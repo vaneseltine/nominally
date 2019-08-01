@@ -2,7 +2,6 @@
 """pytest ./pytest/"""
 
 import json
-import sys
 from pathlib import Path
 
 import pytest
@@ -11,9 +10,24 @@ from nameparser import HumanName
 from nameparser.config import Constants, CONSTANTS
 from nameparser.util import u
 
+TEST_DATA_DIRECTORY = Path(__file__).parent
+FALLBACK_JSON = TEST_DATA_DIRECTORY / "test_bank.json"
 
-test_bank_file = Path(__file__).parent / "test_cases.json"
-TEST_BANK = json.loads(test_bank_file.read_text(encoding="utf8"))
+
+def load_bank(category):
+    separate_file = (TEST_DATA_DIRECTORY / category).with_suffix(".json")
+    if separate_file.exists():
+        json_file = separate_file
+        fetch_category = False
+    else:
+        json_file = FALLBACK_JSON
+        fetch_category = True
+    jsonified = json.loads(json_file.read_text(encoding="utf8"))
+    print("Loading {} test cases from {}.".format(category, json_file.resolve()))
+    if fetch_category:
+        return jsonified[category]
+    else:
+        return jsonified
 
 
 def dict_entry_test(dict_entry):
@@ -29,20 +43,55 @@ def make_ids(entry):
 
 
 class TestCoreFunctionality:
-    def test_utf8(self):
-        hn = HumanName("de la Véña, Jüan")
-        assert hn.first == "Jüan"
-        assert hn.last == "de la Véña"
+    @pytest.mark.parametrize(
+        "entry",
+        [
+            {
+                "id": "test_utf8",
+                "raw": "de la Véña, Jüan",
+                "first": "Jüan",
+                "last": "de la Véña",
+            },
+            {
+                "id": "test_escaped_utf8_bytes",
+                "raw": b"B\xc3\xb6ck, Gerald",
+                "first": "Gerald",
+                "last": "Böck",
+            },
+            {
+                "id": "test_conjunction_names",
+                "raw": "johnny y",
+                "first": "johnny",
+                "last": "y",
+            },
+            {
+                "id": "test_prefixed_names",
+                "raw": "vai la",
+                "first": "vai",
+                "last": "la",
+            },
+        ],
+        ids=lambda x: make_ids(x),
+    )
+    def test_basics(self, entry):
+        dict_entry_test(entry)
 
-    def test_string_output(self):
+    def test_blank(self):
+        # This can't be parametrized in the same way as test_basics, because
+        # CONSTANTS.empty_attribute_default is itself paramatrized at the module level
+        dict_entry_test(
+            {
+                "id": "test_blank_name",
+                "raw": "",
+                "first": CONSTANTS.empty_attribute_default,
+                "last": CONSTANTS.empty_attribute_default,
+            }
+        )
+
+    def test_string_output(self,):
         hn = HumanName("de la Véña, Jüan")
         print(hn)
         print(repr(hn))
-
-    def test_escaped_utf8_bytes(self):
-        hn = HumanName(b"B\xc3\xb6ck, Gerald")
-        assert hn.first == "Gerald"
-        assert hn.last == "Böck"
 
     @pytest.mark.parametrize(
         "raw, length", [("Doe-Ray, Dr. John P., CLU, CFP, LUTC", 5), ("John Doe", 2)]
@@ -148,21 +197,6 @@ class TestCoreFunctionality:
         with pytest.raises(TypeError):
             hn["suffix"] = {"test": "test"}
 
-    def test_conjunction_names(self):
-        hn = HumanName("johnny y")
-        assert hn.first == "johnny"
-        assert hn.last == "y"
-
-    def test_prefix_names(self):
-        hn = HumanName("vai la")
-        assert hn.first == "vai"
-        assert hn.last == "la"
-
-    def test_blank_name(self):
-        hn = HumanName()
-        assert hn.first == CONSTANTS.empty_attribute_default
-        assert hn.last == CONSTANTS.empty_attribute_default
-
     def test_surnames_list_attribute(self):
         hn = HumanName("John Edgar Casey Williams III")
         assert hn.surnames_list, ["Edgar", "Casey", "Williams"]
@@ -187,7 +221,7 @@ def test_pickle():
 class TestHumanNameBruteForce:
     # This fixes a bug in test115, which is not testing the suffix
     @pytest.mark.parametrize(
-        "entry", TEST_BANK["brute_force"], ids=lambda x: make_ids(x)
+        "entry", load_bank("brute_force"), ids=lambda x: make_ids(x)
     )
     def test_brute(self, entry):
         dict_entry_test(entry)
@@ -195,7 +229,7 @@ class TestHumanNameBruteForce:
 
 class TestFirstNameHandling:
     @pytest.mark.parametrize(
-        "entry", TEST_BANK["first_name"], ids=lambda x: make_ids(x)
+        "entry", load_bank("first_name"), ids=lambda x: make_ids(x)
     )
     def test_json_first_name(self, entry):
         dict_entry_test(entry)
@@ -209,12 +243,6 @@ class TestFirstNameHandling:
         assert hn.suffix == "M.D."
         assert hn.last == "Andrews"
 
-    def test_first_name_is_not_prefix_if_only_two_parts(self):
-        """When there are only two parts, don't join prefixes or conjunctions"""
-        hn = HumanName("Van Nguyen")
-        assert hn.first == "Van"
-        assert hn.last == "Nguyen"
-
     @pytest.mark.xfail
     def test_first_name_is_prefix_if_three_parts(self):
         """Not sure how to fix this without breaking Mr and Mrs"""
@@ -225,7 +253,7 @@ class TestFirstNameHandling:
 
 class TestHumanNameConjunction:
     @pytest.mark.parametrize(
-        "entry", TEST_BANK["conjunction"], ids=lambda x: make_ids(x)
+        "entry", load_bank("conjunction"), ids=lambda x: make_ids(x)
     )
     def test_json_conjunction(self, entry):
         dict_entry_test(entry)
@@ -349,31 +377,9 @@ class TestConstantsCustomization:
 
 
 class TestNickname:
-    @pytest.mark.parametrize("entry", TEST_BANK["nickname"], ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("nickname"), ids=lambda x: make_ids(x))
     def test_json_nickname(self, entry):
         dict_entry_test(entry)
-
-    # https://code.google.com/p/python-nameparser/issues/detail?id=33
-    def test_nickname_in_parenthesis(self):
-        hn = HumanName("Benjamin (Ben) Franklin")
-        assert hn.first == "Benjamin"
-        assert hn.middle == CONSTANTS.empty_attribute_default
-        assert hn.last == "Franklin"
-        assert hn.nickname == "Ben"
-
-    # http://code.google.com/p/python-nameparser/issues/detail?id=17
-    def test_parenthesis_are_removed_from_name(self):
-        hn = HumanName("John Jones (Unknown)")
-        assert hn.first == "John"
-        assert hn.last == "Jones"
-        # not testing the nicknames because we don't actually care
-        # about Google Docs here
-
-    def test_duplicate_parenthesis_are_removed_from_name(self):
-        hn = HumanName("John Jones (Google Docs), Jr. (Unknown)")
-        assert hn.first == "John"
-        assert hn.last == "Jones"
-        assert hn.suffix == "Jr."
 
     @pytest.mark.xfail
     def test_nickname_and_last_name_with_title(self):
@@ -385,7 +391,7 @@ class TestNickname:
 
 
 class TestPrefixes:
-    @pytest.mark.parametrize("entry", TEST_BANK["prefix"], ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("prefix"), ids=lambda x: make_ids(x))
     def test_json_prefix(self, entry):
         dict_entry_test(entry)
 
@@ -399,7 +405,7 @@ class TestPrefixes:
 
 
 class TestSuffixes:
-    @pytest.mark.parametrize("entry", TEST_BANK["suffix"], ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("suffix"), ids=lambda x: make_ids(x))
     def test_json_suffix(self, entry):
         dict_entry_test(entry)
 
@@ -447,7 +453,7 @@ class TestSuffixes:
 
 
 class TestTitle:
-    @pytest.mark.parametrize("entry", TEST_BANK["title"], ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("title"), ids=lambda x: make_ids(x))
     def test_json_title(self, entry):
         dict_entry_test(entry)
 
@@ -465,12 +471,6 @@ class TestTitle:
         hn = HumanName("The Right Hon. the President of the Queen's Bench Division")
         assert hn.title == "The Right Hon. the President of the Queen's Bench Division"
 
-    def test_initials_also_suffix(self):
-        hn = HumanName("Smith, J.R.")
-        assert hn.first == "J.R."
-        # assert hn.middle == "R."
-        assert hn.last == "Smith"
-
     # 'ben' is removed from PREFIXES in v0.2.5
     # this test could re-enable this test if we decide to support 'ben' as a prefix
     @pytest.mark.xfail
@@ -479,16 +479,10 @@ class TestTitle:
         assert hn.first == "Ahmad"
         assert hn.last == "ben Husain"
 
-    # http://code.google.com/p/python-nameparser/issues/detail?id=13
-    def test_last_name_also_prefix(self):
-        hn = HumanName("Jane Doctor")
-        assert hn.first == "Jane"
-        assert hn.last == "Doctor"
-
 
 class TestHumanNameCapitalization:
     @pytest.mark.parametrize(
-        "entry", TEST_BANK["capitalization"], ids=lambda x: make_ids(x)
+        "entry", load_bank("capitalization"), ids=lambda x: make_ids(x)
     )
     def test_json_capitalization(self, entry):
         hn = HumanName(entry["raw"])
@@ -625,7 +619,7 @@ class TestHumanNameVariations:
 
     Helps test that the 3 code trees work the same"""
 
-    @pytest.mark.parametrize("name", TEST_BANK["test_names"])
+    @pytest.mark.parametrize("name", load_bank("test_names"))
     def test_json_variations(self, name):
         self.run_variations(name)
 
@@ -680,4 +674,7 @@ class TestHumanNameVariations:
 
 
 if __name__ == "__main__":
-    pytest.main([__file__])
+    import sys
+
+    # Pass through any/all arguments to pytest
+    pytest.main(sys.argv)
