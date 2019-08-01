@@ -10,24 +10,18 @@ from nameparser import HumanName
 from nameparser.config import Constants, CONSTANTS
 from nameparser.util import u
 
-TEST_DATA_DIRECTORY = Path(__file__).parent
-FALLBACK_JSON = TEST_DATA_DIRECTORY / "test_bank.json"
+TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
 
 def load_bank(category):
-    separate_file = (TEST_DATA_DIRECTORY / category).with_suffix(".json")
-    if separate_file.exists():
-        json_file = separate_file
-        fetch_category = False
-    else:
-        json_file = FALLBACK_JSON
-        fetch_category = True
-    jsonified = json.loads(json_file.read_text(encoding="utf8"))
-    print("Loading {} test cases from {}.".format(category, json_file.resolve()))
-    if fetch_category:
-        return jsonified[category]
-    else:
-        return jsonified
+    test_bank_file = (TEST_DATA_DIRECTORY / category).with_suffix(".json")
+    test_bank = json.loads(test_bank_file.read_text(encoding="utf8"))
+    print(
+        "Loading {} cases for {} from {}.".format(
+            len(test_bank), category, test_bank_file.resolve()
+        )
+    )
+    return test_bank
 
 
 def dict_entry_test(dict_entry):
@@ -607,7 +601,7 @@ class TestHumanNameVariations:
 
     Helps test that the 3 code trees work the same"""
 
-    @pytest.mark.parametrize("name", load_bank("singular_test_names"))
+    @pytest.mark.parametrize("name", load_bank("bare_names"))
     def test_json_variations(self, name):
         self.run_variations(name)
 
@@ -659,6 +653,57 @@ class TestHumanNameVariations:
             assert getattr(hn, attr) == getattr(lastnamecomma, attr)
             if hn.suffix:
                 assert getattr(hn, attr) == getattr(suffixcomma, attr)
+
+
+class TestMaidenName:
+
+    no_maiden_names = getattr(HumanName(), "maiden", None) is None
+
+    @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
+    def test_parenthesis_and_quotes_together(self):
+        hn = HumanName("Jennifer 'Jen' Jones (Duff)")
+        assert hn.first == "Jennifer"
+        assert hn.last == "Jones"
+        assert hn.nickname == "Jen"
+        assert hn.maiden == "Duff"
+
+    @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
+    def test_maiden_name_with_nee(self):
+        # https://en.wiktionary.org/wiki/née
+        hn = HumanName("Mary Toogood nee Johnson")
+        assert hn.first == "Mary"
+        assert hn.last == "Toogood"
+        assert hn.maiden == "Johnson"
+
+    @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
+    def test_maiden_name_with_accented_nee(self):
+        # https://en.wiktionary.org/wiki/née
+        hn = HumanName("Mary Toogood née Johnson")
+        assert hn.first == "Mary"
+        assert hn.last == "Toogood"
+        assert hn.maiden == "Johnson"
+
+    @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
+    def test_maiden_name_with_nee_and_comma(self):
+        # https://en.wiktionary.org/wiki/née
+        hn = HumanName("Mary Toogood, née Johnson")
+        assert hn.first == "Mary"
+        assert hn.last == "Toogood"
+        assert hn.maiden == "Johnson"
+
+    @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
+    def test_maiden_name_with_nee_with_parenthesis(self):
+        hn = HumanName("Mary Toogood (nee Johnson)")
+        assert hn.first == "Mary"
+        assert hn.last == "Toogood"
+        assert hn.maiden == "Johnson"
+
+    @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
+    def test_maiden_name_with_parenthesis(self):
+        hn = HumanName("Mary Toogood (Johnson)")
+        assert hn.first == "Mary"
+        assert hn.last == "Toogood"
+        assert hn.maiden == "Johnson"
 
 
 if __name__ == "__main__":
