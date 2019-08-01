@@ -1,4 +1,830 @@
 {
+    "capitalization": [
+        {
+            "id": "test_capitalization_exception_for_III",
+            "raw": "juan q. xavier velasquez y garcia iii",
+            "string": "Juan Q. Xavier Velasquez y Garcia III"
+        },
+        {
+            "id": "test_capitalize_title",
+            "raw": "lt. gen. john a. kenneth doe iv",
+            "string": "Lt. Gen. John A. Kenneth Doe IV"
+        },
+        {
+            "id": "test_capitalize_title_to_lower",
+            "raw": "LT. GEN. JOHN A. KENNETH DOE IV",
+            "string": "Lt. Gen. John A. Kenneth Doe IV"
+        },
+        {
+            "id": "test_capitalization_with_Mac_as_hyphenated_names",
+            "raw": "donovan mcnabb-smith",
+            "string": "Donovan McNabb-Smith"
+        },
+        {
+            "id": "test_capitization_middle_initial_is_also_a_conjunction",
+            "raw": "scott e. werner",
+            "string": "Scott E. Werner"
+        },
+        {
+            "id": "test_no_change_to_mixed_chase",
+            "raw": "Shirley Maclaine",
+            "string": "Shirley Maclaine"
+        },
+        {
+            "id": "test_capitalize_diacritics",
+            "raw": "matthëus schmidt",
+            "string": "Matthëus Schmidt"
+        },
+        {
+            "id": "test_short_names_with_mac",
+            "raw": "mack johnson",
+            "string": "Mack Johnson"
+        },
+        {
+            "id": "test_portuguese_prefixes",
+            "raw": "joao da silva do amaral de souza",
+            "string": "Joao da Silva do Amaral de Souza"
+        },
+        {
+            "id": "test_capitalize_prefix_clash_on_first_name",
+            "raw": "van nguyen",
+            "string": "Van Nguyen"
+        }
+    ],
+    "title": [
+        {
+            "id": "test_last_name_is_also_title",
+            "raw": "Amy E Maid",
+            "first": "Amy",
+            "middle": "E",
+            "last": "Maid"
+        },
+        {
+            "id": "test_last_name_is_also_title_no_comma",
+            "raw": "Dr. Martin Luther King Jr.",
+            "title": "Dr.",
+            "first": "Martin",
+            "middle": "Luther",
+            "last": "King",
+            "suffix": "Jr."
+        },
+        {
+            "id": "test_last_name_is_also_title_with_comma",
+            "raw": "Duke Martin Luther King, Jr.",
+            "title": "Duke",
+            "first": "Martin",
+            "middle": "Luther",
+            "last": "King",
+            "suffix": "Jr."
+        },
+        {
+            "id": "test_last_name_is_also_title3",
+            "raw": "John King",
+            "first": "John",
+            "last": "King"
+        },
+        {
+            "id": "test_title_with_conjunction",
+            "raw": "Secretary of State Hillary Clinton",
+            "title": "Secretary of State",
+            "first": "Hillary",
+            "last": "Clinton"
+        },
+        {
+            "id": "test_compound_title_with_conjunction",
+            "raw": "Cardinal Secretary of State Hillary Clinton",
+            "title": "Cardinal Secretary of State",
+            "first": "Hillary",
+            "last": "Clinton"
+        },
+        {
+            "id": "test_title_is_title",
+            "raw": "Coach",
+            "title": "Coach"
+        },
+        {
+            "id": "test_conflict_with_chained_title_first_name_initial",
+            "raw": "U. S. Grant",
+            "first": "U.",
+            "middle": "S.",
+            "last": "Grant"
+        },
+        {
+            "id": "test_chained_title_first_name_initial_with_no_period",
+            "raw": "US Magistrate Judge T Michael Putnam",
+            "title": "US Magistrate Judge",
+            "first": "T",
+            "middle": "Michael",
+            "last": "Putnam"
+        },
+        {
+            "id": "test_chained_hyphenated_title",
+            "raw": "US Magistrate-Judge Elizabeth E Campbell",
+            "title": "US Magistrate-Judge",
+            "first": "Elizabeth",
+            "middle": "E",
+            "last": "Campbell"
+        },
+        {
+            "id": "test_chained_hyphenated_title_with_comma_suffix",
+            "raw": "Mag-Judge Harwell G Davis, III",
+            "title": "Mag-Judge",
+            "first": "Harwell",
+            "middle": "G",
+            "last": "Davis",
+            "suffix": "III"
+        },
+        {
+            "id": "test_title_starts_with_conjunction",
+            "raw": "The Rt Hon John Jones",
+            "title": "The Rt Hon",
+            "first": "John",
+            "last": "Jones"
+        },
+        {
+            "id": "test_conjunction_before_title",
+            "raw": "The Lord of the Universe",
+            "title": "The Lord of the Universe"
+        },
+        {
+            "id": "test_double_conjunction_on_title",
+            "raw": "Lord of the Universe",
+            "title": "Lord of the Universe"
+        },
+        {
+            "id": "test_triple_conjunction_on_title",
+            "raw": "Lord and of the Universe",
+            "title": "Lord and of the Universe"
+        },
+        {
+            "id": "test_multiple_conjunctions_on_multiple_titles",
+            "raw": "Lord of the Universe and Associate Supreme Queen of the World Lisa Simpson",
+            "title": "Lord of the Universe and Associate Supreme Queen of the World",
+            "first": "Lisa",
+            "last": "Simpson"
+        },
+        {
+            "id": "test_title_with_last_initial_is_suffix",
+            "raw": "King John V.",
+            "title": "King",
+            "first": "John",
+            "last": "V."
+        },
+        {
+            "id": "test_two_title_parts_separated_by_periods",
+            "raw": "Lt.Gen. John A. Kenneth Doe IV",
+            "title": "Lt.Gen.",
+            "first": "John",
+            "last": "Doe",
+            "middle": "A. Kenneth",
+            "suffix": "IV"
+        },
+        {
+            "id": "test_two_part_title",
+            "raw": "Lt. Gen. John A. Kenneth Doe IV",
+            "title": "Lt. Gen.",
+            "first": "John",
+            "last": "Doe",
+            "middle": "A. Kenneth",
+            "suffix": "IV"
+        },
+        {
+            "id": "test_two_part_title_with_lastname_comma",
+            "raw": "Doe, Lt. Gen. John A. Kenneth IV",
+            "title": "Lt. Gen.",
+            "first": "John",
+            "last": "Doe",
+            "middle": "A. Kenneth",
+            "suffix": "IV"
+        },
+        {
+            "id": "test_two_part_title_with_suffix_comma",
+            "raw": "Lt. Gen. John A. Kenneth Doe, Jr.",
+            "title": "Lt. Gen.",
+            "first": "John",
+            "last": "Doe",
+            "middle": "A. Kenneth",
+            "suffix": "Jr."
+        },
+        {
+            "id": "test_possible_conflict_with_middle_initial_that_could_be_suffix",
+            "raw": "Doe, Rev. John V, Jr.",
+            "title": "Rev.",
+            "first": "John",
+            "last": "Doe",
+            "middle": "V",
+            "suffix": "Jr."
+        },
+        {
+            "id": "test_possible_conflict_with_suffix_that_could_be_initial",
+            "raw": "Doe, Rev. John A., V, Jr.",
+            "title": "Rev.",
+            "first": "John",
+            "last": "Doe",
+            "middle": "A.",
+            "suffix": "V, Jr."
+        },
+        {
+            "id": "test_ben_as_first_name",
+            "raw": "Ben Johnson",
+            "first": "Ben",
+            "last": "Johnson"
+        },
+        {
+            "id": "test_ben_as_first_name_with_middle_name",
+            "raw": "Ben Alex Johnson",
+            "first": "Ben",
+            "middle": "Alex",
+            "last": "Johnson"
+        },
+        {
+            "id": "test_ben_as_middle_name",
+            "raw": "Alex Ben Johnson",
+            "first": "Alex",
+            "middle": "Ben",
+            "last": "Johnson"
+        },
+        {
+            "id": "test_title_with_periods",
+            "raw": "Lt.Gov. John Doe",
+            "title": "Lt.Gov.",
+            "first": "John",
+            "last": "Doe"
+        },
+        {
+            "id": "test_title_with_periods_lastname_comma",
+            "raw": "Doe, Lt.Gov. John",
+            "title": "Lt.Gov.",
+            "first": "John",
+            "last": "Doe"
+        }
+    ],
+    "suffix": [
+        {
+            "id": "test_suffix",
+            "raw": "Joe Franklin Jr",
+            "first": "Joe",
+            "last": "Franklin",
+            "suffix": "Jr"
+        },
+        {
+            "id": "test_suffix_with_periods",
+            "raw": "Joe Dentist D.D.S.",
+            "first": "Joe",
+            "last": "Dentist",
+            "suffix": "D.D.S."
+        },
+        {
+            "id": "test_two_suffixes_suffix_comma_format",
+            "raw": "Franklin Washington, Jr. MD",
+            "first": "Franklin",
+            "last": "Washington",
+            "suffix": "Jr. MD"
+        },
+        {
+            "id": "test_suffix_containing_periods",
+            "raw": "Kenneth Clarke Q.C.",
+            "first": "Kenneth",
+            "last": "Clarke",
+            "suffix": "Q.C."
+        },
+        {
+            "id": "test_suffix_containing_periods_lastname_comma_format",
+            "raw": "Clarke, Kenneth, Q.C. M.P.",
+            "first": "Kenneth",
+            "last": "Clarke",
+            "suffix": "Q.C. M.P."
+        },
+        {
+            "id": "test_suffix_containing_periods_suffix_comma_format",
+            "raw": "Kenneth Clarke Q.C., M.P.",
+            "first": "Kenneth",
+            "last": "Clarke",
+            "suffix": "Q.C., M.P."
+        },
+        {
+            "id": "test_suffix_with_single_comma_format",
+            "raw": "John Doe jr., MD",
+            "first": "John",
+            "last": "Doe",
+            "suffix": "jr., MD"
+        },
+        {
+            "id": "test_suffix_with_double_comma_format",
+            "raw": "Doe, John jr., MD",
+            "first": "John",
+            "last": "Doe",
+            "suffix": "jr., MD"
+        },
+        {
+            "id": "test_phd_with_erroneous_space",
+            "raw": "John Smith, Ph. D.",
+            "first": "John",
+            "last": "Smith",
+            "suffix": "Ph. D."
+        },
+        {
+            "id": "test_phd_conflict",
+            "raw": "Adolph D",
+            "first": "Adolph",
+            "last": "D"
+        },
+        {
+            "id": "test_potential_suffix_that_is_also_last_name",
+            "raw": "Jack Ma",
+            "first": "Jack",
+            "last": "Ma"
+        },
+        {
+            "id": "test_potential_suffix_that_is_also_last_name_comma",
+            "raw": "Ma, Jack",
+            "first": "Jack",
+            "last": "Ma"
+        },
+        {
+            "id": "test_potential_suffix_that_is_also_first_name_comma",
+            "raw": "Johnson, Bart",
+            "first": "Bart",
+            "last": "Johnson"
+        },
+        {
+            "id": "test_multiple_letter_suffix_with_periods",
+            "raw": "John Doe Msc.Ed.",
+            "first": "John",
+            "last": "Doe",
+            "suffix": "Msc.Ed."
+        },
+        {
+            "id": "test_suffix_with_periods_with_comma",
+            "raw": "John Doe, Msc.Ed.",
+            "first": "John",
+            "last": "Doe",
+            "suffix": "Msc.Ed."
+        },
+        {
+            "id": "test_suffix_with_periods_with_lastname_comma",
+            "raw": "Doe, John Msc.Ed.",
+            "first": "John",
+            "last": "Doe",
+            "suffix": "Msc.Ed."
+        }
+    ],
+    "prefix": [
+        {
+            "id": "test_prefix",
+            "raw": "Juan del Sur",
+            "first": "Juan",
+            "last": "del Sur"
+        },
+        {
+            "id": "test_prefix_with_period",
+            "raw": "Jill St. John",
+            "first": "Jill",
+            "last": "St. John"
+        },
+        {
+            "id": "test_prefix_before_two_part_last_name",
+            "raw": "pennie von bergen wessels",
+            "first": "pennie",
+            "last": "von bergen wessels"
+        },
+        {
+            "id": "test_prefix_before_two_part_last_name_with_suffix",
+            "raw": "pennie von bergen wessels III",
+            "first": "pennie",
+            "last": "von bergen wessels",
+            "suffix": "III"
+        },
+        {
+            "id": "test_prefix_before_two_part_last_name_with_acronym_suffix",
+            "raw": "pennie von bergen wessels M.D.",
+            "first": "pennie",
+            "last": "von bergen wessels",
+            "suffix": "M.D."
+        },
+        {
+            "id": "test_two_part_last_name_with_suffix_comma",
+            "raw": "pennie von bergen wessels, III",
+            "first": "pennie",
+            "last": "von bergen wessels",
+            "suffix": "III"
+        },
+        {
+            "id": "test_two_part_last_name_with_suffix",
+            "raw": "von bergen wessels, pennie III",
+            "first": "pennie",
+            "last": "von bergen wessels",
+            "suffix": "III"
+        },
+        {
+            "id": "test_last_name_two_part_last_name_with_two_suffixes",
+            "raw": "von bergen wessels MD, pennie III",
+            "first": "pennie",
+            "last": "von bergen wessels",
+            "suffix": "MD, III"
+        },
+        {
+            "id": "test_comma_two_part_last_name_with_acronym_suffix",
+            "raw": "von bergen wessels, pennie MD",
+            "first": "pennie",
+            "last": "von bergen wessels",
+            "suffix": "MD"
+        },
+        {
+            "id": "test_title_two_part_last_name_with_suffix_in_first_part",
+            "raw": "pennie von bergen wessels MD, III",
+            "first": "pennie",
+            "last": "von bergen wessels",
+            "suffix": "MD, III"
+        },
+        {
+            "id": "test_portuguese_dos",
+            "raw": "Rafael Sousa dos Anjos",
+            "first": "Rafael",
+            "middle": "Sousa",
+            "last": "dos Anjos"
+        },
+        {
+            "id": "test_portuguese_prefixes",
+            "raw": "Joao da Silva do Amaral de Souza",
+            "first": "Joao",
+            "middle": "da Silva do Amaral",
+            "last": "de Souza"
+        },
+        {
+            "id": "test_three_conjunctions",
+            "raw": "Dr. Juan Q. Xavier de la dos Vega III",
+            "first": "Juan",
+            "last": "de la dos Vega",
+            "title": "Dr.",
+            "middle": "Q. Xavier",
+            "suffix": "III"
+        },
+        {
+            "id": "test_lastname_three_conjunctions",
+            "raw": "de la dos Vega, Dr. Juan Q. Xavier III",
+            "first": "Juan",
+            "last": "de la dos Vega",
+            "title": "Dr.",
+            "middle": "Q. Xavier",
+            "suffix": "III"
+        },
+        {
+            "id": "test_comma_three_conjunctions",
+            "raw": "Dr. Juan Q. Xavier de la dos Vega, III",
+            "first": "Juan",
+            "last": "de la dos Vega",
+            "title": "Dr.",
+            "middle": "Q. Xavier",
+            "suffix": "III"
+        }
+    ],
+    "first_name": [
+        {
+            "id": "test_first_name",
+            "raw": "Andrew",
+            "first": "Andrew"
+        },
+        {
+            "id": "test_assume_title_and_one_other_name_is_last_name",
+            "raw": "Rev Andrews",
+            "title": "Rev",
+            "last": "Andrews"
+        },
+        {
+            "id": "test_suffix_in_lastname_part_of_lastname_comma_format",
+            "raw": "Smith Jr., John",
+            "last": "Smith",
+            "first": "John",
+            "suffix": "Jr."
+        },
+        {
+            "id": "test_sir_exception_to_first_name_rule",
+            "raw": "Sir Gerald",
+            "title": "Sir",
+            "first": "Gerald"
+        },
+        {
+            "id": "test_king_exception_to_first_name_rule",
+            "raw": "King Henry",
+            "title": "King",
+            "first": "Henry"
+        },
+        {
+            "id": "test_queen_exception_to_first_name_rule",
+            "raw": "Queen Elizabeth",
+            "title": "Queen",
+            "first": "Elizabeth"
+        },
+        {
+            "id": "test_dame_exception_to_first_name_rule",
+            "raw": "Dame Mary",
+            "title": "Dame",
+            "first": "Mary"
+        },
+        {
+            "id": "test_first_name_is_not_prefix_if_only_two_parts_comma",
+            "raw": "Nguyen, Van",
+            "first": "Van",
+            "last": "Nguyen"
+        }
+    ],
+    "nickname": [
+        {
+            "id": "test_two_word_nickname_in_parenthesis",
+            "raw": "Benjamin (Big Ben) Franklin",
+            "first": "Benjamin",
+            "last": "Franklin",
+            "nickname": "Big Ben"
+        },
+        {
+            "id": "test_two_words_in_quotes",
+            "raw": "Benjamin \"Big Ben\" Franklin",
+            "first": "Benjamin",
+            "last": "Franklin",
+            "nickname": "Big Ben"
+        },
+        {
+            "id": "test_nickname_in_parenthesis_with_comma",
+            "raw": "Franklin, Benjamin (Ben)",
+            "first": "Benjamin",
+            "last": "Franklin",
+            "nickname": "Ben"
+        },
+        {
+            "id": "test_nickname_in_parenthesis_with_comma_and_suffix",
+            "raw": "Franklin, Benjamin (Ben), Jr.",
+            "first": "Benjamin",
+            "last": "Franklin",
+            "suffix": "Jr.",
+            "nickname": "Ben"
+        },
+        {
+            "id": "test_nickname_in_single_quotes",
+            "raw": "Benjamin 'Ben' Franklin",
+            "first": "Benjamin",
+            "last": "Franklin",
+            "nickname": "Ben"
+        },
+        {
+            "id": "test_nickname_in_double_quotes",
+            "raw": "Benjamin \"Ben\" Franklin",
+            "first": "Benjamin",
+            "last": "Franklin",
+            "nickname": "Ben"
+        },
+        {
+            "id": "test_single_quotes_on_first_name_not_treated_as_nickname",
+            "raw": "Brian Andrew O'connor",
+            "first": "Brian",
+            "middle": "Andrew",
+            "last": "O'connor"
+        },
+        {
+            "id": "test_single_quotes_on_both_name_not_treated_as_nickname",
+            "raw": "La'tanya O'connor",
+            "first": "La'tanya",
+            "last": "O'connor"
+        },
+        {
+            "id": "test_single_quotes_on_end_of_last_name_not_treated_as_nickname",
+            "raw": "Mari' Aube'",
+            "first": "Mari'",
+            "last": "Aube'"
+        },
+        {
+            "id": "test_okina_inside_name_not_treated_as_nickname",
+            "raw": "Harrieta Keōpūolani Nāhiʻenaʻena",
+            "first": "Harrieta",
+            "middle": "Keōpūolani",
+            "last": "Nāhiʻenaʻena"
+        },
+        {
+            "id": "test_single_quotes_not_treated_as_nickname_Hawaiian_example",
+            "raw": "Harietta Keopuolani Nahi'ena'ena",
+            "first": "Harietta",
+            "middle": "Keopuolani",
+            "last": "Nahi'ena'ena"
+        },
+        {
+            "id": "test_single_quotes_not_treated_as_nickname_Kenyan_example",
+            "raw": "Naomi Wambui Ng'ang'a",
+            "first": "Naomi",
+            "middle": "Wambui",
+            "last": "Ng'ang'a"
+        },
+        {
+            "id": "test_single_quotes_not_treated_as_nickname_Samoan_example",
+            "raw": "Va'apu'u Vitale",
+            "first": "Va'apu'u",
+            "last": "Vitale"
+        },
+        {
+            "id": "test_nickname_and_last_name",
+            "raw": "\"Rick\" Edmonds",
+            "last": "Edmonds",
+            "nickname": "Rick"
+        }
+    ],
+    "conjunction": [
+        {
+            "id": "test_last_name_with_conjunction",
+            "raw": "Jose Aznar y Lopez",
+            "first": "Jose",
+            "last": "Aznar y Lopez"
+        },
+        {
+            "id": "test_multiple_conjunctions",
+            "raw": "part1 of The part2 of the part3 and part4",
+            "first": "part1 of The part2 of the part3 and part4"
+        },
+        {
+            "id": "test_multiple_conjunctions2",
+            "raw": "part1 of and The part2 of the part3 And part4",
+            "first": "part1 of and The part2 of the part3 And part4"
+        },
+        {
+            "id": "test_ends_with_conjunction",
+            "raw": "Jon Dough and",
+            "first": "Jon",
+            "last": "Dough and"
+        },
+        {
+            "id": "test_ends_with_two_conjunctions",
+            "raw": "Jon Dough and of",
+            "first": "Jon",
+            "last": "Dough and of"
+        },
+        {
+            "id": "test_starts_with_conjunction",
+            "raw": "and Jon Dough",
+            "first": "and Jon",
+            "last": "Dough"
+        },
+        {
+            "id": "test_starts_with_two_conjunctions",
+            "raw": "the and Jon Dough",
+            "first": "the and Jon",
+            "last": "Dough"
+        },
+        {
+            "id": "test_uppercase_middle_initial_conflict_with_conjunction_upper_means_initial",
+            "raw": "John E Smith",
+            "first": "John",
+            "middle": "E",
+            "last": "Smith"
+        },
+        {
+            "id": "test_lowercase_middle_initial_with_period_conflict_with_conjunction",
+            "raw": "john e. smith",
+            "first": "john",
+            "middle": "e.",
+            "last": "smith"
+        },
+        {
+            "id": "test_lowercase_first_initial_conflict_with_conjunction",
+            "raw": "e j smith",
+            "first": "e",
+            "middle": "j",
+            "last": "smith"
+        },
+        {
+            "id": "test_lowercase_middle_initial_conflict_with_conjunction",
+            "raw": "John e Smith",
+            "first": "John",
+            "middle": "e",
+            "last": "Smith"
+        },
+        {
+            "id": "test_lowercase_middle_initial_and_suffix_conflict_with_conjunction",
+            "raw": "John e Smith, III",
+            "first": "John",
+            "middle": "e",
+            "last": "Smith",
+            "suffix": "III"
+        },
+        {
+            "id": "test_lowercase_middle_initial_and_nocomma_suffix_conflict_with_conjun",
+            "raw": "John e Smith III",
+            "first": "John",
+            "middle": "e",
+            "last": "Smith",
+            "suffix": "III"
+        },
+        {
+            "id": "test_lowercase_middle_initial_comma_lastname_and_suffix_conflict_with_conjun",
+            "raw": "Smith, John e, III, Jr",
+            "first": "John",
+            "middle": "e",
+            "last": "Smith",
+            "suffix": "III, Jr"
+        },
+        {
+            "id": "test_couples_names",
+            "raw": "John and Jane Smith",
+            "first": "John and Jane",
+            "last": "Smith"
+        },
+        {
+            "id": "test_couples_names_with_conjunction_lastname",
+            "raw": "John and Jane Aznar y Lopez",
+            "first": "John and Jane",
+            "last": "Aznar y Lopez"
+        },
+        {
+            "id": "test_couple_titles",
+            "raw": "Mr. and Mrs. John and Jane Smith",
+            "title": "Mr. and Mrs.",
+            "first": "John and Jane",
+            "last": "Smith"
+        },
+        {
+            "id": "test_title_with_three_part_name_last_initial_is_suffix_uppercase_no_p",
+            "raw": "King John Alexander V",
+            "title": "King",
+            "first": "John",
+            "last": "Alexander",
+            "suffix": "V"
+        },
+        {
+            "id": "test_four_name_parts_with_suffix_that_could_be_initial_lowercase_no_p",
+            "raw": "larry james edward johnson v",
+            "first": "larry",
+            "middle": "james edward",
+            "last": "johnson",
+            "suffix": "v"
+        },
+        {
+            "id": "test_four_name_parts_with_suffix_that_could_be_initial_uppercase_no_p",
+            "raw": "Larry James Johnson I",
+            "first": "Larry",
+            "middle": "James",
+            "last": "Johnson",
+            "suffix": "I"
+        },
+        {
+            "id": "test_roman_numeral_initials",
+            "raw": "Larry V I",
+            "first": "Larry",
+            "middle": "V",
+            "last": "I"
+        },
+        {
+            "id": "test124_Rev_title",
+            "raw": "Rev. John A. Kenneth Doe",
+            "title": "Rev.",
+            "middle": "A. Kenneth",
+            "first": "John",
+            "last": "Doe"
+        },
+        {
+            "id": "test125_Rev_title",
+            "raw": "Rev John A. Kenneth Doe",
+            "title": "Rev",
+            "middle": "A. Kenneth",
+            "first": "John",
+            "last": "Doe"
+        },
+        {
+            "id": "test126_Rev_title",
+            "raw": "Doe, Rev. John A. Jr.",
+            "title": "Rev.",
+            "first": "John",
+            "last": "Doe",
+            "middle": "A.",
+            "suffix": "Jr."
+        },
+        {
+            "id": "test127",
+            "raw": "Buca di Beppo",
+            "first": "Buca",
+            "last": "di Beppo"
+        },
+        {
+            "id": "test_le_as_last_name",
+            "raw": "Yin Le",
+            "first": "Yin",
+            "last": "Le"
+        },
+        {
+            "id": "test_le_as_last_name_with_middle_initial",
+            "raw": "Yin a Le",
+            "first": "Yin",
+            "middle": "a",
+            "last": "Le"
+        },
+        {
+            "id": "test_conjunction_in_an_address_with_a_title",
+            "raw": "His Excellency Lord Duncan",
+            "title": "His Excellency Lord",
+            "last": "Duncan"
+        },
+        {
+            "id": "test_name_is_conjunctions",
+            "raw": "e and e",
+            "first": "e and e"
+        }
+    ],
     "test_names": [
         "John Doe",
         "John Doe, Jr.",
@@ -148,6 +974,7 @@
         "Brian O'connor",
         "Sir Gerald",
         "Magistrate Judge John F. Forster, Jr",
+        "Magistrate Judge Joaquin V.E. Manibusan, Jr",
         "Magistrate-Judge Elizabeth Todd Campbell",
         "Mag-Judge Harwell G Davis, III",
         "Mag. Judge Byron G. Cudmore",
@@ -155,6 +982,7 @@
         "Chief Judge Sharon Lovelace Blackburn",
         "Judge James M. Moody",
         "Judge G. Thomas Eisele",
+        "Judge Callie V. S. Granade",
         "Judge C Lynwood Smith, Jr",
         "Senior Judge Charles R. Butler, Jr",
         "Senior Judge Harold D. Vietor",
