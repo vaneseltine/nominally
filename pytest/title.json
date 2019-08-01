@@ -1,5 +1,12 @@
 [
     {
+        "id": "test_last_name_also_prefix",
+        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=13",
+        "raw": "Jane Doctor",
+        "first": "Jane",
+        "last": "Doctor"
+    },
+    {
         "id": "test_last_name_is_also_title",
         "raw": "Amy E Maid",
         "first": "Amy",
@@ -210,12 +217,5 @@
         "title": "Lt.Gov.",
         "first": "John",
         "last": "Doe"
-    },
-    {
-        "id": "test_last_name_also_prefix",
-        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=13",
-        "raw": "Jane Doctor",
-        "first": "Jane",
-        "last": "Doctor"
     }
 ]

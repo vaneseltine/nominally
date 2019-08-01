@@ -1,5 +1,13 @@
 [
     {
+        "id": "test_comma_two_part_last_name_with_suffix_in_first_part",
+        "_note": "I'm kinda surprised this works, not really sure if this is a realistic place for a suffix to be.",
+        "raw": "von bergen wessels MD, pennie",
+        "first": "pennie",
+        "last": "von bergen wessels",
+        "suffix": "MD"
+    },
+    {
         "id": "test_prefix",
         "raw": "Juan del Sur",
         "first": "Juan",

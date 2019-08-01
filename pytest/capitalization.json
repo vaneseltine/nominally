@@ -1,5 +1,17 @@
 [
     {
+        "id": "test_downcasing_mac",
+        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=15",
+        "raw": "RONALD MACDONALD",
+        "string": "Ronald MacDonald"
+    },
+    {
+        "id": "test_downcasing_mc",
+        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=23",
+        "raw": "RONALD MCDONALD",
+        "string": "Ronald McDonald"
+    },
+    {
         "id": "test_capitalization_exception_for_III",
         "raw": "juan q. xavier velasquez y garcia iii",
         "string": "Juan Q. Xavier Velasquez y Garcia III"
@@ -23,11 +35,6 @@
         "id": "test_capitization_middle_initial_is_also_a_conjunction",
         "raw": "scott e. werner",
         "string": "Scott E. Werner"
-    },
-    {
-        "id": "test_no_change_to_mixed_chase",
-        "raw": "Shirley Maclaine",
-        "string": "Shirley Maclaine"
     },
     {
         "id": "test_capitalize_diacritics",

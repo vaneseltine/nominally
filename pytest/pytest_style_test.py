@@ -206,16 +206,24 @@ class TestCoreFunctionality:
         assert hn.surnames == "Edgar Casey Williams"
 
 
-def test_pickle():
-    dill = pytest.importorskip("dill")
+class TestPickle:
 
-    # test_config_pickle
-    constants = Constants()
-    dill.pickles(constants)
+    try:
+        import dill
 
-    # test_name_instance_pickle
-    hn = HumanName("Title First Middle Middle Last, Jr.")
-    dill.pickles(hn)
+        no_dill = False
+    except ImportError:
+        no_dill = True
+
+    @pytest.mark.skipif(no_dill, reason="requires python-dill module to test pickling")
+    def test_config_pickle(self):
+        constants = Constants()
+        self.dill.pickles(constants)
+
+    @pytest.mark.skipif(no_dill, reason="requires python-dill module to test pickling")
+    def test_name_instance_pickle(self):
+        hn = HumanName("Title First Middle Middle Last, Jr.")
+        self.dill.pickles(hn)
 
 
 class TestHumanNameBruteForce:
@@ -234,10 +242,11 @@ class TestFirstNameHandling:
     def test_json_first_name(self, entry):
         dict_entry_test(entry)
 
-    # TODO: Seems "Andrews, M.D.", Andrews should be treated as a last name
-    # but other suffixes like "George Jr." should be first names. Might be
-    # related to https://github.com/derek73/python-nameparser/issues/2
-    @pytest.mark.xfail
+    @pytest.mark.xfail(
+        reason="# TODO: Seems 'Andrews, M.D.', Andrews should be treated as a last name"
+        "but other suffixes like 'George Jr.' should be first names. "
+        "Might be related to https://github.com/derek73/python-nameparser/issues/2"
+    )
     def test_assume_suffix_title_and_one_other_name_is_last_name(self):
         hn = HumanName("Andrews, M.D.")
         assert hn.suffix == "M.D."
@@ -381,6 +390,22 @@ class TestNickname:
     def test_json_nickname(self, entry):
         dict_entry_test(entry)
 
+    # http://code.google.com/p/python-nameparser/issues/detail?id=17
+    def test_parenthesis_are_removed_from_name(self):
+        hn = HumanName("John Jones (Unknown)")
+        assert hn.first == "John"
+        assert hn.last == "Jones"
+        assert hn.nickname != CONSTANTS.empty_attribute_default
+
+    # http://code.google.com/p/python-nameparser/issues/detail?id=17
+    # not testing nicknames because we don't actually care about Google Docs here
+    def test_duplicate_parenthesis_are_removed_from_name(self):
+        hn = HumanName("John Jones (Google Docs), Jr. (Unknown)")
+        assert hn.first == "John"
+        assert hn.last == "Jones"
+        assert hn.suffix == "Jr."
+        assert hn.nickname != CONSTANTS.empty_attribute_default
+
     @pytest.mark.xfail
     def test_nickname_and_last_name_with_title(self):
         hn = HumanName('Senator "Rick" Edmonds')
@@ -395,56 +420,22 @@ class TestPrefixes:
     def test_json_prefix(self, entry):
         dict_entry_test(entry)
 
-    def test_comma_two_part_last_name_with_suffix_in_first_part(self):
-        # I'm kinda surprised this works, not really sure if this is a
-        # realistic place for a suffix to be.
-        hn = HumanName("von bergen wessels MD, pennie")
-        assert hn.first == "pennie"
-        assert hn.last == "von bergen wessels"
-        assert hn.suffix == "MD"
-
 
 class TestSuffixes:
     @pytest.mark.parametrize("entry", load_bank("suffix"), ids=lambda x: make_ids(x))
     def test_json_suffix(self, entry):
         dict_entry_test(entry)
 
-    def test_two_suffixes(self):
-        hn = HumanName("Kenneth Clarke QC MP")
-        assert hn.first == "Kenneth"
-        assert hn.last == "Clarke"
-        # NOTE: this adds a comma when the original format did not have one.
-        # not ideal but at least its in the right bucket
-        assert hn.suffix == "QC, MP"
-
-    def test_two_suffixes_lastname_comma_format(self):
-        hn = HumanName("Washington Jr. MD, Franklin")
-        assert hn.first == "Franklin"
-        assert hn.last == "Washington"
-        # NOTE: this adds a comma when the original format did not have one.
-        assert hn.suffix == "Jr., MD"
-
-    # TODO: handle conjunctions in last names followed by first names clashing with suffixes
-    @pytest.mark.xfail
+    @pytest.mark.xfail(
+        reason="TODO: handle conjunctions in last names"
+        " followed by first names clashing with suffixes"
+    )
     def test_potential_suffix_that_is_also_first_name_comma_with_conjunction(self):
         hn = HumanName("De la Vina, Bart")
         assert hn.first == "Bart"
         assert hn.last == "De la Vina"
 
-    def test_potential_suffix_that_is_also_last_name_with_suffix(self):
-        hn = HumanName("Jack Ma Jr")
-        assert hn.first == "Jack"
-        assert hn.last == "Ma"
-        assert hn.suffix == "Jr"
-
-    def test_potential_suffix_that_is_also_last_name_with_suffix_comma(self):
-        hn = HumanName("Ma III, Jack Jr")
-        assert hn.first == "Jack"
-        assert hn.last == "Ma"
-        assert hn.suffix == "III, Jr"
-
-    # https://github.com/derek73/python-nameparser/issues/27
-    @pytest.mark.xfail
+    @pytest.mark.xfail(reason="https://github.com/derek73/python-nameparser/issues/27")
     def test_king(self):
         hn = HumanName("Dr King Jr")
         assert hn.title == "Dr"
@@ -457,8 +448,7 @@ class TestTitle:
     def test_json_title(self, entry):
         dict_entry_test(entry)
 
-    # TODO: fix handling of U.S.
-    @pytest.mark.xfail
+    @pytest.mark.xfail(reason="TODO: fix handling of U.S.")
     def test_chained_title_first_name_title_is_initials(self):
         hn = HumanName("U.S. District Judge Marc Thomas Treadwell")
         assert hn.title == "U.S. District Judge"
@@ -466,13 +456,14 @@ class TestTitle:
         assert hn.middle == "Thomas"
         assert hn.last == "Treadwell"
 
-    @pytest.mark.xfail
+    @pytest.mark.xfail(
+        reason=" 'ben' is removed from PREFIXES in v0.2.5"
+        "this test could re-enable this test if we decide to support 'ben' as a prefix"
+    )
     def test_title_multiple_titles_with_apostrophe_s(self):
         hn = HumanName("The Right Hon. the President of the Queen's Bench Division")
         assert hn.title == "The Right Hon. the President of the Queen's Bench Division"
 
-    # 'ben' is removed from PREFIXES in v0.2.5
-    # this test could re-enable this test if we decide to support 'ben' as a prefix
     @pytest.mark.xfail
     def test_ben_as_conjunction(self):
         hn = HumanName("Ahmad ben Husain")
@@ -489,30 +480,27 @@ class TestHumanNameCapitalization:
         hn.capitalize()
         assert str(hn) == entry["string"]
 
-    def test_force_capitalization(self):
-        hn = HumanName("Shirley Maclaine")
-        hn.capitalize(force=True)
-        assert str(hn) == "Shirley MacLaine"
+    @pytest.mark.parametrize(
+        "name, is_forced",
+        [
+            ("Shirley Maclaine", {True: "Shirley MacLaine", False: "Shirley Maclaine"}),
+            ("Baron Mcyolo", {True: "Baron McYolo", False: "Baron Mcyolo"}),
+        ],
+    )
+    @pytest.mark.parametrize("force", [True, False])
+    def test_no_capitalization_change_unless_forced(self, name, is_forced, force):
+        hn = HumanName(name)
+        hn.capitalize(force=force)
+        assert str(hn) == is_forced[force]
 
-    # FIXME: this test does not pass due to a known issue
-    # http://code.google.com/p/python-nameparser/issues/detail?id=22
-    @pytest.mark.xfail
+    @pytest.mark.xfail(
+        reason="FIXME: this test does not pass due to a known issue "
+        "http://code.google.com/p/python-nameparser/issues/detail?id=22"
+    )
     def test_capitalization_exception_for_already_capitalized_III_KNOWN_FAILURE(self):
         hn = HumanName("juan garcia III")
         hn.capitalize()
         assert str(hn) == "Juan Garcia III"
-
-    # http://code.google.com/p/python-nameparser/issues/detail?id=15
-    def test_downcasing_mac(self):
-        hn = HumanName("RONALD MACDONALD")
-        hn.capitalize()
-        assert str(hn) == "Ronald MacDonald"
-
-    # http://code.google.com/p/python-nameparser/issues/detail?id=23
-    def test_downcasing_mc(self):
-        hn = HumanName("RONALD MCDONALD")
-        hn.capitalize()
-        assert str(hn) == "Ronald McDonald"
 
 
 class TestHumanNameOutputFormat:
@@ -619,7 +607,7 @@ class TestHumanNameVariations:
 
     Helps test that the 3 code trees work the same"""
 
-    @pytest.mark.parametrize("name", load_bank("test_names"))
+    @pytest.mark.parametrize("name", load_bank("singular_test_names"))
     def test_json_variations(self, name):
         self.run_variations(name)
 

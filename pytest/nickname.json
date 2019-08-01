@@ -1,25 +1,11 @@
 [
     {
         "id": "test_nickname_in_parenthesis",
-        "raw": "Benjamin (Ben) Franklin",
         "_note": "https://code.google.com/p/python-nameparser/issues/detail?id=33",
+        "raw": "Benjamin (Ben) Franklin",
         "first": "Benjamin",
         "last": "Franklin",
         "nickname": "Ben"
-    },
-    {
-        "id": "test_parenthesis_are_removed_from_name",
-        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=17 not testing the nicknames because we don't actually care about Google Docs here",
-        "raw": "John Jones (Unknown)",
-        "first": "John",
-        "last": "Jones"
-    },
-    {
-        "id": "test_duplicate_parenthesis_are_removed_from_name",
-        "raw": "John Jones (Google Docs), Jr. (Unknown)",
-        "first": "John",
-        "last": "Jones",
-        "suffix": "Jr."
     },
     {
         "id": "test_two_word_nickname_in_parenthesis",
