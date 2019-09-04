@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import re
 
 # emoji regex from https://stackoverflow.com/questions/26568722/remove-unicode-emoji-using-re-in-python
@@ -31,7 +29,7 @@ REGEXES = set(
         ("quoted_word", re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)", re.U)),
         ("double_quotes", re.compile(r"\"(.*?)\"", re.U)),
         ("parenthesis", re.compile(r"\((.*?)\)", re.U)),
-        ("roman_numeral", re.compile(r"^(X|IX|IV|V?I{0,3})$", re.I | re.U)),
+        ("roman_numeral", re.compile(r"^(x|ix|iv|v?i{0,3})$", re.I | re.U)),
         ("no_vowels", re.compile(r"^[^aeyiuo]+$", re.I | re.U)),
         ("period_not_at_end", re.compile(r".*\..+$", re.I | re.U)),
         ("emoji", re_emoji),

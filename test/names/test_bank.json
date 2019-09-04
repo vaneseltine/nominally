@@ -1,983 +1,983 @@
 {
     "singular_test_names": [
-        "John Doe",
-        "John Doe, Jr.",
-        "John Doe III",
-        "Doe, John",
-        "Doe, John, Jr.",
-        "Doe, John III",
-        "John A. Doe",
-        "John A. Doe, Jr.",
-        "John A. Doe III",
-        "Doe, John A.",
-        "Doe, John A., Jr.",
-        "Doe, John A. III",
-        "John A. Kenneth Doe",
-        "John A. Kenneth Doe, Jr.",
-        "John A. Kenneth Doe III",
-        "Doe, John A. Kenneth",
-        "Doe, John A. Kenneth, Jr.",
-        "Doe, John A. Kenneth III",
-        "Dr. John Doe",
-        "Dr. John Doe, Jr.",
-        "Dr. John Doe III",
-        "Doe, Dr. John",
-        "Doe, Dr. John, Jr.",
-        "Doe, Dr. John III",
-        "Dr. John A. Doe",
-        "Dr. John A. Doe, Jr.",
-        "Dr. John A. Doe III",
-        "Doe, Dr. John A.",
-        "Doe, Dr. John A. Jr.",
-        "Doe, Dr. John A. III",
-        "Dr. John A. Kenneth Doe",
-        "Dr. John A. Kenneth Doe, Jr.",
-        "Dr. John A. Kenneth Doe III",
-        "Doe, Dr. John A. Kenneth",
-        "Doe, Dr. John A. Kenneth Jr.",
-        "Doe, Dr. John A. Kenneth III",
-        "Juan de la Vega",
-        "Juan de la Vega, Jr.",
-        "Juan de la Vega III",
-        "de la Vega, Juan",
-        "de la Vega, Juan, Jr.",
-        "de la Vega, Juan III",
-        "Juan Velasquez y Garcia",
-        "Juan Velasquez y Garcia, Jr.",
-        "Juan Velasquez y Garcia III",
-        "Velasquez y Garcia, Juan",
-        "Velasquez y Garcia, Juan, Jr.",
-        "Velasquez y Garcia, Juan III",
-        "Dr. Juan de la Vega",
-        "Dr. Juan de la Vega, Jr.",
-        "Dr. Juan de la Vega III",
-        "de la Vega, Dr. Juan",
-        "de la Vega, Dr. Juan, Jr.",
-        "de la Vega, Dr. Juan III",
-        "Dr. Juan Velasquez y Garcia",
-        "Dr. Juan Velasquez y Garcia, Jr.",
-        "Dr. Juan Velasquez y Garcia III",
-        "Velasquez y Garcia, Dr. Juan",
-        "Velasquez y Garcia, Dr. Juan, Jr.",
-        "Velasquez y Garcia, Dr. Juan III",
-        "Juan Q. de la Vega",
-        "Juan Q. de la Vega, Jr.",
-        "Juan Q. de la Vega III",
-        "de la Vega, Juan Q.",
-        "de la Vega, Juan Q., Jr.",
-        "de la Vega, Juan Q. III",
-        "Juan Q. Velasquez y Garcia",
-        "Juan Q. Velasquez y Garcia, Jr.",
-        "Juan Q. Velasquez y Garcia III",
-        "Velasquez y Garcia, Juan Q.",
-        "Velasquez y Garcia, Juan Q., Jr.",
-        "Velasquez y Garcia, Juan Q. III",
-        "Dr. Juan Q. de la Vega",
-        "Dr. Juan Q. de la Vega, Jr.",
-        "Dr. Juan Q. de la Vega III",
-        "de la Vega, Dr. Juan Q.",
-        "de la Vega, Dr. Juan Q., Jr.",
-        "de la Vega, Dr. Juan Q. III",
-        "Dr. Juan Q. Velasquez y Garcia",
-        "Dr. Juan Q. Velasquez y Garcia, Jr.",
-        "Dr. Juan Q. Velasquez y Garcia III",
-        "Velasquez y Garcia, Dr. Juan Q.",
-        "Velasquez y Garcia, Dr. Juan Q., Jr.",
-        "Velasquez y Garcia, Dr. Juan Q. III",
-        "Juan Q. Xavier de la Vega",
-        "Juan Q. Xavier de la Vega, Jr.",
-        "Juan Q. Xavier de la Vega III",
-        "de la Vega, Juan Q. Xavier",
-        "de la Vega, Juan Q. Xavier, Jr.",
-        "de la Vega, Juan Q. Xavier III",
-        "Juan Q. Xavier Velasquez y Garcia",
-        "Juan Q. Xavier Velasquez y Garcia, Jr.",
-        "Juan Q. Xavier Velasquez y Garcia III",
-        "Velasquez y Garcia, Juan Q. Xavier",
-        "Velasquez y Garcia, Juan Q. Xavier, Jr.",
-        "Velasquez y Garcia, Juan Q. Xavier III",
-        "Dr. Juan Q. Xavier de la Vega",
-        "Dr. Juan Q. Xavier de la Vega, Jr.",
-        "Dr. Juan Q. Xavier de la Vega III",
-        "de la Vega, Dr. Juan Q. Xavier",
-        "de la Vega, Dr. Juan Q. Xavier, Jr.",
-        "de la Vega, Dr. Juan Q. Xavier III",
-        "Dr. Juan Q. Xavier Velasquez y Garcia",
-        "Dr. Juan Q. Xavier Velasquez y Garcia, Jr.",
-        "Dr. Juan Q. Xavier Velasquez y Garcia III",
-        "Velasquez y Garcia, Dr. Juan Q. Xavier",
-        "Velasquez y Garcia, Dr. Juan Q. Xavier, Jr.",
-        "Velasquez y Garcia, Dr. Juan Q. Xavier III",
-        "John Doe, CLU, CFP, LUTC",
-        "John P. Doe, CLU, CFP, LUTC",
-        "Dr. John P. Doe-Ray, CLU, CFP, LUTC",
-        "Doe-Ray, Dr. John P., CLU, CFP, LUTC",
-        "Hon. Barrington P. Doe-Ray, Jr.",
-        "Doe-Ray, Hon. Barrington P. Jr.",
-        "Doe-Ray, Hon. Barrington P. Jr., CFP, LUTC",
-        "Jose Aznar y Lopez",
-        "John E Smith",
-        "John e Smith",
-        "John and Jane Smith",
-        "Rev. John A. Kenneth Doe",
-        "Donovan McNabb-Smith",
-        "Rev John A. Kenneth Doe",
-        "Doe, Rev. John A. Jr.",
-        "Buca di Beppo",
-        "Lt. Gen. John A. Kenneth Doe, Jr.",
-        "Doe, Lt. Gen. John A. Kenneth IV",
-        "Lt. Gen. John A. Kenneth Doe IV",
-        "Mr. and Mrs. John Smith",
-        "John Jones (Google Docs)",
+        "john doe",
+        "john doe, jr.",
+        "john doe iii",
+        "doe, john",
+        "doe, john, jr.",
+        "doe, john iii",
+        "john a. doe",
+        "john a. doe, jr.",
+        "john a. doe iii",
+        "doe, john a.",
+        "doe, john a., jr.",
+        "doe, john a. iii",
+        "john a. kenneth doe",
+        "john a. kenneth doe, jr.",
+        "john a. kenneth doe iii",
+        "doe, john a. kenneth",
+        "doe, john a. kenneth, jr.",
+        "doe, john a. kenneth iii",
+        "dr. john doe",
+        "dr. john doe, jr.",
+        "dr. john doe iii",
+        "doe, dr. john",
+        "doe, dr. john, jr.",
+        "doe, dr. john iii",
+        "dr. john a. doe",
+        "dr. john a. doe, jr.",
+        "dr. john a. doe iii",
+        "doe, dr. john a.",
+        "doe, dr. john a. jr.",
+        "doe, dr. john a. iii",
+        "dr. john a. kenneth doe",
+        "dr. john a. kenneth doe, jr.",
+        "dr. john a. kenneth doe iii",
+        "doe, dr. john a. kenneth",
+        "doe, dr. john a. kenneth jr.",
+        "doe, dr. john a. kenneth iii",
+        "juan de la vega",
+        "juan de la vega, jr.",
+        "juan de la vega iii",
+        "de la vega, juan",
+        "de la vega, juan, jr.",
+        "de la vega, juan iii",
+        "juan velasquez y garcia",
+        "juan velasquez y garcia, jr.",
+        "juan velasquez y garcia iii",
+        "velasquez y garcia, juan",
+        "velasquez y garcia, juan, jr.",
+        "velasquez y garcia, juan iii",
+        "dr. juan de la vega",
+        "dr. juan de la vega, jr.",
+        "dr. juan de la vega iii",
+        "de la vega, dr. juan",
+        "de la vega, dr. juan, jr.",
+        "de la vega, dr. juan iii",
+        "dr. juan velasquez y garcia",
+        "dr. juan velasquez y garcia, jr.",
+        "dr. juan velasquez y garcia iii",
+        "velasquez y garcia, dr. juan",
+        "velasquez y garcia, dr. juan, jr.",
+        "velasquez y garcia, dr. juan iii",
+        "juan q. de la vega",
+        "juan q. de la vega, jr.",
+        "juan q. de la vega iii",
+        "de la vega, juan q.",
+        "de la vega, juan q., jr.",
+        "de la vega, juan q. iii",
+        "juan q. velasquez y garcia",
+        "juan q. velasquez y garcia, jr.",
+        "juan q. velasquez y garcia iii",
+        "velasquez y garcia, juan q.",
+        "velasquez y garcia, juan q., jr.",
+        "velasquez y garcia, juan q. iii",
+        "dr. juan q. de la vega",
+        "dr. juan q. de la vega, jr.",
+        "dr. juan q. de la vega iii",
+        "de la vega, dr. juan q.",
+        "de la vega, dr. juan q., jr.",
+        "de la vega, dr. juan q. iii",
+        "dr. juan q. velasquez y garcia",
+        "dr. juan q. velasquez y garcia, jr.",
+        "dr. juan q. velasquez y garcia iii",
+        "velasquez y garcia, dr. juan q.",
+        "velasquez y garcia, dr. juan q., jr.",
+        "velasquez y garcia, dr. juan q. iii",
+        "juan q. xavier de la vega",
+        "juan q. xavier de la vega, jr.",
+        "juan q. xavier de la vega iii",
+        "de la vega, juan q. xavier",
+        "de la vega, juan q. xavier, jr.",
+        "de la vega, juan q. xavier iii",
+        "juan q. xavier velasquez y garcia",
+        "juan q. xavier velasquez y garcia, jr.",
+        "juan q. xavier velasquez y garcia iii",
+        "velasquez y garcia, juan q. xavier",
+        "velasquez y garcia, juan q. xavier, jr.",
+        "velasquez y garcia, juan q. xavier iii",
+        "dr. juan q. xavier de la vega",
+        "dr. juan q. xavier de la vega, jr.",
+        "dr. juan q. xavier de la vega iii",
+        "de la vega, dr. juan q. xavier",
+        "de la vega, dr. juan q. xavier, jr.",
+        "de la vega, dr. juan q. xavier iii",
+        "dr. juan q. xavier velasquez y garcia",
+        "dr. juan q. xavier velasquez y garcia, jr.",
+        "dr. juan q. xavier velasquez y garcia iii",
+        "velasquez y garcia, dr. juan q. xavier",
+        "velasquez y garcia, dr. juan q. xavier, jr.",
+        "velasquez y garcia, dr. juan q. xavier iii",
+        "john doe, clu, cfp, lutc",
+        "john p. doe, clu, cfp, lutc",
+        "dr. john p. doe-ray, clu, cfp, lutc",
+        "doe-ray, dr. john p., clu, cfp, lutc",
+        "hon. barrington p. doe-ray, jr.",
+        "doe-ray, hon. barrington p. jr.",
+        "doe-ray, hon. barrington p. jr., cfp, lutc",
+        "jose aznar y lopez",
+        "john e smith",
+        "john e smith",
+        "john and jane smith",
+        "rev. john a. kenneth doe",
+        "donovan mcnabb-smith",
+        "rev john a. kenneth doe",
+        "doe, rev. john a. jr.",
+        "buca di beppo",
+        "lt. gen. john a. kenneth doe, jr.",
+        "doe, lt. gen. john a. kenneth iv",
+        "lt. gen. john a. kenneth doe iv",
+        "mr. and mrs. john smith",
+        "john jones (google docs)",
         "john e jones",
-        "john e jones, III",
+        "john e jones, iii",
         "jones, john e",
-        "E.T. Smith",
-        "E.T. Smith, II",
-        "Smith, E.T., Jr.",
-        "A.B. Vajpayee",
-        "Rt. Hon. Paul E. Mary",
-        "Maid Marion",
-        "Amy E. Maid",
-        "Jane Doctor",
-        "Doctor, Jane E.",
-        "dr. ben alex johnson III",
-        "Lord of the Universe and Supreme King of the World Lisa Simpson",
-        "Benjamin (Ben) Franklin",
-        "Benjamin \"Ben\" Franklin",
-        "Brian O'connor",
-        "Sir Gerald",
-        "Magistrate Judge John F. Forster, Jr",
-        "Magistrate Judge Joaquin V.E. Manibusan, Jr",
-        "Magistrate-Judge Elizabeth Todd Campbell",
-        "Mag-Judge Harwell G Davis, III",
-        "Mag. Judge Byron G. Cudmore",
-        "Chief Judge J. Leon Holmes",
-        "Chief Judge Sharon Lovelace Blackburn",
-        "Judge James M. Moody",
-        "Judge G. Thomas Eisele",
-        "Judge Callie V. S. Granade",
-        "Judge C Lynwood Smith, Jr",
-        "Senior Judge Charles R. Butler, Jr",
-        "Senior Judge Harold D. Vietor",
-        "Senior Judge Virgil Pittman",
-        "Honorable Terry F. Moorer",
-        "Honorable W. Harold Albritton, III",
-        "Honorable Judge W. Harold Albritton, III",
-        "Honorable Judge Terry F. Moorer",
-        "Honorable Judge Susan Russ Walker",
-        "Hon. Marian W. Payson",
-        "Hon. Charles J. Siragusa",
-        "US Magistrate Judge T Michael Putnam",
-        "Designated Judge David A. Ezra",
-        "Sr US District Judge Richard G Kopf",
-        "U.S. District Judge Marc Thomas Treadwell",
-        "Dra. Andréia da Silva",
-        "Srta. Andréia da Silva"
+        "e.t. smith",
+        "e.t. smith, ii",
+        "smith, e.t., jr.",
+        "a.b. vajpayee",
+        "rt. hon. paul e. mary",
+        "maid marion",
+        "amy e. maid",
+        "jane doctor",
+        "doctor, jane e.",
+        "dr. ben alex johnson iii",
+        "lord of the universe and supreme king of the world lisa simpson",
+        "benjamin (ben) franklin",
+        "benjamin \"ben\" franklin",
+        "brian o'connor",
+        "sir gerald",
+        "magistrate judge john f. forster, jr",
+        "magistrate judge joaquin v.e. manibusan, jr",
+        "magistrate-judge elizabeth todd campbell",
+        "mag-judge harwell g davis, iii",
+        "mag. judge byron g. cudmore",
+        "chief judge j. leon holmes",
+        "chief judge sharon lovelace blackburn",
+        "judge james m. moody",
+        "judge g. thomas eisele",
+        "judge callie v. s. granade",
+        "judge c lynwood smith, jr",
+        "senior judge charles r. butler, jr",
+        "senior judge harold d. vietor",
+        "senior judge virgil pittman",
+        "honorable terry f. moorer",
+        "honorable w. harold albritton, iii",
+        "honorable judge w. harold albritton, iii",
+        "honorable judge terry f. moorer",
+        "honorable judge susan russ walker",
+        "hon. marian w. payson",
+        "hon. charles j. siragusa",
+        "us magistrate judge t michael putnam",
+        "designated judge david a. ezra",
+        "sr us district judge richard g kopf",
+        "u.s. district judge marc thomas treadwell",
+        "dra. andréia da silva",
+        "srta. andréia da silva"
     ],
     "brute_force": [
         {
-            "raw": "John Doe",
-            "first": "John",
-            "last": "Doe"
+            "raw": "john doe",
+            "first": "john",
+            "last": "doe"
         },
         {
-            "raw": "John Doe, Jr.",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "Jr."
+            "raw": "john doe, jr.",
+            "first": "john",
+            "last": "doe",
+            "suffix": "jr."
         },
         {
-            "raw": "John Doe III",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "III"
+            "raw": "john doe iii",
+            "first": "john",
+            "last": "doe",
+            "suffix": "iii"
         },
         {
-            "raw": "Doe, John",
-            "first": "John",
-            "last": "Doe"
+            "raw": "doe, john",
+            "first": "john",
+            "last": "doe"
         },
         {
-            "raw": "Doe, John, Jr.",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "Jr."
+            "raw": "doe, john, jr.",
+            "first": "john",
+            "last": "doe",
+            "suffix": "jr."
         },
         {
-            "raw": "Doe, John III",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "III"
+            "raw": "doe, john iii",
+            "first": "john",
+            "last": "doe",
+            "suffix": "iii"
         },
         {
-            "raw": "John A. Doe",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A."
+            "raw": "john a. doe",
+            "first": "john",
+            "last": "doe",
+            "middle": "a."
         },
         {
-            "raw": "John A. Doe, Jr",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A.",
-            "suffix": "Jr"
+            "raw": "john a. doe, jr",
+            "first": "john",
+            "last": "doe",
+            "middle": "a.",
+            "suffix": "jr"
         },
         {
-            "raw": "John A. Doe III",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A.",
-            "suffix": "III"
+            "raw": "john a. doe iii",
+            "first": "john",
+            "last": "doe",
+            "middle": "a.",
+            "suffix": "iii"
         },
         {
-            "raw": "Doe, John A.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A."
+            "raw": "doe, john a.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a."
         },
         {
-            "raw": "Doe, John A., Jr.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A.",
-            "suffix": "Jr."
+            "raw": "doe, john a., jr.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a.",
+            "suffix": "jr."
         },
         {
-            "raw": "Doe, John A., III",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A.",
-            "suffix": "III"
+            "raw": "doe, john a., iii",
+            "first": "john",
+            "last": "doe",
+            "middle": "a.",
+            "suffix": "iii"
         },
         {
-            "raw": "John A. Kenneth Doe",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A. Kenneth"
+            "raw": "john a. kenneth doe",
+            "first": "john",
+            "last": "doe",
+            "middle": "a. kenneth"
         },
         {
-            "raw": "John A. Kenneth Doe, Jr.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A. Kenneth",
-            "suffix": "Jr."
+            "raw": "john a. kenneth doe, jr.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a. kenneth",
+            "suffix": "jr."
         },
         {
-            "raw": "John A. Kenneth Doe III",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A. Kenneth",
-            "suffix": "III"
+            "raw": "john a. kenneth doe iii",
+            "first": "john",
+            "last": "doe",
+            "middle": "a. kenneth",
+            "suffix": "iii"
         },
         {
-            "raw": "Doe, John. A. Kenneth",
-            "first": "John.",
-            "last": "Doe",
-            "middle": "A. Kenneth"
+            "raw": "doe, john. a. kenneth",
+            "first": "john.",
+            "last": "doe",
+            "middle": "a. kenneth"
         },
         {
-            "raw": "Doe, John. A. Kenneth, Jr.",
-            "first": "John.",
-            "last": "Doe",
-            "middle": "A. Kenneth",
-            "suffix": "Jr."
+            "raw": "doe, john. a. kenneth, jr.",
+            "first": "john.",
+            "last": "doe",
+            "middle": "a. kenneth",
+            "suffix": "jr."
         },
         {
-            "raw": "Doe, John. A. Kenneth III",
-            "first": "John.",
-            "last": "Doe",
-            "middle": "A. Kenneth",
-            "suffix": "III"
+            "raw": "doe, john. a. kenneth iii",
+            "first": "john.",
+            "last": "doe",
+            "middle": "a. kenneth",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. John Doe",
-            "first": "John",
-            "last": "Doe",
-            "title": "Dr."
+            "raw": "dr. john doe",
+            "first": "john",
+            "last": "doe",
+            "title": "dr."
         },
         {
-            "raw": "Dr. John Doe, Jr.",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "Jr."
+            "raw": "dr. john doe, jr.",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. John Doe III",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "III"
+            "raw": "dr. john doe iii",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "suffix": "iii"
         },
         {
-            "raw": "Doe, Dr. John",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe"
+            "raw": "doe, dr. john",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe"
         },
         {
-            "raw": "Doe, Dr. John, Jr.",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "Jr."
+            "raw": "doe, dr. john, jr.",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "suffix": "jr."
         },
         {
-            "raw": "Doe, Dr. John III",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "III"
+            "raw": "doe, dr. john iii",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. John A. Doe",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A."
+            "raw": "dr. john a. doe",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a."
         },
         {
-            "raw": "Dr. John A. Doe, Jr.",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A.",
-            "suffix": "Jr."
+            "raw": "dr. john a. doe, jr.",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a.",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. John A. Doe III",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A.",
-            "suffix": "III"
+            "raw": "dr. john a. doe iii",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a.",
+            "suffix": "iii"
         },
         {
-            "raw": "Doe, Dr. John A.",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A."
+            "raw": "doe, dr. john a.",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a."
         },
         {
-            "raw": "Doe, Dr. John A. Jr.",
-            "title": "Dr.",
-            "first": "John",
-            "last": "Doe",
-            "middle": "A.",
-            "suffix": "Jr."
+            "raw": "doe, dr. john a. jr.",
+            "title": "dr.",
+            "first": "john",
+            "last": "doe",
+            "middle": "a.",
+            "suffix": "jr."
         },
         {
-            "raw": "Doe, Dr. John A. III",
-            "title": "Dr.",
-            "middle": "A.",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "III"
+            "raw": "doe, dr. john a. iii",
+            "title": "dr.",
+            "middle": "a.",
+            "first": "john",
+            "last": "doe",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. John A. Kenneth Doe",
-            "title": "Dr.",
-            "middle": "A. Kenneth",
-            "first": "John",
-            "last": "Doe"
+            "raw": "dr. john a. kenneth doe",
+            "title": "dr.",
+            "middle": "a. kenneth",
+            "first": "john",
+            "last": "doe"
         },
         {
-            "raw": "Dr. John A. Kenneth Doe, Jr.",
-            "title": "Dr.",
-            "middle": "A. Kenneth",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "Jr."
+            "raw": "dr. john a. kenneth doe, jr.",
+            "title": "dr.",
+            "middle": "a. kenneth",
+            "first": "john",
+            "last": "doe",
+            "suffix": "jr."
         },
         {
-            "raw": "Al Arnold Gore, Jr.",
-            "middle": "Arnold",
-            "first": "Al",
-            "last": "Gore",
-            "suffix": "Jr."
+            "raw": "al arnold gore, jr.",
+            "middle": "arnold",
+            "first": "al",
+            "last": "gore",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. John A. Kenneth Doe III",
-            "title": "Dr.",
-            "middle": "A. Kenneth",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "III"
+            "raw": "dr. john a. kenneth doe iii",
+            "title": "dr.",
+            "middle": "a. kenneth",
+            "first": "john",
+            "last": "doe",
+            "suffix": "iii"
         },
         {
-            "raw": "Doe, Dr. John A. Kenneth",
-            "title": "Dr.",
-            "middle": "A. Kenneth",
-            "first": "John",
-            "last": "Doe"
+            "raw": "doe, dr. john a. kenneth",
+            "title": "dr.",
+            "middle": "a. kenneth",
+            "first": "john",
+            "last": "doe"
         },
         {
-            "raw": "Doe, Dr. John A. Kenneth Jr.",
-            "title": "Dr.",
-            "middle": "A. Kenneth",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "Jr."
+            "raw": "doe, dr. john a. kenneth jr.",
+            "title": "dr.",
+            "middle": "a. kenneth",
+            "first": "john",
+            "last": "doe",
+            "suffix": "jr."
         },
         {
-            "raw": "Doe, Dr. John A. Kenneth III",
-            "title": "Dr.",
-            "middle": "A. Kenneth",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "III"
+            "raw": "doe, dr. john a. kenneth iii",
+            "title": "dr.",
+            "middle": "a. kenneth",
+            "first": "john",
+            "last": "doe",
+            "suffix": "iii"
         },
         {
-            "raw": "Juan de la Vega",
-            "first": "Juan",
-            "last": "de la Vega"
+            "raw": "juan de la vega",
+            "first": "juan",
+            "last": "de la vega"
         },
         {
-            "raw": "Juan de la Vega, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "Jr."
+            "raw": "juan de la vega, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "jr."
         },
         {
-            "raw": "Juan de la Vega III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "III"
+            "raw": "juan de la vega iii",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "iii"
         },
         {
-            "raw": "de la Vega, Juan",
-            "first": "Juan",
-            "last": "de la Vega"
+            "raw": "de la vega, juan",
+            "first": "juan",
+            "last": "de la vega"
         },
         {
-            "raw": "de la Vega, Juan, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "Jr."
+            "raw": "de la vega, juan, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "jr."
         },
         {
-            "raw": "de la Vega, Juan III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "III"
+            "raw": "de la vega, juan iii",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "iii"
         },
         {
-            "raw": "Juan Velasquez y Garcia",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "juan velasquez y garcia",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Juan Velasquez y Garcia, Jr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "juan velasquez y garcia, jr.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Juan Velasquez y Garcia III",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "juan velasquez y garcia iii",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Velasquez y Garcia, Juan",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "velasquez y garcia, juan",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Velasquez y Garcia, Juan, Jr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "velasquez y garcia, juan, jr.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Velasquez y Garcia, Juan III",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "velasquez y garcia, juan iii",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. Juan de la Vega",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "de la Vega"
+            "raw": "dr. juan de la vega",
+            "title": "dr.",
+            "first": "juan",
+            "last": "de la vega"
         },
         {
-            "raw": "Dr. Juan de la Vega, Jr.",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "Jr."
+            "raw": "dr. juan de la vega, jr.",
+            "title": "dr.",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. Juan de la Vega III",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "III"
+            "raw": "dr. juan de la vega iii",
+            "title": "dr.",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "iii"
         },
         {
-            "raw": "de la Vega, Dr. Juan",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "de la Vega"
+            "raw": "de la vega, dr. juan",
+            "title": "dr.",
+            "first": "juan",
+            "last": "de la vega"
         },
         {
-            "raw": "de la Vega, Dr. Juan, Jr.",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "Jr."
+            "raw": "de la vega, dr. juan, jr.",
+            "title": "dr.",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "jr."
         },
         {
-            "raw": "de la Vega, Dr. Juan III",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "suffix": "III"
+            "raw": "de la vega, dr. juan iii",
+            "title": "dr.",
+            "first": "juan",
+            "last": "de la vega",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. Juan Velasquez y Garcia",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "dr. juan velasquez y garcia",
+            "title": "dr.",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Dr. Juan Velasquez y Garcia, Jr.",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "dr. juan velasquez y garcia, jr.",
+            "title": "dr.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. Juan Velasquez y Garcia III",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "dr. juan velasquez y garcia iii",
+            "title": "dr.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "velasquez y garcia, dr. juan",
+            "title": "dr.",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan, Jr.",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "velasquez y garcia, dr. juan, jr.",
+            "title": "dr.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan III",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "velasquez y garcia, dr. juan iii",
+            "title": "dr.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Juan Q. de la Vega",
-            "first": "Juan",
-            "middle": "Q.",
-            "last": "de la Vega"
+            "raw": "juan q. de la vega",
+            "first": "juan",
+            "middle": "q.",
+            "last": "de la vega"
         },
         {
-            "raw": "Juan Q. de la Vega, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q.",
-            "suffix": "Jr."
+            "raw": "juan q. de la vega, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q.",
+            "suffix": "jr."
         },
         {
-            "raw": "Juan Q. de la Vega III",
-            "first": "Juan",
-            "middle": "Q.",
-            "last": "de la Vega",
-            "suffix": "III"
+            "raw": "juan q. de la vega iii",
+            "first": "juan",
+            "middle": "q.",
+            "last": "de la vega",
+            "suffix": "iii"
         },
         {
-            "raw": "de la Vega, Juan Q.",
-            "first": "Juan",
-            "middle": "Q.",
-            "last": "de la Vega"
+            "raw": "de la vega, juan q.",
+            "first": "juan",
+            "middle": "q.",
+            "last": "de la vega"
         },
         {
-            "raw": "de la Vega, Juan Q., Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q.",
-            "suffix": "Jr."
+            "raw": "de la vega, juan q., jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q.",
+            "suffix": "jr."
         },
         {
-            "raw": "de la Vega, Juan Q. III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q.",
-            "suffix": "III"
+            "raw": "de la vega, juan q. iii",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q.",
+            "suffix": "iii"
         },
         {
-            "raw": "Juan Q. Velasquez y Garcia",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "juan q. velasquez y garcia",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Juan Q. Velasquez y Garcia, Jr.",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "juan q. velasquez y garcia, jr.",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Juan Q. Velasquez y Garcia III",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "juan q. velasquez y garcia iii",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Velasquez y Garcia, Juan Q.",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "velasquez y garcia, juan q.",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Velasquez y Garcia, Juan Q., Jr.",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "velasquez y garcia, juan q., jr.",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Velasquez y Garcia, Juan Q. III",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "velasquez y garcia, juan q. iii",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. Juan Q. de la Vega",
-            "title": "Dr.",
-            "first": "Juan",
-            "middle": "Q.",
-            "last": "de la Vega"
+            "raw": "dr. juan q. de la vega",
+            "title": "dr.",
+            "first": "juan",
+            "middle": "q.",
+            "last": "de la vega"
         },
         {
-            "raw": "Dr. Juan Q. de la Vega, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q.",
-            "title": "Dr.",
-            "suffix": "Jr."
+            "raw": "dr. juan q. de la vega, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q.",
+            "title": "dr.",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. Juan Q. de la Vega III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q.",
-            "title": "Dr.",
-            "suffix": "III"
+            "raw": "dr. juan q. de la vega iii",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q.",
+            "title": "dr.",
+            "suffix": "iii"
         },
         {
-            "raw": "de la Vega, Dr. Juan Q.",
-            "first": "Juan",
-            "middle": "Q.",
-            "last": "de la Vega",
-            "title": "Dr."
+            "raw": "de la vega, dr. juan q.",
+            "first": "juan",
+            "middle": "q.",
+            "last": "de la vega",
+            "title": "dr."
         },
         {
-            "raw": "de la Vega, Dr. Juan Q., Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q.",
-            "suffix": "Jr.",
-            "title": "Dr."
+            "raw": "de la vega, dr. juan q., jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q.",
+            "suffix": "jr.",
+            "title": "dr."
         },
         {
-            "raw": "de la Vega, Dr. Juan Q. III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q.",
-            "suffix": "III",
-            "title": "Dr."
+            "raw": "de la vega, dr. juan q. iii",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q.",
+            "suffix": "iii",
+            "title": "dr."
         },
         {
-            "raw": "Dr. Juan Q. Velasquez y Garcia",
-            "title": "Dr.",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "dr. juan q. velasquez y garcia",
+            "title": "dr.",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Dr. Juan Q. Velasquez y Garcia, Jr.",
-            "title": "Dr.",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "dr. juan q. velasquez y garcia, jr.",
+            "title": "dr.",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. Juan Q. Velasquez y Garcia III",
-            "middle": "Q.",
-            "title": "Dr.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "dr. juan q. velasquez y garcia iii",
+            "middle": "q.",
+            "title": "dr.",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan Q.",
-            "title": "Dr.",
-            "middle": "Q.",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "velasquez y garcia, dr. juan q.",
+            "title": "dr.",
+            "middle": "q.",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan Q., Jr.",
-            "middle": "Q.",
-            "first": "Juan",
-            "title": "Dr.",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "velasquez y garcia, dr. juan q., jr.",
+            "middle": "q.",
+            "first": "juan",
+            "title": "dr.",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan Q. III",
-            "middle": "Q.",
-            "first": "Juan",
-            "title": "Dr.",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "velasquez y garcia, dr. juan q. iii",
+            "middle": "q.",
+            "first": "juan",
+            "title": "dr.",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Juan Q. Xavier de la Vega",
-            "first": "Juan",
-            "middle": "Q. Xavier",
-            "last": "de la Vega"
+            "raw": "juan q. xavier de la vega",
+            "first": "juan",
+            "middle": "q. xavier",
+            "last": "de la vega"
         },
         {
-            "raw": "Juan Q. Xavier de la Vega, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q. Xavier",
-            "suffix": "Jr."
+            "raw": "juan q. xavier de la vega, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q. xavier",
+            "suffix": "jr."
         },
         {
-            "raw": "Juan Q. Xavier de la Vega III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q. Xavier",
-            "suffix": "III"
+            "raw": "juan q. xavier de la vega iii",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q. xavier",
+            "suffix": "iii"
         },
         {
-            "raw": "de la Vega, Juan Q. Xavier",
-            "first": "Juan",
-            "middle": "Q. Xavier",
-            "last": "de la Vega"
+            "raw": "de la vega, juan q. xavier",
+            "first": "juan",
+            "middle": "q. xavier",
+            "last": "de la vega"
         },
         {
-            "raw": "de la Vega, Juan Q. Xavier, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q. Xavier",
-            "suffix": "Jr."
+            "raw": "de la vega, juan q. xavier, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q. xavier",
+            "suffix": "jr."
         },
         {
-            "raw": "de la Vega, Juan Q. Xavier III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "middle": "Q. Xavier",
-            "suffix": "III"
+            "raw": "de la vega, juan q. xavier iii",
+            "first": "juan",
+            "last": "de la vega",
+            "middle": "q. xavier",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. Juan Q. Xavier de la Vega",
-            "first": "Juan",
-            "middle": "Q. Xavier",
-            "title": "Dr.",
-            "last": "de la Vega"
+            "raw": "dr. juan q. xavier de la vega",
+            "first": "juan",
+            "middle": "q. xavier",
+            "title": "dr.",
+            "last": "de la vega"
         },
         {
-            "raw": "Dr. Juan Q. Xavier de la Vega, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "title": "Dr.",
-            "middle": "Q. Xavier",
-            "suffix": "Jr."
+            "raw": "dr. juan q. xavier de la vega, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "title": "dr.",
+            "middle": "q. xavier",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. Juan Q. Xavier de la Vega III",
-            "first": "Juan",
-            "last": "de la Vega",
-            "title": "Dr.",
-            "middle": "Q. Xavier",
-            "suffix": "III"
+            "raw": "dr. juan q. xavier de la vega iii",
+            "first": "juan",
+            "last": "de la vega",
+            "title": "dr.",
+            "middle": "q. xavier",
+            "suffix": "iii"
         },
         {
-            "raw": "de la Vega, Dr. Juan Q. Xavier",
-            "first": "Juan",
-            "title": "Dr.",
-            "middle": "Q. Xavier",
-            "last": "de la Vega"
+            "raw": "de la vega, dr. juan q. xavier",
+            "first": "juan",
+            "title": "dr.",
+            "middle": "q. xavier",
+            "last": "de la vega"
         },
         {
-            "raw": "de la Vega, Dr. Juan Q. Xavier, Jr.",
-            "first": "Juan",
-            "last": "de la Vega",
-            "title": "Dr.",
-            "middle": "Q. Xavier",
-            "suffix": "Jr."
+            "raw": "de la vega, dr. juan q. xavier, jr.",
+            "first": "juan",
+            "last": "de la vega",
+            "title": "dr.",
+            "middle": "q. xavier",
+            "suffix": "jr."
         },
         {
-            "raw": "de la Vega, Dr. Juan Q. Xavier III",
-            "first": "Juan",
-            "title": "Dr.",
-            "last": "de la Vega",
-            "middle": "Q. Xavier",
-            "suffix": "III"
+            "raw": "de la vega, dr. juan q. xavier iii",
+            "first": "juan",
+            "title": "dr.",
+            "last": "de la vega",
+            "middle": "q. xavier",
+            "suffix": "iii"
         },
         {
-            "raw": "Juan Q. Xavier Velasquez y Garcia",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "juan q. xavier velasquez y garcia",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Juan Q. Xavier Velasquez y Garcia, Jr.",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "juan q. xavier velasquez y garcia, jr.",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Juan Q. Xavier Velasquez y Garcia III",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "juan q. xavier velasquez y garcia iii",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Velasquez y Garcia, Juan Q. Xavier",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "velasquez y garcia, juan q. xavier",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Velasquez y Garcia, Juan Q. Xavier, Jr.",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "velasquez y garcia, juan q. xavier, jr.",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Velasquez y Garcia, Juan Q. Xavier III",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "velasquez y garcia, juan q. xavier iii",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Dr. Juan Q. Xavier Velasquez y Garcia",
-            "title": "Dr.",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "dr. juan q. xavier velasquez y garcia",
+            "title": "dr.",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Dr. Juan Q. Xavier Velasquez y Garcia, Jr.",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "title": "Dr.",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "dr. juan q. xavier velasquez y garcia, jr.",
+            "middle": "q. xavier",
+            "first": "juan",
+            "title": "dr.",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Dr. Juan Q. Xavier Velasquez y Garcia III",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "title": "Dr.",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "dr. juan q. xavier velasquez y garcia iii",
+            "middle": "q. xavier",
+            "first": "juan",
+            "title": "dr.",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan Q. Xavier",
-            "title": "Dr.",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "last": "Velasquez y Garcia"
+            "raw": "velasquez y garcia, dr. juan q. xavier",
+            "title": "dr.",
+            "middle": "q. xavier",
+            "first": "juan",
+            "last": "velasquez y garcia"
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan Q. Xavier, Jr.",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "title": "Dr.",
-            "last": "Velasquez y Garcia",
-            "suffix": "Jr."
+            "raw": "velasquez y garcia, dr. juan q. xavier, jr.",
+            "middle": "q. xavier",
+            "first": "juan",
+            "title": "dr.",
+            "last": "velasquez y garcia",
+            "suffix": "jr."
         },
         {
-            "raw": "Velasquez y Garcia, Dr. Juan Q. Xavier III",
-            "middle": "Q. Xavier",
-            "first": "Juan",
-            "title": "Dr.",
-            "last": "Velasquez y Garcia",
-            "suffix": "III"
+            "raw": "velasquez y garcia, dr. juan q. xavier iii",
+            "middle": "q. xavier",
+            "first": "juan",
+            "title": "dr.",
+            "last": "velasquez y garcia",
+            "suffix": "iii"
         },
         {
-            "raw": "John Doe, CLU, CFP, LUTC",
-            "first": "John",
-            "last": "Doe",
-            "suffix": "CLU, CFP, LUTC"
+            "raw": "john doe, clu, cfp, lutc",
+            "first": "john",
+            "last": "doe",
+            "suffix": "clu, cfp, lutc"
         },
         {
-            "raw": "John P. Doe, CLU, CFP, LUTC",
-            "first": "John",
-            "middle": "P.",
-            "last": "Doe",
-            "suffix": "CLU, CFP, LUTC"
+            "raw": "john p. doe, clu, cfp, lutc",
+            "first": "john",
+            "middle": "p.",
+            "last": "doe",
+            "suffix": "clu, cfp, lutc"
         },
         {
-            "raw": "Dr. John P. Doe-Ray, CLU, CFP, LUTC",
-            "first": "John",
-            "middle": "P.",
-            "last": "Doe-Ray",
-            "title": "Dr.",
-            "suffix": "CLU, CFP, LUTC"
+            "raw": "dr. john p. doe-ray, clu, cfp, lutc",
+            "first": "john",
+            "middle": "p.",
+            "last": "doe-ray",
+            "title": "dr.",
+            "suffix": "clu, cfp, lutc"
         },
         {
-            "raw": "Doe-Ray, Dr. John P., CLU, CFP, LUTC",
-            "title": "Dr.",
-            "middle": "P.",
-            "first": "John",
-            "last": "Doe-Ray",
-            "suffix": "CLU, CFP, LUTC"
+            "raw": "doe-ray, dr. john p., clu, cfp, lutc",
+            "title": "dr.",
+            "middle": "p.",
+            "first": "john",
+            "last": "doe-ray",
+            "suffix": "clu, cfp, lutc"
         },
         {
-            "raw": "Hon. Barrington P. Doe-Ray, Jr.",
-            "title": "Hon.",
-            "middle": "P.",
-            "first": "Barrington",
-            "last": "Doe-Ray",
-            "suffix": "Jr."
+            "raw": "hon. barrington p. doe-ray, jr.",
+            "title": "hon.",
+            "middle": "p.",
+            "first": "barrington",
+            "last": "doe-ray",
+            "suffix": "jr."
         },
         {
-            "raw": "Doe-Ray, Hon. Barrington P. Jr., CFP, LUTC",
-            "title": "Hon.",
-            "middle": "P.",
-            "first": "Barrington",
-            "last": "Doe-Ray",
-            "suffix": "Jr., CFP, LUTC"
+            "raw": "doe-ray, hon. barrington p. jr., cfp, lutc",
+            "title": "hon.",
+            "middle": "p.",
+            "first": "barrington",
+            "last": "doe-ray",
+            "suffix": "jr., cfp, lutc"
         },
         {
-            "raw": "Rt. Hon. Paul E. Mary",
-            "title": "Rt. Hon.",
-            "first": "Paul",
-            "middle": "E.",
-            "last": "Mary"
+            "raw": "rt. hon. paul e. mary",
+            "title": "rt. hon.",
+            "first": "paul",
+            "middle": "e.",
+            "last": "mary"
         },
         {
-            "raw": "Lord God Almighty",
-            "title": "Lord",
-            "first": "God",
-            "last": "Almighty"
+            "raw": "lord god almighty",
+            "title": "lord",
+            "first": "god",
+            "last": "almighty"
         }
     ]
 }

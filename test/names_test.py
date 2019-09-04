@@ -465,38 +465,6 @@ class TestTitle:
         assert hn.last == "ben Husain"
 
 
-class TestHumanNameCapitalization:
-    @pytest.mark.parametrize(
-        "entry", load_bank("capitalization"), ids=lambda x: make_ids(x)
-    )
-    def test_json_capitalization(self, entry):
-        hn = HumanName(entry["raw"])
-        hn.capitalize()
-        assert str(hn) == entry["string"]
-
-    @pytest.mark.parametrize(
-        "name, is_forced",
-        [
-            ("Shirley Maclaine", {True: "Shirley MacLaine", False: "Shirley Maclaine"}),
-            ("Baron Mcyolo", {True: "Baron McYolo", False: "Baron Mcyolo"}),
-        ],
-    )
-    @pytest.mark.parametrize("force", [True, False])
-    def test_no_capitalization_change_unless_forced(self, name, is_forced, force):
-        hn = HumanName(name)
-        hn.capitalize(force=force)
-        assert str(hn) == is_forced[force]
-
-    @pytest.mark.xfail(
-        reason="FIXME: this test does not pass due to a known issue "
-        "http://code.google.com/p/python-nominally/issues/detail?id=22"
-    )
-    def test_capitalization_exception_for_already_capitalized_III_KNOWN_FAILURE(self):
-        hn = HumanName("juan garcia III")
-        hn.capitalize()
-        assert str(hn) == "Juan Garcia III"
-
-
 class TestHumanNameOutputFormat:
     def test_formatting_init_argument(self):
         hn = HumanName("Rev John A. Kenneth Doe III (Kenny)", string_format="TEST1")

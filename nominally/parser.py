@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import sys
 from itertools import groupby
 from operator import itemgetter
 
+from nominally import util
 from nominally.config import CONSTANTS, DEFAULT_ENCODING, Constants
 from nominally.util import binary_type, lc, log, text_types, u
 
@@ -407,6 +405,7 @@ class HumanName(object):
         self.fix_phd()
         self.parse_nicknames()
         self.squash_emoji()
+        # self.thoroughly_clean()
 
     def post_process(self):
         """
@@ -443,6 +442,9 @@ class HumanName(object):
             if _re.search(self._full_name):
                 self.nickname_list += [x for x in _re.findall(self._full_name)]
                 self._full_name = _re.sub("", self._full_name)
+
+    def thoroughly_clean(self):
+        self._full_name = util.clean(self._full_name)
 
     def squash_emoji(self):
         """
@@ -821,65 +823,3 @@ class HumanName(object):
 
         log.debug("pieces: %s", pieces)
         return pieces
-
-    ### Capitalization Support
-
-    def cap_word(self, word, attribute):
-        if (
-            self.is_prefix(word) and attribute in ("last", "middle")
-        ) or self.is_conjunction(word):
-            return word.lower()
-        exceptions = self.C.capitalization_exceptions
-        if lc(word) in exceptions:
-            return exceptions[lc(word)]
-        mac_match = self.C.regexes.mac.match(word)
-        if mac_match:
-
-            def cap_after_mac(m):
-                return m.group(1).capitalize() + m.group(2).capitalize()
-
-            return self.C.regexes.mac.sub(cap_after_mac, word)
-        else:
-            return word.capitalize()
-
-    def cap_piece(self, piece, attribute):
-        if not piece:
-            return ""
-        replacement = lambda m: self.cap_word(m.group(0), attribute)
-        return self.C.regexes.word.sub(replacement, piece)
-
-    def capitalize(self, force=False):
-        """
-        The HumanName class can try to guess the correct capitalization of name
-        entered in all upper or lower case. By default, it will not adjust the
-        case of names entered in mixed case. To run capitalization on all names
-        pass the parameter `force=True`.
-
-        :param bool force: force capitalization of strings that include mixed case
-
-        **Usage**
-
-        .. doctest:: capitalize
-
-            >>> name = HumanName('bob v. de la macdole-eisenhower phd')
-            >>> name.capitalize()
-            >>> str(name)
-            'Bob V. de la MacDole-Eisenhower Ph.D.'
-            >>> # Don't touch good names
-            >>> name = HumanName('Shirley Maclaine')
-            >>> name.capitalize()
-            >>> str(name)
-            'Shirley Maclaine'
-            >>> name.capitalize(force=True)
-            >>> str(name)
-            'Shirley MacLaine'
-
-        """
-        name = u(self)
-        if not force and not (name == name.upper() or name == name.lower()):
-            return
-        self.title_list = self.cap_piece(self.title, "title").split(" ")
-        self.first_list = self.cap_piece(self.first, "first").split(" ")
-        self.middle_list = self.cap_piece(self.middle, "middle").split(" ")
-        self.last_list = self.cap_piece(self.last, "last").split(" ")
-        self.suffix_list = self.cap_piece(self.suffix, "suffix").split(", ")

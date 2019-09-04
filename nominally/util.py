@@ -25,18 +25,13 @@ def lc(value):
     return value.lower().strip(".")
 
 
-def clean(
-    s,
-    lowercase=True,
-    substitute_hyphen=r"[-_/\\]+",
-    substitute_nothing=r"[^ \-A-Za-z'\"()]+",
-):
+def clean(s):
     if not isinstance(s, str):
         return ""
-    s = unidecode_expect_ascii(s)
-    s = re.sub(substitute_hyphen, "-", s)
-    s = re.sub(substitute_nothing, "", s)
-    s = re.sub(r"\s+", " ", s)
-    s = s.strip("-")
-    s = s.strip(" ")
-    return s.lower()
+    s = unidecode_expect_ascii(s).lower()
+    s = re.sub(r"[-_/\\]+", "-", s)
+    s = re.sub(r"(?<!\d)0{1,2}(?!\d)", "o", s)  # fix typo 0 -> O
+    s = re.sub(r"[^ \-a-z'\"()]+", "", s)
+    s = re.sub(r"\s+", " ", s)  # condense spaces
+    s = s.strip("- ")
+    return s

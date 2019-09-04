@@ -7,7 +7,7 @@ class TestClean:
     @pytest.mark.parametrize(
         "raw", ["DINSDALE", "Dinsdale", "dINSDALE", "dinsdale", "DiNsDaLe"]
     )
-    def t_lower(self, raw):
+    def t_force_lower(self, raw):
         assert clean(raw) == "dinsdale"
 
     @pytest.mark.parametrize(
@@ -19,7 +19,7 @@ class TestClean:
             "Spiny Norman == 🐾 ",
         ],
     )
-    def t_emoji(self, raw):
+    def t_drop_emoji(self, raw):
         assert clean(raw) == "spiny norman"
 
     @pytest.mark.parametrize("raw", ["Mr Εric Πραλiñé"])
@@ -84,5 +84,5 @@ class TestClean:
             ("---Dinsdale-", "dinsdale"),
         ],
     )
-    def t_strip_margin_symbols(self, raw, cooked):
+    def t_strip_margin_hyphens(self, raw, cooked):
         assert clean(raw) == cooked

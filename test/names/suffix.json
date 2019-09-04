@@ -1,140 +1,140 @@
 [
     {
         "id": "test_two_suffixes",
-        "_note": "This adds a comma when the original format did not have one. Not ideal but at least its in the right bucket.",
-        "raw": "Kenneth Clarke QC MP",
-        "first": "Kenneth",
-        "last": "Clarke",
-        "suffix": "QC, MP"
+        "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
+        "raw": "kenneth clarke qc mp",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "qc, mp"
     },
     {
         "id": "test_two_suffixes_lastname_comma_format",
-        "_note": "This adds a comma when the original format did not have one.",
-        "raw": "Washington Jr. MD, Franklin",
-        "first": "Franklin",
-        "last": "Washington",
-        "suffix": "Jr., MD"
+        "_note": "this adds a comma when the original format did not have one.",
+        "raw": "washington jr. md, franklin",
+        "first": "franklin",
+        "last": "washington",
+        "suffix": "jr., md"
     },
     {
         "id": "test_suffix",
-        "raw": "Joe Franklin Jr",
-        "first": "Joe",
-        "last": "Franklin",
-        "suffix": "Jr"
+        "raw": "joe franklin jr",
+        "first": "joe",
+        "last": "franklin",
+        "suffix": "jr"
     },
     {
         "id": "test_suffix_with_periods",
-        "raw": "Joe Dentist D.D.S.",
-        "first": "Joe",
-        "last": "Dentist",
-        "suffix": "D.D.S."
+        "raw": "joe dentist d.d.s.",
+        "first": "joe",
+        "last": "dentist",
+        "suffix": "d.d.s."
     },
     {
         "id": "test_two_suffixes_suffix_comma_format",
-        "raw": "Franklin Washington, Jr. MD",
-        "first": "Franklin",
-        "last": "Washington",
-        "suffix": "Jr. MD"
+        "raw": "franklin washington, jr. md",
+        "first": "franklin",
+        "last": "washington",
+        "suffix": "jr. md"
     },
     {
         "id": "test_suffix_containing_periods",
-        "raw": "Kenneth Clarke Q.C.",
-        "first": "Kenneth",
-        "last": "Clarke",
-        "suffix": "Q.C."
+        "raw": "kenneth clarke q.c.",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "q.c."
     },
     {
         "id": "test_suffix_containing_periods_lastname_comma_format",
-        "raw": "Clarke, Kenneth, Q.C. M.P.",
-        "first": "Kenneth",
-        "last": "Clarke",
-        "suffix": "Q.C. M.P."
+        "raw": "clarke, kenneth, q.c. m.p.",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "q.c. m.p."
     },
     {
         "id": "test_suffix_containing_periods_suffix_comma_format",
-        "raw": "Kenneth Clarke Q.C., M.P.",
-        "first": "Kenneth",
-        "last": "Clarke",
-        "suffix": "Q.C., M.P."
+        "raw": "kenneth clarke q.c., m.p.",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "q.c., m.p."
     },
     {
         "id": "test_suffix_with_single_comma_format",
-        "raw": "John Doe jr., MD",
-        "first": "John",
-        "last": "Doe",
-        "suffix": "jr., MD"
+        "raw": "john doe jr., md",
+        "first": "john",
+        "last": "doe",
+        "suffix": "jr., md"
     },
     {
         "id": "test_suffix_with_double_comma_format",
-        "raw": "Doe, John jr., MD",
-        "first": "John",
-        "last": "Doe",
-        "suffix": "jr., MD"
+        "raw": "doe, john jr., md",
+        "first": "john",
+        "last": "doe",
+        "suffix": "jr., md"
     },
     {
         "id": "test_phd_with_erroneous_space",
-        "raw": "John Smith, Ph. D.",
-        "first": "John",
-        "last": "Smith",
-        "suffix": "Ph. D."
+        "raw": "john smith, ph. d.",
+        "first": "john",
+        "last": "smith",
+        "suffix": "ph. d."
     },
     {
         "id": "test_phd_conflict",
-        "raw": "Adolph D",
-        "first": "Adolph",
-        "last": "D"
+        "raw": "adolph d",
+        "first": "adolph",
+        "last": "d"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_with_suffix",
-        "raw": "Jack Ma Jr",
-        "first": "Jack",
-        "last": "Ma",
-        "suffix": "Jr"
+        "raw": "jack ma jr",
+        "first": "jack",
+        "last": "ma",
+        "suffix": "jr"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_with_suffix_comma",
-        "raw": "Ma III, Jack Jr",
-        "first": "Jack",
-        "last": "Ma",
-        "suffix": "III, Jr"
+        "raw": "ma iii, jack jr",
+        "first": "jack",
+        "last": "ma",
+        "suffix": "iii, jr"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name",
-        "raw": "Jack Ma",
-        "first": "Jack",
-        "last": "Ma"
+        "raw": "jack ma",
+        "first": "jack",
+        "last": "ma"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_comma",
-        "raw": "Ma, Jack",
-        "first": "Jack",
-        "last": "Ma"
+        "raw": "ma, jack",
+        "first": "jack",
+        "last": "ma"
     },
     {
         "id": "test_potential_suffix_that_is_also_first_name_comma",
-        "raw": "Johnson, Bart",
-        "first": "Bart",
-        "last": "Johnson"
+        "raw": "johnson, bart",
+        "first": "bart",
+        "last": "johnson"
     },
     {
         "id": "test_multiple_letter_suffix_with_periods",
-        "raw": "John Doe Msc.Ed.",
-        "first": "John",
-        "last": "Doe",
-        "suffix": "Msc.Ed."
+        "raw": "john doe msc.ed.",
+        "first": "john",
+        "last": "doe",
+        "suffix": "msc.ed."
     },
     {
         "id": "test_suffix_with_periods_with_comma",
-        "raw": "John Doe, Msc.Ed.",
-        "first": "John",
-        "last": "Doe",
-        "suffix": "Msc.Ed."
+        "raw": "john doe, msc.ed.",
+        "first": "john",
+        "last": "doe",
+        "suffix": "msc.ed."
     },
     {
         "id": "test_suffix_with_periods_with_lastname_comma",
-        "raw": "Doe, John Msc.Ed.",
-        "first": "John",
-        "last": "Doe",
-        "suffix": "Msc.Ed."
+        "raw": "doe, john msc.ed.",
+        "first": "john",
+        "last": "doe",
+        "suffix": "msc.ed."
     }
 ]

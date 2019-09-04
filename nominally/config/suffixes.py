@@ -1,23 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 SUFFIX_NOT_ACRONYMS = set(
-    [
-        "dr",
-        "esq",
-        "esquire",
-        "jr",
-        "jnr",
-        "junior",
-        "sr",
-        "snr",
-        "2",
-        "i",
-        "ii",
-        "iii",
-        "iv",
-        "v",
-    ]
+    ["dr", "esq", "esquire", "jr", "jnr", "junior", "sr", "snr", "2", "ii", "iii", "iv"]
 )
 """
 

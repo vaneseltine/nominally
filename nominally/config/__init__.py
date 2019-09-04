@@ -34,7 +34,6 @@ import sys
 from nominally.util import binary_type
 from nominally.util import lc
 from nominally.config.prefixes import PREFIXES
-from nominally.config.capitalization import CAPITALIZATION_EXCEPTIONS
 from nominally.config.conjunctions import CONJUNCTIONS
 from nominally.config.suffixes import SUFFIX_ACRONYMS
 from nominally.config.suffixes import SUFFIX_NOT_ACRONYMS
@@ -156,9 +155,6 @@ class Constants(object):
         :py:attr:`~suffixes.SUFFIX_NOT_ACRONYMS`  wrapped with :py:class:`SetManager`.
     :param set conjunctions:
         :py:attr:`conjunctions`  wrapped with :py:class:`SetManager`.
-    :type capitalization_exceptions: tuple or dict
-    :param capitalization_exceptions:
-        :py:attr:`~capitalization.CAPITALIZATION_EXCEPTIONS` wrapped with :py:class:`TupleManager`.
     :type regexes: tuple or dict
     :param regexes:
         :py:attr:`regexes`  wrapped with :py:class:`TupleManager`.
@@ -192,7 +188,6 @@ class Constants(object):
         titles=TITLES,
         first_name_titles=FIRST_NAME_TITLES,
         conjunctions=CONJUNCTIONS,
-        capitalization_exceptions=CAPITALIZATION_EXCEPTIONS,
         regexes=REGEXES,
     ):
         self.prefixes = SetManager(prefixes)
@@ -201,7 +196,6 @@ class Constants(object):
         self.titles = SetManager(titles)
         self.first_name_titles = SetManager(first_name_titles)
         self.conjunctions = SetManager(conjunctions)
-        self.capitalization_exceptions = TupleManager(capitalization_exceptions)
         self.regexes = TupleManager(regexes)
         self._pst = None
 
