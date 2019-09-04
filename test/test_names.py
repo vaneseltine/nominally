@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 
 from nominally import Name
-from nominally import config
 
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
@@ -35,8 +34,8 @@ class TestCoreFunctionality:
             {
                 "id": "test_utf8",
                 "raw": "de la Véña, Jüan",
-                "first": "jüan",
-                "last": "de la véña",
+                "first": "juan",
+                "last": "de la vena",
             },
             {
                 "id": "test_conjunction_names",
@@ -58,14 +57,14 @@ class TestCoreFunctionality:
 
     def test_string_output(self):
         hn = Name('de la Véña, Dr. Jüan "Paco", Jr.')
-        assert str(hn) == "dr. jüan de la véña jr. (paco)"
+        assert str(hn) == "dr juan de la vena jr (paco)"
 
     def test_repr_output(self):
         hn = Name('de la Véña, Dr. Jüan "Paco", Jr.')
         assert repr(hn) == (
-            "Name({'title': 'dr.', "
-            "'first': 'jüan', 'middle': '', 'last': 'de la véña', "
-            "'suffix': 'jr.', 'nickname': 'paco'})"
+            "Name({'title': 'dr', "
+            "'first': 'juan', 'middle': '', 'last': 'de la vena', "
+            "'suffix': 'jr', 'nickname': 'paco'})"
         )
 
     def test_blank(self):
@@ -94,7 +93,7 @@ class TestCoreFunctionality:
         assert hn2
         assert hn1 == hn2
         assert hn1 is not hn2
-        assert hn1 == "dr. john p. doe-ray jr"
+        assert hn1 == "dr john p doe-ray jr"
         hn1 = Name("Doe, Dr. John P., Jr")
         hn2 = Name("Dr. John P. Doe-Ray, jr")
         assert hn1 != hn2
@@ -110,22 +109,22 @@ class TestCoreFunctionality:
 
     def test_comparison_case_insensitive(self):
         hn1 = Name("Doe-Ray, Dr. John P., Jr")
-        hn2 = Name("dr. john p. doe-Ray, jr")
+        hn2 = Name("dr john p. doe-Ray, jr")
         assert hn1 == hn2
         assert hn1 is not hn2
-        assert hn1 == "dr. john p. doe-ray jr"
+        assert hn1 == "dr john p doe-ray jr"
 
     def test_slice(self):
         hn = Name("Doe-Ray, Dr. John P., Jr")
-        assert list(hn) == ["dr.", "john", "p.", "doe-ray", "jr"]
+        assert list(hn) == ["dr", "john", "p", "doe-ray", "jr"]
 
     def test_getitem(self):
         hn = Name("Dr. John A. Kenneth Doe, Jr.")
-        assert hn["title"] == "dr."
+        assert hn["title"] == "dr"
         assert hn["first"] == "john"
         assert hn["last"] == "doe"
-        assert hn["middle"] == "a. kenneth"
-        assert hn["suffix"] == "jr."
+        assert hn["middle"] == "a kenneth"
+        assert hn["suffix"] == "jr"
 
 
 class TestNameBruteForce:
@@ -160,8 +159,8 @@ class TestNameConjunction:
     def test_two_initials_conflict_with_conjunction(self):
         # Supporting this seems to screw up titles with periods in them like M.B.A.
         hn = Name("E.T. Smith")
-        assert hn.first == "e."
-        assert hn.middle == "t."
+        assert hn.first == "e"
+        assert hn.middle == "t"
         assert hn.last == "smith"
 
     @pytest.mark.xfail
@@ -178,20 +177,18 @@ class TestNickname:
     def test_json_nickname(self, entry):
         dict_entry_test(entry)
 
-    # http://code.google.com/p/python-nominally/issues/detail?id=17
     def test_parenthesis_are_removed_from_name(self):
         hn = Name("John Jones (Unknown)")
         assert hn.first == "john"
         assert hn.last == "jones"
         assert hn.nickname != ""
 
-    # http://code.google.com/p/python-nominally/issues/detail?id=17
     # not testing nicknames because we don't actually care about Google Docs here
     def test_duplicate_parenthesis_are_removed_from_name(self):
         hn = Name("John Jones (Google Docs), Jr. (Unknown)")
         assert hn.first == "john"
         assert hn.last == "jones"
-        assert hn.suffix == "jr."
+        assert hn.suffix == "jr"
         assert hn.nickname != ""
 
 

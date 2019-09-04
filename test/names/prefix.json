@@ -17,7 +17,7 @@
         "id": "test_prefix_with_period",
         "raw": "jill st. john",
         "first": "jill",
-        "last": "st. john"
+        "last": "st john"
     },
     {
         "id": "test_prefix_before_two_part_last_name",
@@ -37,7 +37,7 @@
         "raw": "pennie von bergen wessels m.d.",
         "first": "pennie",
         "last": "von bergen wessels",
-        "suffix": "m.d."
+        "suffix": "md"
     },
     {
         "id": "test_two_part_last_name_with_suffix_comma",
@@ -93,8 +93,8 @@
         "raw": "dr. juan q. xavier de la dos vega iii",
         "first": "juan",
         "last": "de la dos vega",
-        "title": "dr.",
-        "middle": "q. xavier",
+        "title": "dr",
+        "middle": "q xavier",
         "suffix": "iii"
     },
     {
@@ -102,8 +102,8 @@
         "raw": "de la dos vega, dr. juan q. xavier iii",
         "first": "juan",
         "last": "de la dos vega",
-        "title": "dr.",
-        "middle": "q. xavier",
+        "title": "dr",
+        "middle": "q xavier",
         "suffix": "iii"
     },
     {
@@ -111,8 +111,8 @@
         "raw": "dr. juan q. xavier de la dos vega, iii",
         "first": "juan",
         "last": "de la dos vega",
-        "title": "dr.",
-        "middle": "q. xavier",
+        "title": "dr",
+        "middle": "q xavier",
         "suffix": "iii"
     }
 ]

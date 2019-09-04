@@ -1,14 +1,11 @@
 import re
 
 RE_SPACES = re.compile(r"\s+")
-RE_WORD = re.compile(r"(\w|\.)+")
 RE_INITIAL = re.compile(r"^(\w\.|[A-Z])?$")
 RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)")
 RE_DOUBLE_QUOTES = re.compile(r"\"(.*?)\"")
 RE_PARENTHESIS = re.compile(r"\((.*?)\)")
 RE_ROMAN_NUMERAL = re.compile(r"^(ii|iii|iv|vi|vii|viii|ix)$", re.I)
-RE_NO_VOWELS = re.compile(r"^[^aeyiuo]+$", re.I)
-RE_PERIOD_NOT_AT_END = re.compile(r".*\..+$", re.I)
 
 # Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".
 # "of" and "the" are also include to facilitate joining multiple titles,

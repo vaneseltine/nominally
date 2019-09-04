@@ -1,15 +1,11 @@
 import logging
 import re
-import sys
-from itertools import groupby
-from operator import itemgetter
 
 from unidecode import unidecode_expect_ascii
 
 from nominally import config
 
-
-LOGS_ON = False
+LOGS_ON = True
 
 logger = logging.getLogger()
 if LOGS_ON:
@@ -21,6 +17,10 @@ if LOGS_ON:
     logger.addHandler(stream_handler)
 else:
     logger.addHandler(logging.NullHandler())
+
+
+def parse_name(s):
+    return Name(s).as_dict()
 
 
 class Name:
@@ -150,14 +150,14 @@ class Name:
         subclass. Runs :py:func:`parse_nicknames` .
         """
         self.parse_nicknames()
-        # self.thoroughly_clean()
+        self.thoroughly_clean()
 
     def post_process(self):
         """
         This happens at the end of the :py:func:`parse_full_name` after
-        all other processing has taken place. Runs :py:func:`handle_firstnames`.
+        all other processing has taken place.
         """
-        self.handle_firstnames()
+        self.make_last_name_if_title_and_one()
 
     def parse_nicknames(self):
         """
@@ -172,19 +172,20 @@ class Name:
         `quoted_word`, `double_quotes` and `parenthesis`.
         """
 
-        re_quoted_word = config.RE_QUOTED_WORD
-        re_double_quotes = config.RE_DOUBLE_QUOTES
-        re_parenthesis = config.RE_PARENTHESIS
-
-        for _re in (re_quoted_word, re_double_quotes, re_parenthesis):
-            if _re.search(self._full_name):
-                self.nickname_list += [x for x in _re.findall(self._full_name)]
-                self._full_name = _re.sub("", self._full_name)
+        for pattern in (
+            config.RE_QUOTED_WORD,
+            config.RE_DOUBLE_QUOTES,
+            config.RE_PARENTHESIS,
+        ):
+            if pattern.search(self._full_name):
+                self.nickname_list += [x for x in pattern.findall(self._full_name)]
+                logger.debug(f"{pattern}, {self.nickname_list}")
+                self._full_name = pattern.sub("", self._full_name)
 
     def thoroughly_clean(self):
         self._full_name = clean_name(self._full_name)
 
-    def handle_firstnames(self):
+    def make_last_name_if_title_and_one(self):
         """
         If there are only two parts and one is a title, assume it's a last name
         instead of a first name. e.g. Mr. Johnson.
@@ -354,6 +355,7 @@ class Name:
 
         logger.debug(f"Incoming pieces: {output}")
         pieces = self.join_on_conjunctions(output, additional_parts_count)
+        pieces = self.join_prefixes(pieces, original=output)
         logger.debug(f"Outgoing pieces: {pieces}")
         return pieces
 
@@ -379,27 +381,37 @@ class Name:
         :rtype: list
 
         """
-        original_pieces = pieces.copy()
+        if len(pieces) == 1:
+            return pieces
+        original = pieces.copy()
 
         length = len(pieces) + additional_parts_count
+        logger.debug(f"length {length} additional_parts_count {additional_parts_count}")
         # don't join on conjunctions if there's only 2 parts
         if length < 3:
-            return original_pieces
-
-        rootname_pieces = [p for p in pieces if is_rootname(p)]
-        total_length = len(rootname_pieces) + additional_parts_count
+            return original
 
         conj_index = [i for i, piece in enumerate(pieces) if is_conjunction(piece)]
+        logger.debug(f"conj_index: {conj_index}")
 
         for i in conj_index:
             new_piece = " ".join(pieces[i - 1 : i + 2])
             pieces[i - 1] = new_piece
             pieces.pop(i)
-            rm_count = 2
             pieces.pop(i)
 
+        if len(pieces) == 1:
+            logger.debug("pieces: %s", pieces)
+            logger.debug("Not expecting to arrive at only one piece; throwing back")
+            return original
+
+        return pieces
+
+    def join_prefixes(self, pieces, original):
+        if len(pieces) == 1:
+            return pieces
         # join prefixes to following lastnames: ['de la Vega'], ['van Buren']
-        prefixes = list(filter(is_prefix, pieces))
+        prefixes = [x for x in pieces if is_prefix(x)]
         logger.debug(f"prefixes {prefixes}")
         for prefix in prefixes:
             try:
@@ -441,7 +453,7 @@ class Name:
         if len(pieces) == 1:
             logger.debug("pieces: %s", pieces)
             logger.debug("Not expecting to arrive at only one piece; throwing back")
-            return original_pieces
+            return original
         return pieces
 
 
@@ -495,10 +507,6 @@ def are_suffixes(pieces):
     return all(is_suffix(x) for x in pieces)
 
 
-def is_rootname(piece):
-    return not any((is_prefix(piece), is_an_initial(piece), is_suffix(piece)))
-
-
 def is_an_initial(value):
     return bool(config.RE_INITIAL.match(value))
 
@@ -510,10 +518,13 @@ def lc(value):
     return value.lower().strip(".")
 
 
-def clean_name(s, deep=False):
+def clean_name(s):
     s = unidecode_expect_ascii(s).lower()
+    # s = re.sub(r"`|'|\"", "'", s)
+    s = s.replace("`", "'")
+    s = s.replace('"', "'")
     s = re.sub(r"[-_/\\]+", "-", s)
-    s = re.sub(r"[^ \-a-z'\"()]+", "", s)
+    s = re.sub(r"[^ \-a-z'\"(),]+", "", s)
     s = re.sub(r"\s+", " ", s)  # condense spaces
     s = s.strip("- ")
     return s

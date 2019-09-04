@@ -21,7 +21,7 @@
         "raw": "washington jr. md, franklin",
         "first": "franklin",
         "last": "washington",
-        "suffix": "jr., md"
+        "suffix": "jr, md"
     },
     {
         "id": "test_suffix",
@@ -35,49 +35,49 @@
         "raw": "joe dentist ph.d.",
         "first": "joe",
         "last": "dentist",
-        "suffix": "ph.d."
+        "suffix": "phd"
     },
     {
         "id": "test_two_suffixes_suffix_comma_format",
-        "raw": "franklin washington, jr. md",
+        "raw": "franklin washington, jr md",
         "first": "franklin",
         "last": "washington",
-        "suffix": "jr. md"
+        "suffix": "jr md"
     },
     {
         "id": "test_suffix_containing_periods",
         "raw": "kenneth clarke m.s.c.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "m.s.c."
+        "suffix": "msc"
     },
     {
         "id": "test_suffix_containing_periods_lastname_comma_format",
         "raw": "clarke, kenneth, m.s.c. ph.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "m.s.c. ph.d."
+        "suffix": "msc phd"
     },
     {
         "id": "test_suffix_containing_periods_suffix_comma_format",
         "raw": "kenneth clarke m.s.c., ph.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "m.s.c., ph.d."
+        "suffix": "msc, phd"
     },
     {
         "id": "test_suffix_with_single_comma_format",
         "raw": "john doe jr., md",
         "first": "john",
         "last": "doe",
-        "suffix": "jr., md"
+        "suffix": "jr, md"
     },
     {
         "id": "test_suffix_with_double_comma_format",
         "raw": "doe, john jr., md",
         "first": "john",
         "last": "doe",
-        "suffix": "jr., md"
+        "suffix": "jr, md"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_with_suffix",

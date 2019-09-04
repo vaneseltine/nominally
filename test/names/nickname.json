@@ -32,7 +32,7 @@
         "raw": "franklin, benjamin (ben), jr.",
         "first": "benjamin",
         "last": "franklin",
-        "suffix": "jr.",
+        "suffix": "jr",
         "nickname": "ben"
     },
     {
@@ -72,12 +72,19 @@
         "id": "test_okina_inside_name_not_treated_as_nickname",
         "raw": "harrieta keōpūolani nāhiʻenaʻena",
         "first": "harrieta",
-        "middle": "keōpūolani",
-        "last": "nāhiʻenaʻena"
+        "middle": "keopuolani",
+        "last": "nahi'ena'ena"
     },
     {
         "id": "test_single_quotes_not_treated_as_nickname_hawaiian_example",
         "raw": "harietta keopuolani nahi'ena'ena",
+        "first": "harietta",
+        "middle": "keopuolani",
+        "last": "nahi'ena'ena"
+    },
+    {
+        "id": "test_backticks_like_single_quotes",
+        "raw": "harietta keopuolani nahi`ena`ena",
         "first": "harietta",
         "middle": "keopuolani",
         "last": "nahi'ena'ena"

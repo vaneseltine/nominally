@@ -16,7 +16,7 @@
         "id": "test_lowercase_middle_initial_with_period_conflict_with_conjunction",
         "raw": "john e. smith",
         "first": "john",
-        "middle": "e.",
+        "middle": "e",
         "last": "smith"
     },
     {

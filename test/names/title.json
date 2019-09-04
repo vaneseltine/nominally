@@ -6,50 +6,37 @@
         "last": "doctor"
     },
     {
-        "id": "test_last_name_also_prefix",
-        "raw": "jane doctor",
-        "first": "jane",
-        "last": "doctor"
-    },
-    {
-        "id": "test_last_name_is_also_title",
-        "raw": "amy e maid",
-        "first": "amy",
-        "middle": "e",
-        "last": "maid"
-    },
-    {
         "id": "test_last_name_is_also_title_no_comma",
         "raw": "dr. martin luther king jr.",
-        "title": "dr.",
+        "title": "dr",
         "first": "martin",
         "middle": "luther",
         "last": "king",
-        "suffix": "jr."
+        "suffix": "jr"
     },
     {
         "id": "test_initials_also_suffix",
         "raw": "smith, j.r.",
-        "first": "j.r.",
+        "first": "jr",
         "last": "smith"
     },
     {
         "id": "test_possible_conflict_with_middle_initial_that_could_be_suffix",
         "raw": "doe, dr. john v, jr.",
-        "title": "dr.",
+        "title": "dr",
         "first": "john",
         "last": "doe",
         "middle": "v",
-        "suffix": "jr."
+        "suffix": "jr"
     },
     {
         "id": "test_possible_conflict_with_suffix_that_could_be_initial",
         "raw": "doe, dr. john a., v, jr.",
-        "title": "dr.",
+        "title": "dr",
         "first": "john",
         "last": "doe",
-        "middle": "a.",
-        "suffix": "v, jr."
+        "middle": "a",
+        "suffix": "v, jr"
     },
     {
         "id": "test_ben_as_first_name",
