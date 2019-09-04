@@ -59,17 +59,26 @@ class TestCoreFunctionality:
                 "first": "vai",
                 "last": "la",
             },
-            {"id": "test_blank_name", "raw": "", "first": "", "last": ""},
         ],
         ids=lambda x: make_ids(x),
     )
     def test_basics(self, entry):
         dict_entry_test(entry)
 
-    def test_string_output(self,):
+    def test_string_output(self):
         hn = HumanName("de la Véña, Jüan")
         print(hn)
         print(repr(hn))
+
+    def test_blank(self):
+        hn = HumanName("")
+        assert hn.unparsable
+        assert "unparsable" in repr(hn).lower()
+
+    def test_nonblank(self):
+        hn = HumanName("Bob")
+        assert not hn.unparsable
+        assert "unparsable" not in repr(hn).lower()
 
     @pytest.mark.parametrize(
         "raw, length", [("Doe-Ray, Dr. John P., CLU, CFP, LUTC", 5), ("John Doe", 2)]

@@ -51,10 +51,9 @@ class HumanName(object):
     _count = 0
     _members = ["title", "first", "middle", "last", "suffix", "nickname"]
 
-    def __init__(self, full_name="", constants=CONSTANTS):
+    def __init__(self, full_name=""):
         self.original = ""
         self._full_name = ""
-        self.unparsable = True
 
         # full_name setter triggers the parse
         self.full_name = full_name
@@ -98,6 +97,7 @@ class HumanName(object):
     def __str__(self):
         STRING_FORMAT = "{title} {first} {middle} {last} {suffix} ({nickname})"
         _s = STRING_FORMAT.format(**self.as_dict())
+        # TODO -- improve with regex
         # remove trailing punctuation from missing nicknames
         _s = _s.replace(" ()", "")
         _s = _s.replace(" ''", "")
@@ -420,7 +420,6 @@ class HumanName(object):
         self.last_list = []
         self.suffix_list = []
         self.nickname_list = []
-        self.unparsable = True
 
         self.pre_process()
 
@@ -553,11 +552,13 @@ class HumanName(object):
                 except IndexError:
                     pass
 
-        if len(self) < 0:
+        if self.unparsable:
             log.info('Unparsable: "%s" ', self.original)
-        else:
-            self.unparsable = False
         self.post_process()
+
+    @property
+    def unparsable(self):
+        return len(self) == 0
 
     def parse_pieces(self, parts, additional_parts_count=0):
         """
