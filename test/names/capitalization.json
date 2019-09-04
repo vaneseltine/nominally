@@ -1,13 +1,11 @@
 [
     {
         "id": "test_downcasing_mac",
-        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=15",
         "raw": "RONALD MACDONALD",
         "string": "Ronald MacDonald"
     },
     {
         "id": "test_downcasing_mc",
-        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=23",
         "raw": "RONALD MCDONALD",
         "string": "Ronald McDonald"
     },

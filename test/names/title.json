@@ -1,7 +1,6 @@
 [
     {
         "id": "test_last_name_also_prefix",
-        "_note": "http://code.google.com/p/python-nameparser/issues/detail?id=13",
         "raw": "Jane Doctor",
         "first": "Jane",
         "last": "Doctor"

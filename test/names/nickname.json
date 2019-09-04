@@ -1,7 +1,6 @@
 [
     {
         "id": "test_nickname_in_parenthesis",
-        "_note": "https://code.google.com/p/python-nameparser/issues/detail?id=33",
         "raw": "Benjamin (Ben) Franklin",
         "first": "Benjamin",
         "last": "Franklin",

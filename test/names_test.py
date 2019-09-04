@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from nameparser import HumanName
-from nameparser.config import Constants, CONSTANTS
-from nameparser.util import u
+from nominally import HumanName
+from nominally.config import Constants, CONSTANTS
+from nominally.util import u
 
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
@@ -239,7 +239,7 @@ class TestFirstNameHandling:
     @pytest.mark.xfail(
         reason="# TODO: Seems 'Andrews, M.D.', Andrews should be treated as a last name"
         "but other suffixes like 'George Jr.' should be first names. "
-        "Might be related to https://github.com/derek73/python-nameparser/issues/2"
+        "Might be related to https://github.com/derek73/python-nominally/issues/2"
     )
     def test_assume_suffix_title_and_one_other_name_is_last_name(self):
         hn = HumanName("Andrews, M.D.")
@@ -345,7 +345,7 @@ class TestConstantsCustomization:
         assert hn.last == "Solo"
 
     def test_empty_attribute_default(self):
-        from nameparser.config import CONSTANTS
+        from nominally.config import CONSTANTS
 
         _orig = CONSTANTS.empty_attribute_default
         CONSTANTS.empty_attribute_default = None
@@ -384,14 +384,14 @@ class TestNickname:
     def test_json_nickname(self, entry):
         dict_entry_test(entry)
 
-    # http://code.google.com/p/python-nameparser/issues/detail?id=17
+    # http://code.google.com/p/python-nominally/issues/detail?id=17
     def test_parenthesis_are_removed_from_name(self):
         hn = HumanName("John Jones (Unknown)")
         assert hn.first == "John"
         assert hn.last == "Jones"
         assert hn.nickname != CONSTANTS.empty_attribute_default
 
-    # http://code.google.com/p/python-nameparser/issues/detail?id=17
+    # http://code.google.com/p/python-nominally/issues/detail?id=17
     # not testing nicknames because we don't actually care about Google Docs here
     def test_duplicate_parenthesis_are_removed_from_name(self):
         hn = HumanName("John Jones (Google Docs), Jr. (Unknown)")
@@ -429,7 +429,7 @@ class TestSuffixes:
         assert hn.first == "Bart"
         assert hn.last == "De la Vina"
 
-    @pytest.mark.xfail(reason="https://github.com/derek73/python-nameparser/issues/27")
+    @pytest.mark.xfail(reason="https://github.com/derek73/python-nominally/issues/27")
     def test_king(self):
         hn = HumanName("Dr King Jr")
         assert hn.title == "Dr"
@@ -489,7 +489,7 @@ class TestHumanNameCapitalization:
 
     @pytest.mark.xfail(
         reason="FIXME: this test does not pass due to a known issue "
-        "http://code.google.com/p/python-nameparser/issues/detail?id=22"
+        "http://code.google.com/p/python-nominally/issues/detail?id=22"
     )
     def test_capitalization_exception_for_already_capitalized_III_KNOWN_FAILURE(self):
         hn = HumanName("juan garcia III")
@@ -503,7 +503,7 @@ class TestHumanNameOutputFormat:
         assert u(hn) == "TEST1"
 
     def test_formatting_constants_attribute(self):
-        from nameparser.config import CONSTANTS
+        from nominally.config import CONSTANTS
 
         _orig = CONSTANTS.string_format
         CONSTANTS.string_format = "TEST2"

@@ -1,4 +1,3 @@
-include AUTHORS
 include LICENSE
-include README.rst
-include tests.py
+include *.md
+prune test

@@ -13,6 +13,6 @@ def empty_attribute_value(request):
     First run CONSTANTS.empty_attribute_default = ""
     Second run CONSTANTS.empty_attribute_default = None
     """
-    from nameparser.config import CONSTANTS
+    from nominally.config import CONSTANTS
 
     CONSTANTS.empty_attribute_default = request.param
