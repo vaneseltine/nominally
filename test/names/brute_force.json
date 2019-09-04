@@ -751,5 +751,11 @@
         "first": "barrington",
         "last": "doe-ray",
         "suffix": "jr."
+    },
+    {
+        "raw": "benjamin (big ben) franklin",
+        "first": "benjamin",
+        "last": "franklin",
+        "nickname": "big ben"
     }
 ]

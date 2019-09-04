@@ -1,11 +1,26 @@
+import logging
 import re
 import sys
 from itertools import groupby
 from operator import itemgetter
 
-from nominally import util
-from nominally.util import lc, logger
+from unidecode import unidecode_expect_ascii
+
 from nominally import config
+
+
+LOGS_ON = False
+
+logger = logging.getLogger()
+if LOGS_ON:
+    logger.setLevel(logging.DEBUG)
+    fmt = logging.Formatter("%(asctime)s - %(levelname)-8s - %(message)s")
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(fmt)
+    stream_handler.setLevel(logging.DEBUG)
+    logger.addHandler(stream_handler)
+else:
+    logger.addHandler(logging.NullHandler())
 
 
 class HumanName:
@@ -32,11 +47,19 @@ class HumanName:
     _members = ["title", "first", "middle", "last", "suffix", "nickname"]
 
     def __init__(self, full_name=""):
-        self.original = ""
-        self._full_name = ""
+        self.original = full_name
+        self._full_name = self.original.lower()
 
-        # full_name setter triggers the parse
-        self.full_name = full_name
+        self.title_list = []
+        self.first_list = []
+        self.middle_list = []
+        self.last_list = []
+        self.suffix_list = []
+        self.nickname_list = []
+
+        self.pre_process()
+        self.parse_full_name()
+        self.post_process()
 
     def __iter__(self):
         return self
@@ -48,6 +71,8 @@ class HumanName:
         return l
 
     def __eq__(self, other):
+        if self.unparsable:
+            return False
         return str(self).lower() == str(other).lower()
 
     def __getitem__(self, key):
@@ -64,15 +89,19 @@ class HumanName:
 
     def __str__(self):
         # STRING_FORMAT = "{title} {first} {middle} {last} {suffix} ({nickname})"
-        s = "{title} {first} {middle} {last} {suffix}".format(**self.as_dict())
+        s = " ".join(
+            x
+            for x in [self.title, self.first, self.middle, self.last, self.suffix]
+            if x
+        )
         if self.nickname:
             s += f" ({self.nickname})"
-        return self.collapse_whitespace(s).strip(", ")
+        return collapse_whitespace(s).strip(", ")
 
     def __repr__(self):
         if self.unparsable:
-            return f"<{self.__class__.__name__}: *Unparsable* >"
-        return f"<{self.__class__.__name__}: {self.as_dict()} >"
+            return f"{self.__class__.__name__}(Unparsable)"
+        return f"{self.__class__.__name__}({self.as_dict()})"
 
     def as_dict(self, include_empty=True):
         """Return the parsed name as a dictionary of its attributes."""
@@ -82,77 +111,36 @@ class HumanName:
 
     @property
     def title(self):
-        """
-        The person's titles. Any string of consecutive pieces in
-        :py:mod:`~nominally.config.titles` or
-        :py:mod:`~nominally.config.conjunctions`
-        at the beginning of :py:attr:`full_name`.
-        """
         return " ".join(self.title_list) or ""
 
     @property
     def first(self):
-        """
-        The person's first name. The first name piece after any known
-        :py:attr:`title` pieces parsed from :py:attr:`full_name`.
-        """
         return " ".join(self.first_list) or ""
 
     @property
     def middle(self):
-        """
-        The person's middle names. All name pieces after the first name and
-        before the last name parsed from :py:attr:`full_name`.
-        """
         return " ".join(self.middle_list) or ""
 
     @property
     def last(self):
-        """
-        The person's last name. The last name piece parsed from
-        :py:attr:`full_name`.
-        """
         return " ".join(self.last_list) or ""
 
     @property
     def suffix(self):
-        """
-        The persons's suffixes. Pieces at the end of the name that are found in
-        :py:mod:`~nominally.config.suffixes`, or pieces that are at the end
-        of comma separated formats, e.g.
-        "Lastname, Title Firstname Middle[,] Suffix [, Suffix]" parsed
-        from :py:attr:`full_name`.
-        """
         return ", ".join(self.suffix_list) or ""
 
     @property
     def nickname(self):
-        """
-        The person's nicknames. Any text found inside of quotes (``""``) or
-        parenthesis (``()``)
-        """
         return " ".join(self.nickname_list) or ""
 
     @property
     def unparsable(self):
         return len(self) == 0
 
-    ### full_name parser
-
     @property
     def full_name(self):
         """The string output of the HumanName instance."""
         return str(self)
-
-    @full_name.setter
-    def full_name(self, value):
-        self.original = value
-        self._full_name = value.lower()
-        self.parse_full_name()
-
-    def collapse_whitespace(self, string):
-        # collapse multiple spaces into single space
-        return config.RE_SPACES.sub(" ", string.strip())
 
     def pre_process(self):
         """
@@ -194,7 +182,7 @@ class HumanName:
                 self._full_name = _re.sub("", self._full_name)
 
     def thoroughly_clean(self):
-        self._full_name = util.clean(self._full_name)
+        self._full_name = clean_name(self._full_name)
 
     def handle_firstnames(self):
         """
@@ -217,17 +205,6 @@ class HumanName:
         :py:func:`parse_pieces` then splits those parts on spaces and
         :py:func:`join_on_conjunctions` joins any pieces next to conjunctions.
         """
-
-        self.title_list = []
-        self.first_list = []
-        self.middle_list = []
-        self.last_list = []
-        self.suffix_list = []
-        self.nickname_list = []
-
-        self.pre_process()
-
-        self._full_name = re.sub(r"\s+", " ", self._full_name)
 
         # break up full_name by commas
         parts = [x.strip() for x in self._full_name.split(",")]
@@ -353,7 +330,6 @@ class HumanName:
 
         if self.unparsable:
             logger.info('Unparsable: "%s" ', self.original)
-        self.post_process()
 
     def parse_pieces(self, parts, additional_parts_count=0):
         """
@@ -469,6 +445,11 @@ class HumanName:
         return pieces
 
 
+def collapse_whitespace(s):
+    # collapse multiple spaces into single space
+    return config.RE_SPACES.sub(" ", s.strip())
+
+
 def is_title(value):
     """Is in the :py:data:`~nominally.config.titles.TITLES` set."""
     return lc(value) in config.TITLES
@@ -492,7 +473,6 @@ def is_roman_numeral(value):
     Matches the ``roman_numeral`` regular expression in
     :py:data:`~nominally.config.regexes.REGEXES`.
     """
-    return False
     return bool(config.RE_ROMAN_NUMERAL.match(value))
 
 
@@ -512,26 +492,28 @@ def is_suffix(piece):
 
 
 def are_suffixes(pieces):
-    """Return True if all pieces are suffixes."""
-    for piece in pieces:
-        if not is_suffix(piece):
-            return False
-    return True
+    return all(is_suffix(x) for x in pieces)
 
 
 def is_rootname(piece):
-    """
-    Is not a known title, suffix or prefix. Just first, middle, last names.
-    """
     return not any((is_prefix(piece), is_an_initial(piece), is_suffix(piece)))
 
 
 def is_an_initial(value):
-    """
-    Words with a single period at the end, or a single uppercase letter.
-
-    Matches the ``initial`` regular expression in
-    :py:data:`~nominally.config.regexes.REGEXES`.
-    """
     return bool(config.RE_INITIAL.match(value))
 
+
+def lc(value):
+    """Lower case and remove any periods to normalize for comparison."""
+    if not value:
+        return ""
+    return value.lower().strip(".")
+
+
+def clean_name(s, deep=False):
+    s = unidecode_expect_ascii(s).lower()
+    s = re.sub(r"[-_/\\]+", "-", s)
+    s = re.sub(r"[^ \-a-z'\"()]+", "", s)
+    s = re.sub(r"\s+", " ", s)  # condense spaces
+    s = s.strip("- ")
+    return s

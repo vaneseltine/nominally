@@ -1,15 +1,14 @@
 import re
 
-RE_SPACES = re.compile(r"\s+", re.U)
-RE_WORD = re.compile(r"(\w|\.)+", re.U)
-RE_MAC = re.compile(r"^(ma?c)(\w{2,})", re.I | re.U)
-RE_INITIAL = re.compile(r"^(\w\.|[A-Z])?$", re.U)
-RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)", re.U)
-RE_DOUBLE_QUOTES = re.compile(r"\"(.*?)\"", re.U)
-RE_PARENTHESIS = re.compile(r"\((.*?)\)", re.U)
-RE_ROMAN_NUMERAL = re.compile(r"^(x|ix|iv|v?i{0,3})$", re.I | re.U)
-RE_NO_VOWELS = re.compile(r"^[^aeyiuo]+$", re.I | re.U)
-RE_PERIOD_NOT_AT_END = re.compile(r".*\..+$", re.I | re.U)
+RE_SPACES = re.compile(r"\s+")
+RE_WORD = re.compile(r"(\w|\.)+")
+RE_INITIAL = re.compile(r"^(\w\.|[A-Z])?$")
+RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)")
+RE_DOUBLE_QUOTES = re.compile(r"\"(.*?)\"")
+RE_PARENTHESIS = re.compile(r"\((.*?)\)")
+RE_ROMAN_NUMERAL = re.compile(r"^(ii|iii|iv|vi|vii|viii|ix)$", re.I)
+RE_NO_VOWELS = re.compile(r"^[^aeyiuo]+$", re.I)
+RE_PERIOD_NOT_AT_END = re.compile(r".*\..+$", re.I)
 
 # Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".
 # "of" and "the" are also include to facilitate joining multiple titles,

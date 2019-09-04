@@ -20,11 +20,8 @@ def load_bank(category):
 
 def dict_entry_test(dict_entry):
     hn = HumanName(dict_entry["raw"])
-    print(hn)
-    for attr in hn._members:
-        actual = getattr(hn, attr)
-        expected = dict_entry.get(attr, "")
-        assert actual == expected
+    expected = {attr: dict_entry.get(attr, "") for attr in hn._members}
+    assert hn.as_dict() == expected
 
 
 def make_ids(entry):
@@ -60,9 +57,16 @@ class TestCoreFunctionality:
         dict_entry_test(entry)
 
     def test_string_output(self):
-        hn = HumanName("de la Véña, Jüan")
-        print(hn)
-        print(repr(hn))
+        hn = HumanName('de la Véña, Dr. Jüan "Paco", Jr.')
+        assert str(hn) == "dr. jüan de la véña jr. (paco)"
+
+    def test_repr_output(self):
+        hn = HumanName('de la Véña, Dr. Jüan "Paco", Jr.')
+        assert repr(hn) == (
+            "HumanName({'title': 'dr.', "
+            "'first': 'jüan', 'middle': '', 'last': 'de la véña', "
+            "'suffix': 'jr.', 'nickname': 'paco'})"
+        )
 
     def test_blank(self):
         hn = HumanName("")
@@ -73,6 +77,9 @@ class TestCoreFunctionality:
         hn = HumanName("Bob")
         assert not hn.unparsable
         assert "unparsable" not in repr(hn).lower()
+
+    def test_unparsable_are_not_equal(self):
+        assert not HumanName("") == HumanName("")
 
     @pytest.mark.parametrize(
         "raw, length", [("Doe-Ray, Dr. John P., Jr", 5), ("John Doe", 2)]
@@ -122,7 +129,6 @@ class TestCoreFunctionality:
 
 
 class TestHumanNameBruteForce:
-    # This fixes a bug in test115, which is not testing the suffix
     @pytest.mark.parametrize(
         "entry", load_bank("brute_force"), ids=lambda x: make_ids(x)
     )

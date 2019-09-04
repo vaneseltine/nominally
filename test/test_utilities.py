@@ -1,20 +1,20 @@
 import pytest
 
-from nominally.util import clean
+from nominally.parser import clean_name
 
 
-class TestClean:
+class TestCleanName:
     @pytest.mark.parametrize(
         "raw", ["DINSDALE", "Dinsdale", "dINSDALE", "dinsdale", "DiNsDaLe"]
     )
     def t_force_lower(self, raw):
-        assert clean(raw) == "dinsdale"
+        assert clean_name(raw) == "dinsdale"
 
     @pytest.mark.parametrize(
         "raw", ["DINSDALE", "Dinsdale", "dINSDALE", "dinsdale", "DiNsDaLe"]
     )
     def t_force_lower(self, raw):
-        assert clean(raw) == "dinsdale"
+        assert clean_name(raw) == "dinsdale"
 
     @pytest.mark.parametrize(
         "raw",
@@ -26,12 +26,12 @@ class TestClean:
         ],
     )
     def t_drop_emoji(self, raw):
-        assert clean(raw) == "spiny norman"
+        assert clean_name(raw) == "spiny norman"
 
     @pytest.mark.parametrize("raw", ["Mr Εric Πραλiñé"])
     def t_convert_unicode(self, raw):
         """This is handled by unidecode and should not be extensively tested"""
-        assert clean(raw) == "mr eric praline"
+        assert clean_name(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw",
@@ -49,7 +49,7 @@ class TestClean:
         ],
     )
     def t_drop_spacing(self, raw):
-        assert clean(raw) == "mr eric praline"
+        assert clean_name(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw",
@@ -64,7 +64,7 @@ class TestClean:
         ],
     )
     def t_ignore_most_symbols(self, raw):
-        assert clean(raw) == "mr eric praline"
+        assert clean_name(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw, cooked",
@@ -80,7 +80,7 @@ class TestClean:
         ],
     )
     def t_keep_certain_symbols(self, raw, cooked):
-        assert clean(raw) == cooked
+        assert clean_name(raw) == cooked
 
     @pytest.mark.parametrize(
         "raw, cooked",
@@ -91,4 +91,4 @@ class TestClean:
         ],
     )
     def t_strip_margin_hyphens(self, raw, cooked):
-        assert clean(raw) == cooked
+        assert clean_name(raw) == cooked

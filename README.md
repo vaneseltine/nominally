@@ -26,3 +26,4 @@ Whereas I gain:
 
 - Allow for 'y' and 'e' conjunctions within last names
 - Expand Md.
+- Confirm `r'[a-z]'` on each part to make, e.g., HumanName("#") unparsable
