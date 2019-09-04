@@ -4,7 +4,7 @@ from operator import itemgetter
 
 from nominally import util
 from nominally.config import CONSTANTS, Constants
-from nominally.util import lc, log
+from nominally.util import lc, logger
 
 
 def group_contiguous_integers(data):
@@ -20,7 +20,7 @@ def group_contiguous_integers(data):
     return ranges
 
 
-class HumanName(object):
+class HumanName:
     """
     Parse a person's name into individual components.
 
@@ -290,7 +290,7 @@ class HumanName(object):
     @property
     def full_name(self):
         """The string output of the HumanName instance."""
-        return self.__str__()
+        return str(self)
 
     @full_name.setter
     def full_name(self, value):
@@ -391,8 +391,8 @@ class HumanName(object):
         # break up full_name by commas
         parts = [x.strip() for x in self._full_name.split(",")]
 
-        log.debug("full_name: %s", self._full_name)
-        log.debug("parts: %s", parts)
+        logger.debug("full_name: %s", self._full_name)
+        logger.debug("parts: %s", parts)
 
         if len(parts) == 1:
 
@@ -445,7 +445,7 @@ class HumanName(object):
 
                 self.suffix_list += parts[1:]
                 pieces = self.parse_pieces(parts[0].split(" "))
-                log.debug(f"pieces: {pieces}")
+                logger.debug(f"pieces: {pieces}")
                 for i, piece in enumerate(pieces):
                     try:
                         nxt = pieces[i + 1]
@@ -477,7 +477,7 @@ class HumanName(object):
                 #      parts[0],      parts[1],              parts[2:...]
                 pieces = self.parse_pieces(parts[1].split(" "), 1)
 
-                log.debug(f"pieces: {pieces}")
+                logger.debug(f"pieces: {pieces}")
 
                 # lastname part may have suffixes in it
                 lastname_pieces = self.parse_pieces(parts[0].split(" "), 1)
@@ -516,7 +516,7 @@ class HumanName(object):
                     pass
 
         if self.unparsable:
-            log.info('Unparsable: "%s" ', self.original)
+            logger.info('Unparsable: "%s" ', self.original)
         self.post_process()
 
     @property
@@ -681,43 +681,43 @@ class HumanName(object):
 
         # join prefixes to following lastnames: ['de la Vega'], ['van Buren']
         prefixes = list(filter(self.is_prefix, pieces))
-        if prefixes:
-            for prefix in prefixes:
+        logger.debug(f"prefixes {prefixes}")
+        for prefix in prefixes:
+            try:
+                i = pieces.index(prefix)
+            except ValueError:
+                # If the prefix is no longer in pieces, it's because it has been
+                # combined with the prefix that appears right before (or before that when
+                # chained together) in the last loop, so the index of that newly created
+                # piece is the same as in the last loop, i==i still, and we want to join
+                # it to the next piece.
+                pass
+
+            new_piece = ""
+
+            # join everything after the prefix until the next prefix or suffix
+
+            try:
+                next_prefix = next(iter(filter(self.is_prefix, pieces[i + 1 :])))
+                j = pieces.index(next_prefix)
+                if j == i + 1:
+                    # if there are two prefixes in sequence, join to the following piece
+                    j += 1
+                new_piece = " ".join(pieces[i:j])
+                pieces = pieces[:i] + [new_piece] + pieces[j:]
+            except StopIteration:
                 try:
-                    i = pieces.index(prefix)
-                except ValueError:
-                    # If the prefix is no longer in pieces, it's because it has been
-                    # combined with the prefix that appears right before (or before that when
-                    # chained together) in the last loop, so the index of that newly created
-                    # piece is the same as in the last loop, i==i still, and we want to join
-                    # it to the next piece.
-                    pass
-
-                new_piece = ""
-
-                # join everything after the prefix until the next prefix or suffix
-
-                try:
-                    next_prefix = next(iter(filter(self.is_prefix, pieces[i + 1 :])))
-                    j = pieces.index(next_prefix)
-                    if j == i + 1:
-                        # if there are two prefixes in sequence, join to the following piece
-                        j += 1
+                    # if there are no more prefixes, look for a suffix to stop at
+                    stop_at = next(iter(filter(self.is_suffix, pieces[i + 1 :])))
+                    j = pieces.index(stop_at)
                     new_piece = " ".join(pieces[i:j])
                     pieces = pieces[:i] + [new_piece] + pieces[j:]
                 except StopIteration:
-                    try:
-                        # if there are no more prefixes, look for a suffix to stop at
-                        stop_at = next(iter(filter(self.is_suffix, pieces[i + 1 :])))
-                        j = pieces.index(stop_at)
-                        new_piece = " ".join(pieces[i:j])
-                        pieces = pieces[:i] + [new_piece] + pieces[j:]
-                    except StopIteration:
-                        # if there were no suffixes, nothing to stop at so join all
-                        # remaining pieces
-                        new_piece = " ".join(pieces[i:])
-                        pieces = pieces[:i] + [new_piece]
+                    # if there were no suffixes, nothing to stop at so join all
+                    # remaining pieces
+                    new_piece = " ".join(pieces[i:])
+                    pieces = pieces[:i] + [new_piece]
 
-        log.debug("pieces: %s", pieces)
+        logger.debug("pieces: %s", pieces)
         print(f"pieces: {pieces}")
         return pieces

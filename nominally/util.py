@@ -3,9 +3,13 @@ import re
 
 from unidecode import unidecode_expect_ascii
 
-log = logging.getLogger("HumanName")
-log.addHandler(logging.NullHandler())
-log.setLevel(logging.ERROR)
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+fmt = logging.Formatter("%(asctime)s - %(levelname)-8s - %(message)s")
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(fmt)
+stream_handler.setLevel(logging.DEBUG)
+logger.addHandler(stream_handler)
 
 
 def lc(value):
