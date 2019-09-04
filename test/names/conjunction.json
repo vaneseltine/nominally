@@ -111,22 +111,6 @@
         "last": "smith"
     },
     {
-        "id": "test_title_with_three_part_name_last_initial_is_suffix_uppercase_no_p",
-        "raw": "king john alexander v",
-        "title": "king",
-        "first": "john",
-        "last": "alexander",
-        "suffix": "v"
-    },
-    {
-        "id": "test_four_name_parts_with_suffix_that_could_be_initial_lowercase_no_p",
-        "raw": "larry james edward johnson v",
-        "first": "larry",
-        "middle": "james edward",
-        "last": "johnson",
-        "suffix": "v"
-    },
-    {
         "id": "test_roman_numeral_initials_one",
         "raw": "larry v i",
         "first": "larry",

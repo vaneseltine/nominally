@@ -10,7 +10,8 @@ does *not* support:
 3. Lengthy and carefully curated built-in titles for many occasions
 4. Encoding other than UTF-8
 5. Very much extensibility
-6. Python < 3.6
+6. Byte input
+7. Python < 3.6
 
 <!-- Della, Abu, Doctor... -->
 

@@ -44,14 +44,8 @@ class TestCoreFunctionality:
             {
                 "id": "test_utf8",
                 "raw": "de la Véña, Jüan",
-                "first": "Jüan",
-                "last": "de la Véña",
-            },
-            {
-                "id": "test_escaped_utf8_bytes",
-                "raw": b"B\xc3\xb6ck, Gerald",
-                "first": "Gerald",
-                "last": "Böck",
+                "first": "jüan",
+                "last": "de la véña",
             },
             {
                 "id": "test_conjunction_names",
@@ -65,16 +59,12 @@ class TestCoreFunctionality:
                 "first": "vai",
                 "last": "la",
             },
+            {"id": "test_blank_name", "raw": "", "first": "", "last": ""},
         ],
         ids=lambda x: make_ids(x),
     )
     def test_basics(self, entry):
         dict_entry_test(entry)
-
-    def test_blank(self):
-        # This can't be parametrized in the same way as test_basics, because
-        # "" is itself paramatrized at the module level
-        dict_entry_test({"id": "test_blank_name", "raw": "", "first": "", "last": ""})
 
     def test_string_output(self,):
         hn = HumanName("de la Véña, Jüan")
@@ -90,9 +80,11 @@ class TestCoreFunctionality:
     def test_comparison(self):
         hn1 = HumanName("Doe-Ray, Dr. John P., CLU, CFP, LUTC")
         hn2 = HumanName("Dr. John P. Doe-Ray, CLU, CFP, LUTC")
+        assert hn1
+        assert hn2
         assert hn1 == hn2
         assert hn1 is not hn2
-        assert hn1 == "Dr. John P. Doe-Ray CLU, CFP, LUTC"
+        assert hn1 == "dr. john p. doe-ray clu, cfp, lutc"
         hn1 = HumanName("Doe, Dr. John P., CLU, CFP, LUTC")
         hn2 = HumanName("Dr. John P. Doe-Ray, CLU, CFP, LUTC")
         assert hn1 != hn2
@@ -103,24 +95,24 @@ class TestCoreFunctionality:
 
     def test_assignment_to_full_name(self):
         hn = HumanName("John A. Kenneth Doe, Jr.")
-        assert hn.first == "John"
-        assert hn.last == "Doe"
-        assert hn.middle == "A. Kenneth"
-        assert hn.suffix == "Jr."
+        assert hn.first == "john"
+        assert hn.last == "doe"
+        assert hn.middle == "a. kenneth"
+        assert hn.suffix == "jr."
         hn.full_name = "Juan Velasquez y Garcia III"
-        assert hn.first == "Juan"
-        assert hn.last == "Velasquez y Garcia"
-        assert hn.suffix == "III"
+        assert hn.first == "juan"
+        assert hn.last == "velasquez y garcia"
+        assert hn.suffix == "iii"
 
     def test_get_full_name_attribute_references_internal_lists(self):
         hn = HumanName("John Williams")
-        hn.first_list = ["Larry"]
-        assert hn.full_name, "Larry Williams"
+        hn.first_list = ["larry"]
+        assert hn.full_name == "larry williams"
 
     def test_assignment_to_attribute(self):
         hn = HumanName("John A. Kenneth Doe, Jr.")
-        hn.last = "de la Vega"
-        assert hn.last == "de la Vega"
+        hn.last = "de la vega"
+        assert hn.last == "de la vega"
         hn.title = "test"
         assert hn.title == "test"
         hn.first = "test"
@@ -152,28 +144,28 @@ class TestCoreFunctionality:
         hn2 = HumanName("dr. john p. doe-Ray, CLU, CFP, LUTC")
         assert hn1 == hn2
         assert hn1 is not hn2
-        assert hn1 == "Dr. John P. Doe-ray clu, CFP, LUTC"
+        assert hn1 == "dr. john p. doe-ray clu, cfp, lutc"
 
     def test_slice(self):
         hn = HumanName("Doe-Ray, Dr. John P., CLU, CFP, LUTC")
-        assert list(hn), ["Dr.", "John", "P.", "Doe-Ray", "CLU, CFP, LUTC"]
-        assert hn[1:] == ["John", "P.", "Doe-Ray", "CLU, CFP, LUTC", ""]
-        assert hn[1:-2], ["John", "P.", "Doe-Ray"]
+        assert list(hn) == ["dr.", "john", "p.", "doe-ray", "clu, cfp, lutc"]
+        assert hn[1:] == ["john", "p.", "doe-ray", "clu, cfp, lutc", ""]
+        assert hn[1:-2] == ["john", "p.", "doe-ray"]
 
     def test_getitem(self):
         hn = HumanName("Dr. John A. Kenneth Doe, Jr.")
-        assert hn["title"], "Dr."
-        assert hn["first"], "John"
-        assert hn["last"], "Doe"
-        assert hn["middle"], "A. Kenneth"
-        assert hn["suffix"], "Jr."
+        assert hn["title"] == "dr."
+        assert hn["first"] == "john"
+        assert hn["last"] == "doe"
+        assert hn["middle"] == "a. kenneth"
+        assert hn["suffix"] == "jr."
 
     def test_setitem(self):
         hn = HumanName("Dr. John A. Kenneth Doe, Jr.")
         hn["title"] = "test"
-        assert hn["title"], "test"
+        assert hn["title"] == "test"
         hn["last"] = ["test", "test2"]
-        assert hn["last"], "test test2"
+        assert hn["last"] == "test test2"
         with pytest.raises(TypeError):
             hn["suffix"] = [["test"]]
         with pytest.raises(TypeError):
@@ -181,11 +173,11 @@ class TestCoreFunctionality:
 
     def test_surnames_list_attribute(self):
         hn = HumanName("John Edgar Casey Williams III")
-        assert hn.surnames_list, ["Edgar", "Casey", "Williams"]
+        assert hn.surnames_list == ["edgar", "casey", "williams"]
 
     def test_surnames_attribute(self):
         hn = HumanName("John Edgar Casey Williams III")
-        assert hn.surnames == "Edgar Casey Williams"
+        assert hn.surnames == "edgar casey williams"
 
 
 class TestHumanNameBruteForce:
@@ -204,22 +196,12 @@ class TestFirstNameHandling:
     def test_json_first_name(self, entry):
         dict_entry_test(entry)
 
-    @pytest.mark.xfail(
-        reason="# TODO: Seems 'Andrews, M.D.', Andrews should be treated as a last name"
-        "but other suffixes like 'George Jr.' should be first names. "
-        "Might be related to https://github.com/derek73/python-nominally/issues/2"
-    )
-    def test_assume_suffix_title_and_one_other_name_is_last_name(self):
-        hn = HumanName("Andrews, M.D.")
-        assert hn.suffix == "M.D."
-        assert hn.last == "Andrews"
-
     @pytest.mark.xfail
     def test_first_name_is_prefix_if_three_parts(self):
         """Not sure how to fix this without breaking Mr and Mrs"""
         hn = HumanName("Mr. Van Nguyen")
-        assert hn.first == "Van"
-        assert hn.last == "Nguyen"
+        assert hn.first == "van"
+        assert hn.last == "nguyen"
 
 
 class TestHumanNameConjunction:
@@ -233,16 +215,25 @@ class TestHumanNameConjunction:
     def test_two_initials_conflict_with_conjunction(self):
         # Supporting this seems to screw up titles with periods in them like M.B.A.
         hn = HumanName("E.T. Smith")
-        assert hn.first == "E."
-        assert hn.middle == "T."
-        assert hn.last == "Smith"
+        assert hn.first == "e."
+        assert hn.middle == "t."
+        assert hn.last == "smith"
 
     @pytest.mark.xfail
-    def test_conjunction_in_an_address_with_a_first_name_title(self):
-        hn = HumanName("Her Majesty Queen Elizabeth")
-        assert hn.title == "Her Majesty Queen"
-        # if you want to be technical, Queen is in FIRST_NAME_TITLES
-        assert hn.first == "Elizabeth"
+    def test_title_with_three_part_name_last_initial_is_suffix_uppercase_no_p(self):
+        hn = HumanName("king john alexander v")
+        assert hn.title == "king"
+        assert hn.first == "john"
+        assert hn.last == "alexander"
+        assert hn.suffix == "v"
+
+    @pytest.mark.xfail
+    def test_four_name_parts_with_suffix_that_could_be_initial_lowercase_no_p(self):
+        hn = HumanName("larry james edward johnson v")
+        assert hn.first == "larry"
+        assert hn.middle == "james edward"
+        assert hn.last == "johnson"
+        assert hn.suffix == "v"
 
 
 class TestNickname:
@@ -253,26 +244,26 @@ class TestNickname:
     # http://code.google.com/p/python-nominally/issues/detail?id=17
     def test_parenthesis_are_removed_from_name(self):
         hn = HumanName("John Jones (Unknown)")
-        assert hn.first == "John"
-        assert hn.last == "Jones"
+        assert hn.first == "john"
+        assert hn.last == "jones"
         assert hn.nickname != ""
 
     # http://code.google.com/p/python-nominally/issues/detail?id=17
     # not testing nicknames because we don't actually care about Google Docs here
     def test_duplicate_parenthesis_are_removed_from_name(self):
         hn = HumanName("John Jones (Google Docs), Jr. (Unknown)")
-        assert hn.first == "John"
-        assert hn.last == "Jones"
-        assert hn.suffix == "Jr."
+        assert hn.first == "john"
+        assert hn.last == "jones"
+        assert hn.suffix == "jr."
         assert hn.nickname != ""
 
     @pytest.mark.xfail
     def test_nickname_and_last_name_with_title(self):
         hn = HumanName('Senator "Rick" Edmonds')
-        assert hn.title == "Senator"
+        assert hn.title == "senator"
         assert hn.first == ""
-        assert hn.last == "Edmonds"
-        assert hn.nickname == "Rick"
+        assert hn.last == "edmonds"
+        assert hn.nickname == "rick"
 
 
 class TestPrefixes:
@@ -292,15 +283,8 @@ class TestSuffixes:
     )
     def test_potential_suffix_that_is_also_first_name_comma_with_conjunction(self):
         hn = HumanName("De la Vina, Bart")
-        assert hn.first == "Bart"
-        assert hn.last == "De la Vina"
-
-    @pytest.mark.xfail(reason="https://github.com/derek73/python-nominally/issues/27")
-    def test_king(self):
-        hn = HumanName("Dr King Jr")
-        assert hn.title == "Dr"
-        assert hn.last == "King"
-        assert hn.suffix == "Jr"
+        assert hn.first == "bart"
+        assert hn.last == "de la vina"
 
 
 class TestTitle:
@@ -311,10 +295,10 @@ class TestTitle:
     @pytest.mark.xfail(reason="TODO: fix handling of U.S.")
     def test_chained_title_first_name_title_is_initials(self):
         hn = HumanName("U.S. District Judge Marc Thomas Treadwell")
-        assert hn.title == "U.S. District Judge"
-        assert hn.first == "Marc"
-        assert hn.middle == "Thomas"
-        assert hn.last == "Treadwell"
+        assert hn.title == "u.s. district judge"
+        assert hn.first == "marc"
+        assert hn.middle == "thomas"
+        assert hn.last == "treadwell"
 
     @pytest.mark.xfail(
         reason=" 'ben' is removed from PREFIXES in v0.2.5"
@@ -322,13 +306,13 @@ class TestTitle:
     )
     def test_title_multiple_titles_with_apostrophe_s(self):
         hn = HumanName("The Right Hon. the President of the Queen's Bench Division")
-        assert hn.title == "The Right Hon. the President of the Queen's Bench Division"
+        assert hn.title == "the right hon. the president of the queen's bench division"
 
     @pytest.mark.xfail
     def test_ben_as_conjunction(self):
         hn = HumanName("Ahmad ben Husain")
-        assert hn.first == "Ahmad"
-        assert hn.last == "ben Husain"
+        assert hn.first == "ahmad"
+        assert hn.last == "ben husain"
 
 
 class TestHumanNameVariations:
@@ -395,48 +379,48 @@ class TestMaidenName:
     @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
     def test_parenthesis_and_quotes_together(self):
         hn = HumanName("Jennifer 'Jen' Jones (Duff)")
-        assert hn.first == "Jennifer"
-        assert hn.last == "Jones"
-        assert hn.nickname == "Jen"
-        assert hn.maiden == "Duff"
+        assert hn.first == "jennifer"
+        assert hn.last == "jones"
+        assert hn.nickname == "jen"
+        assert hn.maiden == "duff"
 
     @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
     def test_maiden_name_with_nee(self):
         # https://en.wiktionary.org/wiki/née
         hn = HumanName("Mary Toogood nee Johnson")
-        assert hn.first == "Mary"
-        assert hn.last == "Toogood"
-        assert hn.maiden == "Johnson"
+        assert hn.first == "mary"
+        assert hn.last == "toogood"
+        assert hn.maiden == "johnson"
 
     @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
     def test_maiden_name_with_accented_nee(self):
         # https://en.wiktionary.org/wiki/née
         hn = HumanName("Mary Toogood née Johnson")
-        assert hn.first == "Mary"
-        assert hn.last == "Toogood"
-        assert hn.maiden == "Johnson"
+        assert hn.first == "mary"
+        assert hn.last == "toogood"
+        assert hn.maiden == "johnson"
 
     @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
     def test_maiden_name_with_nee_and_comma(self):
         # https://en.wiktionary.org/wiki/née
         hn = HumanName("Mary Toogood, née Johnson")
-        assert hn.first == "Mary"
-        assert hn.last == "Toogood"
-        assert hn.maiden == "Johnson"
+        assert hn.first == "mary"
+        assert hn.last == "toogood"
+        assert hn.maiden == "johnson"
 
     @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
     def test_maiden_name_with_nee_with_parenthesis(self):
         hn = HumanName("Mary Toogood (nee Johnson)")
-        assert hn.first == "Mary"
-        assert hn.last == "Toogood"
-        assert hn.maiden == "Johnson"
+        assert hn.first == "mary"
+        assert hn.last == "toogood"
+        assert hn.maiden == "johnson"
 
     @pytest.mark.skipif(no_maiden_names, reason="Maiden names not implemented.")
     def test_maiden_name_with_parenthesis(self):
         hn = HumanName("Mary Toogood (Johnson)")
-        assert hn.first == "Mary"
-        assert hn.last == "Toogood"
-        assert hn.maiden == "Johnson"
+        assert hn.first == "mary"
+        assert hn.last == "toogood"
+        assert hn.maiden == "johnson"
 
 
 if __name__ == "__main__":

@@ -92,7 +92,7 @@ class HumanName(object):
         HumanName instances are equal to other objects whose
         lower case unicode representation is the same.
         """
-        return (u(self)).lower() == (u(other)).lower()
+        return str(self).lower() == str(other).lower()
 
     def __ne__(self, other):
         return not (u(self)).lower() == (u(other)).lower()
@@ -121,7 +121,7 @@ class HumanName(object):
             self._count = c + 1
             return getattr(self, self._members[c]) or next(self)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.string_format:
             # string_format = "{title} {first} {middle} {last} {suffix} ({nickname})"
             _s = self.string_format.format(**self.as_dict())
@@ -131,11 +131,6 @@ class HumanName(object):
             _s = _s.replace(' ""', "")
             return self.collapse_whitespace(_s).strip(", ")
         return " ".join(self)
-
-    def __str__(self):
-        if sys.version_info[0] >= 3:
-            return self.__unicode__()
-        return self.__unicode__().encode(self.encoding)
 
     def __repr__(self):
         if self.unparsable:
@@ -155,9 +150,7 @@ class HumanName(object):
                     "nickname": self.nickname or "",
                 }
             )
-        if sys.version_info[0] >= 3:
-            return _string
-        return _string.encode(self.encoding)
+        return _string
 
     def as_dict(self, include_empty=True):
         """
@@ -375,7 +368,7 @@ class HumanName(object):
     @full_name.setter
     def full_name(self, value):
         self.original = value
-        self._full_name = value
+        self._full_name = value.lower()
         if isinstance(value, binary_type):
             self._full_name = value.decode(self.encoding)
         self.parse_full_name()
