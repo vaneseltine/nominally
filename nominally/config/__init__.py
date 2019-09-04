@@ -145,11 +145,6 @@ class Constants(object):
         :py:attr:`regexes`  wrapped with :py:class:`TupleManager`.
     """
 
-    string_format = "{title} {first} {middle} {last} {suffix} ({nickname})"
-    """
-    The default string format use for all new `HumanName` instances.
-    """
-
     def __init__(
         self,
         prefixes=PREFIXES,

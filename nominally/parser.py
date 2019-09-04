@@ -39,7 +39,6 @@ class HumanName(object):
     * :py:attr:`surnames`
 
     :param str full_name: The name string to be parsed.
-    :param str string_format: python string formatting
     """
 
     """
@@ -52,12 +51,11 @@ class HumanName(object):
     _count = 0
     _members = ["title", "first", "middle", "last", "suffix", "nickname"]
 
-    def __init__(self, full_name="", constants=CONSTANTS, string_format=None):
+    def __init__(self, full_name="", constants=CONSTANTS):
         self.original = ""
         self._full_name = ""
         self.unparsable = True
 
-        self.string_format = string_format or CONSTANTS.string_format
         # full_name setter triggers the parse
         self.full_name = full_name
 
@@ -98,15 +96,13 @@ class HumanName(object):
             return getattr(self, self._members[c]) or next(self)
 
     def __str__(self):
-        if self.string_format:
-            # string_format = "{title} {first} {middle} {last} {suffix} ({nickname})"
-            _s = self.string_format.format(**self.as_dict())
-            # remove trailing punctuation from missing nicknames
-            _s = _s.replace(" ()", "")
-            _s = _s.replace(" ''", "")
-            _s = _s.replace(' ""', "")
-            return self.collapse_whitespace(_s).strip(", ")
-        return " ".join(self)
+        STRING_FORMAT = "{title} {first} {middle} {last} {suffix} ({nickname})"
+        _s = STRING_FORMAT.format(**self.as_dict())
+        # remove trailing punctuation from missing nicknames
+        _s = _s.replace(" ()", "")
+        _s = _s.replace(" ''", "")
+        _s = _s.replace(' ""', "")
+        return self.collapse_whitespace(_s).strip(", ")
 
     def __repr__(self):
         if self.unparsable:
