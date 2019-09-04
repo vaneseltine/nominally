@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from nominally import HumanName
-from nominally.config import Constants, CONSTANTS
+from nominally import config
 
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 

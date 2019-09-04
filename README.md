@@ -22,6 +22,7 @@ Whereas I gain:
 2. Improved testing suite (via pytest).
 3. Improved formatting (flake8, black across the board).
 
-## TODO
+## To consider
 
-Allow for 'y' and 'e' conjunctions within last names
+- Allow for 'y' and 'e' conjunctions within last names
+- Expand Md.

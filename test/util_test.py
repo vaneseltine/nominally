@@ -11,6 +11,12 @@ class TestClean:
         assert clean(raw) == "dinsdale"
 
     @pytest.mark.parametrize(
+        "raw", ["DINSDALE", "Dinsdale", "dINSDALE", "dinsdale", "DiNsDaLe"]
+    )
+    def t_force_lower(self, raw):
+        assert clean(raw) == "dinsdale"
+
+    @pytest.mark.parametrize(
         "raw",
         [
             " ❤  Spiny Norman ",

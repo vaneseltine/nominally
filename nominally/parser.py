@@ -4,8 +4,8 @@ from itertools import groupby
 from operator import itemgetter
 
 from nominally import util
-from nominally.config import CONSTANTS, Constants
 from nominally.util import lc, logger
+from nominally import config
 
 
 class HumanName:
@@ -26,13 +26,6 @@ class HumanName:
     * :py:attr:`nickname`
 
     :param str full_name: The name string to be parsed.
-    """
-
-    """
-    A reference to the configuration for this instance, which may or may not be
-    a reference to the shared, module-wide instance at
-    :py:mod:`~nominally.config.CONSTANTS`. See `Customizing the Parser
-    <customize.html>`_.
     """
 
     _count = 0
@@ -159,7 +152,7 @@ class HumanName:
 
     def collapse_whitespace(self, string):
         # collapse multiple spaces into single space
-        return CONSTANTS.regexes.spaces.sub(" ", string.strip())
+        return config.RE_SPACES.sub(" ", string.strip())
 
     def pre_process(self):
         """
@@ -191,9 +184,9 @@ class HumanName:
         `quoted_word`, `double_quotes` and `parenthesis`.
         """
 
-        re_quoted_word = CONSTANTS.regexes.quoted_word
-        re_double_quotes = CONSTANTS.regexes.double_quotes
-        re_parenthesis = CONSTANTS.regexes.parenthesis
+        re_quoted_word = config.RE_QUOTED_WORD
+        re_double_quotes = config.RE_DOUBLE_QUOTES
+        re_parenthesis = config.RE_PARENTHESIS
 
         for _re in (re_quoted_word, re_double_quotes, re_parenthesis):
             if _re.search(self._full_name):
@@ -478,12 +471,12 @@ class HumanName:
 
 def is_title(value):
     """Is in the :py:data:`~nominally.config.titles.TITLES` set."""
-    return lc(value) in CONSTANTS.titles
+    return lc(value) in config.TITLES
 
 
 def is_conjunction(piece):
     """Is in the conjuctions set and not :py:func:`is_an_initial()`."""
-    return piece.lower() in CONSTANTS.conjunctions and not is_an_initial(piece)
+    return piece.lower() in config.CONJUNCTIONS and not is_an_initial(piece)
 
 
 def is_prefix(piece):
@@ -491,7 +484,7 @@ def is_prefix(piece):
     Lowercase and no periods version of piece is in the
     :py:data:`~nominally.config.prefixes.PREFIXES` set.
     """
-    return lc(piece) in CONSTANTS.prefixes
+    return lc(piece) in config.PREFIXES
 
 
 def is_roman_numeral(value):
@@ -500,7 +493,7 @@ def is_roman_numeral(value):
     :py:data:`~nominally.config.regexes.REGEXES`.
     """
     return False
-    return bool(CONSTANTS.regexes.roman_numeral.match(value))
+    return bool(config.RE_ROMAN_NUMERAL.match(value))
 
 
 def is_suffix(piece):
@@ -513,8 +506,8 @@ def is_suffix(piece):
     """
     # suffixes may have periods inside them like "M.D."
     return (
-        (lc(piece).replace(".", "") in CONSTANTS.suffix_acronyms)
-        or (lc(piece) in CONSTANTS.suffix_not_acronyms)
+        (lc(piece).replace(".", "") in config.SUFFIX_ACRONYMS)
+        or (lc(piece) in config.SUFFIX_NOT_ACRONYMS)
     ) and not is_an_initial(piece)
 
 
@@ -540,4 +533,5 @@ def is_an_initial(value):
     Matches the ``initial`` regular expression in
     :py:data:`~nominally.config.regexes.REGEXES`.
     """
-    return bool(CONSTANTS.regexes.initial.match(value))
+    return bool(config.RE_INITIAL.match(value))
+
