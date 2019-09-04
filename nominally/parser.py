@@ -23,7 +23,7 @@ else:
     logger.addHandler(logging.NullHandler())
 
 
-class HumanName:
+class Name:
     """
     Parse a person's name into individual components.
 
@@ -31,7 +31,7 @@ class HumanName:
     :py:attr:`full_name` triggers :py:func:`parse_full_name`. After parsing the
     name, these instance attributes are available.
 
-    **HumanName Instance Attributes**
+    **Name Instance Attributes**
 
     * :py:attr:`title`
     * :py:attr:`first`
@@ -139,7 +139,7 @@ class HumanName:
 
     @property
     def full_name(self):
-        """The string output of the HumanName instance."""
+        """The string output of the Name instance."""
         return str(self)
 
     def pre_process(self):

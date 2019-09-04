@@ -1,1 +1,1 @@
-from nominally.parser import HumanName
+from nominally.parser import Name

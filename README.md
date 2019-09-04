@@ -5,7 +5,7 @@ The key benefit is that **nominally** narrowly maximizes on parsing
 lists of decently well-formed single name fields. Therefore, **nominally**
 does *not* support:
 
-- Mutability of HumanName
+- Mutability
 - Easy customization of lists of name parts
 - Parsing multiple names from a single field
 - Most titles
@@ -26,4 +26,4 @@ Whereas I gain:
 
 - Allow for 'y' and 'e' conjunctions within last names
 - Expand Md.
-- Confirm `r'[a-z]'` on each part to make, e.g., HumanName("#") unparsable
+- Confirm `r'[a-z]'` on each part to make, e.g., Name("#") unparsable

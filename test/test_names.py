@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from nominally import HumanName
+from nominally import Name
 from nominally import config
 
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
@@ -19,7 +19,7 @@ def load_bank(category):
 
 
 def dict_entry_test(dict_entry):
-    hn = HumanName(dict_entry["raw"])
+    hn = Name(dict_entry["raw"])
     expected = {attr: dict_entry.get(attr, "") for attr in hn._members}
     assert hn.as_dict() == expected
 
@@ -57,46 +57,46 @@ class TestCoreFunctionality:
         dict_entry_test(entry)
 
     def test_string_output(self):
-        hn = HumanName('de la Véña, Dr. Jüan "Paco", Jr.')
+        hn = Name('de la Véña, Dr. Jüan "Paco", Jr.')
         assert str(hn) == "dr. jüan de la véña jr. (paco)"
 
     def test_repr_output(self):
-        hn = HumanName('de la Véña, Dr. Jüan "Paco", Jr.')
+        hn = Name('de la Véña, Dr. Jüan "Paco", Jr.')
         assert repr(hn) == (
-            "HumanName({'title': 'dr.', "
+            "Name({'title': 'dr.', "
             "'first': 'jüan', 'middle': '', 'last': 'de la véña', "
             "'suffix': 'jr.', 'nickname': 'paco'})"
         )
 
     def test_blank(self):
-        hn = HumanName("")
+        hn = Name("")
         assert hn.unparsable
         assert "unparsable" in repr(hn).lower()
 
     def test_nonblank(self):
-        hn = HumanName("Bob")
+        hn = Name("Bob")
         assert not hn.unparsable
         assert "unparsable" not in repr(hn).lower()
 
     def test_unparsable_are_not_equal(self):
-        assert not HumanName("") == HumanName("")
+        assert not Name("") == Name("")
 
     @pytest.mark.parametrize(
         "raw, length", [("Doe-Ray, Dr. John P., Jr", 5), ("John Doe", 2)]
     )
     def test_len(self, raw, length):
-        assert len(HumanName(raw)) == length
+        assert len(Name(raw)) == length
 
     def test_comparison(self):
-        hn1 = HumanName("Doe-Ray, Dr. John P., jr")
-        hn2 = HumanName("Dr. John P. Doe-Ray, jr")
+        hn1 = Name("Doe-Ray, Dr. John P., jr")
+        hn2 = Name("Dr. John P. Doe-Ray, jr")
         assert hn1
         assert hn2
         assert hn1 == hn2
         assert hn1 is not hn2
         assert hn1 == "dr. john p. doe-ray jr"
-        hn1 = HumanName("Doe, Dr. John P., Jr")
-        hn2 = HumanName("Dr. John P. Doe-Ray, jr")
+        hn1 = Name("Doe, Dr. John P., Jr")
+        hn2 = Name("Dr. John P. Doe-Ray, jr")
         assert hn1 != hn2
         assert hn1 != 0
         assert hn1 != "test"
@@ -104,23 +104,23 @@ class TestCoreFunctionality:
         assert hn1 != {"test": hn2}
 
     def test_get_full_name_attribute_references_internal_lists(self):
-        hn = HumanName("John Williams")
+        hn = Name("John Williams")
         hn.first_list = ["larry"]
         assert hn.full_name == "larry williams"
 
     def test_comparison_case_insensitive(self):
-        hn1 = HumanName("Doe-Ray, Dr. John P., Jr")
-        hn2 = HumanName("dr. john p. doe-Ray, jr")
+        hn1 = Name("Doe-Ray, Dr. John P., Jr")
+        hn2 = Name("dr. john p. doe-Ray, jr")
         assert hn1 == hn2
         assert hn1 is not hn2
         assert hn1 == "dr. john p. doe-ray jr"
 
     def test_slice(self):
-        hn = HumanName("Doe-Ray, Dr. John P., Jr")
+        hn = Name("Doe-Ray, Dr. John P., Jr")
         assert list(hn) == ["dr.", "john", "p.", "doe-ray", "jr"]
 
     def test_getitem(self):
-        hn = HumanName("Dr. John A. Kenneth Doe, Jr.")
+        hn = Name("Dr. John A. Kenneth Doe, Jr.")
         assert hn["title"] == "dr."
         assert hn["first"] == "john"
         assert hn["last"] == "doe"
@@ -128,7 +128,7 @@ class TestCoreFunctionality:
         assert hn["suffix"] == "jr."
 
 
-class TestHumanNameBruteForce:
+class TestNameBruteForce:
     @pytest.mark.parametrize(
         "entry", load_bank("brute_force"), ids=lambda x: make_ids(x)
     )
@@ -145,11 +145,11 @@ class TestFirstNameHandling:
 
     def test_first_name_is_prefix_if_three_parts(self):
         """Not sure how to fix this without breaking Mr and Mrs"""
-        hn = HumanName("Mr. Van Nguyen")
+        hn = Name("Mr. Van Nguyen")
         assert hn.last == "van nguyen"
 
 
-class TestHumanNameConjunction:
+class TestNameConjunction:
     @pytest.mark.parametrize(
         "entry", load_bank("conjunction"), ids=lambda x: make_ids(x)
     )
@@ -159,14 +159,14 @@ class TestHumanNameConjunction:
     @pytest.mark.xfail
     def test_two_initials_conflict_with_conjunction(self):
         # Supporting this seems to screw up titles with periods in them like M.B.A.
-        hn = HumanName("E.T. Smith")
+        hn = Name("E.T. Smith")
         assert hn.first == "e."
         assert hn.middle == "t."
         assert hn.last == "smith"
 
     @pytest.mark.xfail
     def test_four_name_parts_with_suffix_that_could_be_initial_lowercase_no_p(self):
-        hn = HumanName("larry james edward johnson v")
+        hn = Name("larry james edward johnson v")
         assert hn.first == "larry"
         assert hn.middle == "james edward"
         assert hn.last == "johnson"
@@ -180,7 +180,7 @@ class TestNickname:
 
     # http://code.google.com/p/python-nominally/issues/detail?id=17
     def test_parenthesis_are_removed_from_name(self):
-        hn = HumanName("John Jones (Unknown)")
+        hn = Name("John Jones (Unknown)")
         assert hn.first == "john"
         assert hn.last == "jones"
         assert hn.nickname != ""
@@ -188,7 +188,7 @@ class TestNickname:
     # http://code.google.com/p/python-nominally/issues/detail?id=17
     # not testing nicknames because we don't actually care about Google Docs here
     def test_duplicate_parenthesis_are_removed_from_name(self):
-        hn = HumanName("John Jones (Google Docs), Jr. (Unknown)")
+        hn = Name("John Jones (Google Docs), Jr. (Unknown)")
         assert hn.first == "john"
         assert hn.last == "jones"
         assert hn.suffix == "jr."
@@ -213,7 +213,7 @@ class TestTitle:
         dict_entry_test(entry)
 
 
-class TestHumanNameVariations:
+class TestNameVariations:
     """Test automated variations of raw names in the 'brute_force' bank.
 
     Helps test that the 3 code trees work the same"""
@@ -228,37 +228,35 @@ class TestHumanNameVariations:
         This is a separate function so that individual non-parametrized tests can be
         added if desired.
         """
-        hn = HumanName(name)
+        hn = Name(name)
         if len(hn.suffix_list) > 1:
-            hn = HumanName(
+            hn = Name(
                 "{title} {first} {middle} {last} {suffix}".format(**hn.as_dict()).split(
                     ","
                 )[0]
             )
         hn_dict = hn.as_dict()
-        nocomma = HumanName(
-            "{title} {first} {middle} {last} {suffix}".format(**hn_dict)
-        )
-        lastnamecomma = HumanName(
+        nocomma = Name("{title} {first} {middle} {last} {suffix}".format(**hn_dict))
+        lastnamecomma = Name(
             "{last}, {title} {first} {middle} {suffix}".format(**hn_dict)
         )
         if hn.suffix:
-            suffixcomma = HumanName(
+            suffixcomma = Name(
                 "{title} {first} {middle} {last}, {suffix}".format(**hn_dict)
             )
         if hn.nickname:
-            nocomma = HumanName(
+            nocomma = Name(
                 "{title} {first} {middle} {last} {suffix} ({nickname})".format(
                     **hn_dict
                 )
             )
-            lastnamecomma = HumanName(
+            lastnamecomma = Name(
                 "{last}, {title} {first} {middle} {suffix} ({nickname})".format(
                     **hn_dict
                 )
             )
             if hn.suffix:
-                suffixcomma = HumanName(
+                suffixcomma = Name(
                     "{title} {first} {middle} {last}, {suffix} ({nickname})".format(
                         **hn_dict
                     )
