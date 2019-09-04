@@ -24,9 +24,7 @@ class TestClean:
 
     @pytest.mark.parametrize("raw", ["Mr Εric Πραλiñé"])
     def t_convert_unicode(self, raw):
-        """
-        This is handled by unidecode and does not need to be extensively tested
-        """
+        """This is handled by unidecode and should not be extensively tested"""
         assert clean(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
@@ -55,8 +53,7 @@ class TestClean:
             r"M2r Er4ic Pra32lin5e",
             r"Mr Eric Praline_____",
             r"Mr Eric Praline",
-            r"Mr Eric/Praline",
-            r"Mr_Eric_Praline",
+            r"/Mr Eric Praline",
             r"Mr% Eric Pr#ali&ne",
         ],
     )
@@ -68,8 +65,12 @@ class TestClean:
         [
             ("Dinsdale", "dinsdale"),
             ("(Dinsdale)", "(dinsdale)"),
-            ("-Dinsdale-", "-dinsdale-"),
-            ("'Dins'dale'", "'dins'dale'"),
+            ("Dins-dale-", "dins-dale"),
+            ("Dins/dale-", "dins-dale"),
+            ("Dins_dale-", "dins-dale"),
+            ("Dins'dale", "dins'dale"),
+            ("'Dinsdale'", "'dinsdale'"),
+            ('"Dinsdale"', '"dinsdale"'),
         ],
     )
     def t_keep_certain_symbols(self, raw, cooked):
@@ -79,10 +80,9 @@ class TestClean:
         "raw, cooked",
         [
             ("Dinsdale-", "dinsdale"),
-            ("Dinsdale--", "dinsdale"),
-            ("Dinsdale--", "dinsdale"),
+            ("--Dinsdale--", "dinsdale"),
+            ("---Dinsdale-", "dinsdale"),
         ],
     )
-    @pytest.mark.xfail(reason="Unimplemented")
     def t_strip_margin_symbols(self, raw, cooked):
         assert clean(raw) == cooked

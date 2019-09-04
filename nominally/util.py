@@ -28,13 +28,15 @@ def lc(value):
 def clean(
     s,
     lowercase=True,
-    replace_with_space=r"[\s/\\_]+",
-    replace_with_none=r"[^ \-A-Za-z'\"()]+",
+    substitute_hyphen=r"[-_/\\]+",
+    substitute_nothing=r"[^ \-A-Za-z'\"()]+",
 ):
     if not isinstance(s, str):
         return ""
     s = unidecode_expect_ascii(s)
-    s = re.sub(replace_with_space, " ", s)
-    s = re.sub(replace_with_none, "", s)
-    s = s.lower().strip()
-    return s
+    s = re.sub(substitute_hyphen, "-", s)
+    s = re.sub(substitute_nothing, "", s)
+    s = re.sub(r"\s+", " ", s)
+    s = s.strip("-")
+    s = s.strip(" ")
+    return s.lower()
