@@ -6,40 +6,6 @@
         "last": "aznar y lopez"
     },
     {
-        "id": "test_multiple_conjunctions",
-        "raw": "part1 of the part2 of the part3 and part4",
-        "first": "part1 of the part2 of the part3 and part4"
-    },
-    {
-        "id": "test_multiple_conjunctions2",
-        "raw": "part1 of and the part2 of the part3 and part4",
-        "first": "part1 of and the part2 of the part3 and part4"
-    },
-    {
-        "id": "test_ends_with_conjunction",
-        "raw": "jon dough and",
-        "first": "jon",
-        "last": "dough and"
-    },
-    {
-        "id": "test_ends_with_two_conjunctions",
-        "raw": "jon dough and of",
-        "first": "jon",
-        "last": "dough and of"
-    },
-    {
-        "id": "test_starts_with_conjunction",
-        "raw": "and jon dough",
-        "first": "and jon",
-        "last": "dough"
-    },
-    {
-        "id": "test_starts_with_two_conjunctions",
-        "raw": "the and jon dough",
-        "first": "the and jon",
-        "last": "dough"
-    },
-    {
         "id": "test_uppercase_middle_initial_conflict_with_conjunction_upper_means_initial",
         "raw": "john e smith",
         "first": "john",
@@ -106,31 +72,6 @@
         "last": "v"
     },
     {
-        "id": "test124_rev_title",
-        "raw": "rev. john a. kenneth doe",
-        "title": "rev.",
-        "middle": "a. kenneth",
-        "first": "john",
-        "last": "doe"
-    },
-    {
-        "id": "test125_rev_title",
-        "raw": "rev john a. kenneth doe",
-        "title": "rev",
-        "middle": "a. kenneth",
-        "first": "john",
-        "last": "doe"
-    },
-    {
-        "id": "test126_rev_title",
-        "raw": "doe, rev. john a. jr.",
-        "title": "rev.",
-        "first": "john",
-        "last": "doe",
-        "middle": "a.",
-        "suffix": "jr."
-    },
-    {
         "id": "test127",
         "raw": "buca di beppo",
         "first": "buca",
@@ -150,14 +91,10 @@
         "last": "le"
     },
     {
-        "id": "test_conjunction_in_an_address_with_a_title",
-        "raw": "his excellency lord duncan",
-        "title": "his excellency lord",
-        "last": "duncan"
-    },
-    {
-        "id": "test_name_is_conjunctions",
-        "raw": "e and e",
-        "first": "e and e"
+        "id": "test_y_middle_initial",
+        "raw": "doug y piranha",
+        "first": "doug",
+        "middle": "y",
+        "last": "piranha"
     }
 ]

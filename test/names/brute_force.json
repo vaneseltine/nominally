@@ -745,61 +745,11 @@
         "suffix": "iii"
     },
     {
-        "raw": "john doe, clu, cfp, lutc",
-        "first": "john",
-        "last": "doe",
-        "suffix": "clu, cfp, lutc"
-    },
-    {
-        "raw": "john p. doe, clu, cfp, lutc",
-        "first": "john",
-        "middle": "p.",
-        "last": "doe",
-        "suffix": "clu, cfp, lutc"
-    },
-    {
-        "raw": "dr. john p. doe-ray, clu, cfp, lutc",
-        "first": "john",
-        "middle": "p.",
-        "last": "doe-ray",
+        "raw": "dr. barrington p. doe-ray, jr.",
         "title": "dr.",
-        "suffix": "clu, cfp, lutc"
-    },
-    {
-        "raw": "doe-ray, dr. john p., clu, cfp, lutc",
-        "title": "dr.",
-        "middle": "p.",
-        "first": "john",
-        "last": "doe-ray",
-        "suffix": "clu, cfp, lutc"
-    },
-    {
-        "raw": "hon. barrington p. doe-ray, jr.",
-        "title": "hon.",
         "middle": "p.",
         "first": "barrington",
         "last": "doe-ray",
         "suffix": "jr."
-    },
-    {
-        "raw": "doe-ray, hon. barrington p. jr., cfp, lutc",
-        "title": "hon.",
-        "middle": "p.",
-        "first": "barrington",
-        "last": "doe-ray",
-        "suffix": "jr., cfp, lutc"
-    },
-    {
-        "raw": "rt. hon. paul e. mary",
-        "title": "rt. hon.",
-        "first": "paul",
-        "middle": "e.",
-        "last": "mary"
-    },
-    {
-        "raw": "lord god almighty",
-        "title": "lord",
-        "first": "god",
-        "last": "almighty"
     }
 ]

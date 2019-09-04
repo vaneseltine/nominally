@@ -6,6 +6,12 @@
         "last": "doctor"
     },
     {
+        "id": "test_last_name_also_prefix",
+        "raw": "jane doctor",
+        "first": "jane",
+        "last": "doctor"
+    },
+    {
         "id": "test_last_name_is_also_title",
         "raw": "amy e maid",
         "first": "amy",
@@ -22,153 +28,15 @@
         "suffix": "jr."
     },
     {
-        "id": "test_last_name_is_also_title_with_comma",
-        "raw": "duke martin luther king, jr.",
-        "title": "duke",
-        "first": "martin",
-        "middle": "luther",
-        "last": "king",
-        "suffix": "jr."
-    },
-    {
-        "id": "test_last_name_is_also_title3",
-        "raw": "john king",
-        "first": "john",
-        "last": "king"
-    },
-    {
-        "id": "test_title_with_conjunction",
-        "raw": "secretary of state hillary clinton",
-        "title": "secretary of state",
-        "first": "hillary",
-        "last": "clinton"
-    },
-    {
-        "id": "test_compound_title_with_conjunction",
-        "raw": "cardinal secretary of state hillary clinton",
-        "title": "cardinal secretary of state",
-        "first": "hillary",
-        "last": "clinton"
-    },
-    {
-        "id": "test_title_is_title",
-        "raw": "coach",
-        "title": "coach"
-    },
-    {
-        "id": "test_conflict_with_chained_title_first_name_initial",
-        "raw": "u. s. grant",
-        "first": "u.",
-        "middle": "s.",
-        "last": "grant"
-    },
-    {
-        "id": "test_chained_title_first_name_initial_with_no_period",
-        "raw": "us magistrate judge t michael putnam",
-        "title": "us magistrate judge",
-        "first": "t",
-        "middle": "michael",
-        "last": "putnam"
-    },
-    {
-        "id": "test_chained_hyphenated_title",
-        "raw": "us magistrate-judge elizabeth e campbell",
-        "title": "us magistrate-judge",
-        "first": "elizabeth",
-        "middle": "e",
-        "last": "campbell"
-    },
-    {
-        "id": "test_chained_hyphenated_title_with_comma_suffix",
-        "raw": "mag-judge harwell g davis, iii",
-        "title": "mag-judge",
-        "first": "harwell",
-        "middle": "g",
-        "last": "davis",
-        "suffix": "iii"
-    },
-    {
-        "id": "test_title_starts_with_conjunction",
-        "raw": "the rt hon john jones",
-        "title": "the rt hon",
-        "first": "john",
-        "last": "jones"
-    },
-    {
-        "id": "test_conjunction_before_title",
-        "raw": "the lord of the universe",
-        "title": "the lord of the universe"
-    },
-    {
-        "id": "test_double_conjunction_on_title",
-        "raw": "lord of the universe",
-        "title": "lord of the universe"
-    },
-    {
-        "id": "test_triple_conjunction_on_title",
-        "raw": "lord and of the universe",
-        "title": "lord and of the universe"
-    },
-    {
-        "id": "test_multiple_conjunctions_on_multiple_titles",
-        "raw": "lord of the universe and associate supreme queen of the world lisa simpson",
-        "title": "lord of the universe and associate supreme queen of the world",
-        "first": "lisa",
-        "last": "simpson"
-    },
-    {
-        "id": "test_title_with_last_initial_is_suffix",
-        "raw": "king john v.",
-        "title": "king",
-        "first": "john",
-        "last": "v."
-    },
-    {
         "id": "test_initials_also_suffix",
         "raw": "smith, j.r.",
         "first": "j.r.",
         "last": "smith"
     },
     {
-        "id": "test_two_title_parts_separated_by_periods",
-        "raw": "lt.gen. john a. kenneth doe iv",
-        "title": "lt.gen.",
-        "first": "john",
-        "last": "doe",
-        "middle": "a. kenneth",
-        "suffix": "iv"
-    },
-    {
-        "id": "test_two_part_title",
-        "raw": "lt. gen. john a. kenneth doe iv",
-        "title": "lt. gen.",
-        "first": "john",
-        "last": "doe",
-        "middle": "a. kenneth",
-        "suffix": "iv"
-    },
-    {
-        "id": "test_two_part_title_with_lastname_comma",
-        "raw": "doe, lt. gen. john a. kenneth iv",
-        "title": "lt. gen.",
-        "first": "john",
-        "last": "doe",
-        "middle": "a. kenneth",
-        "suffix": "iv"
-    },
-    {
-        "id": "test_two_part_title_with_suffix_comma",
-        "raw": "lt. gen. john a. kenneth doe, jr.",
-        "title": "lt. gen.",
-        "first": "john",
-        "last": "doe",
-        "middle": "a. kenneth",
-        "suffix": "jr."
-    },
-    {
         "id": "test_possible_conflict_with_middle_initial_that_could_be_suffix",
-        "raw": "doe, rev. john v, jr.",
-        "title": "rev.",
+        "raw": "doe, dr. john v, jr.",
+        "title": "dr.",
         "first": "john",
         "last": "doe",
         "middle": "v",
@@ -176,8 +44,8 @@
     },
     {
         "id": "test_possible_conflict_with_suffix_that_could_be_initial",
-        "raw": "doe, rev. john a., v, jr.",
-        "title": "rev.",
+        "raw": "doe, dr. john a., v, jr.",
+        "title": "dr.",
         "first": "john",
         "last": "doe",
         "middle": "a.",
@@ -202,19 +70,5 @@
         "first": "alex",
         "middle": "ben",
         "last": "johnson"
-    },
-    {
-        "id": "test_title_with_periods",
-        "raw": "lt.gov. john doe",
-        "title": "lt.gov.",
-        "first": "john",
-        "last": "doe"
-    },
-    {
-        "id": "test_title_with_periods_lastname_comma",
-        "raw": "doe, lt.gov. john",
-        "title": "lt.gov.",
-        "first": "john",
-        "last": "doe"
     }
 ]

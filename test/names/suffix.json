@@ -2,10 +2,18 @@
     {
         "id": "test_two_suffixes",
         "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
-        "raw": "kenneth clarke qc mp",
+        "raw": "kenneth clarke msc phd",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "qc, mp"
+        "suffix": "msc, phd"
+    },
+    {
+        "id": "test_three_suffixes",
+        "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
+        "raw": "kenneth clarke msc md phd",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "msc, md, phd"
     },
     {
         "id": "test_two_suffixes_lastname_comma_format",
@@ -24,10 +32,10 @@
     },
     {
         "id": "test_suffix_with_periods",
-        "raw": "joe dentist d.d.s.",
+        "raw": "joe dentist ph.d.",
         "first": "joe",
         "last": "dentist",
-        "suffix": "d.d.s."
+        "suffix": "ph.d."
     },
     {
         "id": "test_two_suffixes_suffix_comma_format",
@@ -38,24 +46,24 @@
     },
     {
         "id": "test_suffix_containing_periods",
-        "raw": "kenneth clarke q.c.",
+        "raw": "kenneth clarke m.s.c.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "q.c."
+        "suffix": "m.s.c."
     },
     {
         "id": "test_suffix_containing_periods_lastname_comma_format",
-        "raw": "clarke, kenneth, q.c. m.p.",
+        "raw": "clarke, kenneth, m.s.c. ph.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "q.c. m.p."
+        "suffix": "m.s.c. ph.d."
     },
     {
         "id": "test_suffix_containing_periods_suffix_comma_format",
-        "raw": "kenneth clarke q.c., m.p.",
+        "raw": "kenneth clarke m.s.c., ph.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "q.c., m.p."
+        "suffix": "m.s.c., ph.d."
     },
     {
         "id": "test_suffix_with_single_comma_format",
@@ -102,26 +110,5 @@
         "raw": "johnson, bart",
         "first": "bart",
         "last": "johnson"
-    },
-    {
-        "id": "test_multiple_letter_suffix_with_periods",
-        "raw": "john doe msc.ed.",
-        "first": "john",
-        "last": "doe",
-        "suffix": "msc.ed."
-    },
-    {
-        "id": "test_suffix_with_periods_with_comma",
-        "raw": "john doe, msc.ed.",
-        "first": "john",
-        "last": "doe",
-        "suffix": "msc.ed."
-    },
-    {
-        "id": "test_suffix_with_periods_with_lastname_comma",
-        "raw": "doe, john msc.ed.",
-        "first": "john",
-        "last": "doe",
-        "suffix": "msc.ed."
     }
 ]

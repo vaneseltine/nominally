@@ -13,8 +13,8 @@
     },
     {
         "id": "test_assume_title_and_one_other_name_is_last_name",
-        "raw": "rev andrews",
-        "title": "rev",
+        "raw": "dr andrews",
+        "title": "dr",
         "last": "andrews"
     },
     {
@@ -23,30 +23,6 @@
         "last": "smith",
         "first": "john",
         "suffix": "jr."
-    },
-    {
-        "id": "test_sir_exception_to_first_name_rule",
-        "raw": "sir gerald",
-        "title": "sir",
-        "first": "gerald"
-    },
-    {
-        "id": "test_king_exception_to_first_name_rule",
-        "raw": "king henry",
-        "title": "king",
-        "first": "henry"
-    },
-    {
-        "id": "test_queen_exception_to_first_name_rule",
-        "raw": "queen elizabeth",
-        "title": "queen",
-        "first": "elizabeth"
-    },
-    {
-        "id": "test_dame_exception_to_first_name_rule",
-        "raw": "dame mary",
-        "title": "dame",
-        "first": "mary"
     },
     {
         "id": "test_first_name_is_not_prefix_if_only_two_parts_comma",

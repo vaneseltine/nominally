@@ -5,13 +5,14 @@ The key benefit is that **nominally** narrowly maximizes on parsing
 lists of decently well-formed single name fields. Therefore, **nominally**
 does *not* support:
 
-1. Easy customization of lists of name parts
-2. Parsing multiple names from a single field
-3. Lengthy and carefully curated built-in titles for many occasions
-4. Encoding other than UTF-8
-5. Very much extensibility
-6. Byte input
-7. Python < 3.6
+- Mutability of HumanName
+- Easy customization of lists of name parts
+- Parsing multiple names from a single field
+- Most titles
+- Mononyms; i.e., input names expected to output only a single field
+- Encoding other than UTF-8
+- Input from byte strings
+- Python < 3.6
 
 <!-- Della, Abu, Doctor... -->
 
@@ -20,3 +21,7 @@ Whereas I gain:
 1. Easier maintainability (relative to keeping a closer fork).
 2. Improved testing suite (via pytest).
 3. Improved formatting (flake8, black across the board).
+
+## TODO
+
+Allow for 'y' and 'e' conjunctions within last names
