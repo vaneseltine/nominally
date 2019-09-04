@@ -11,6 +11,13 @@ def parse():
         print("Usage: nominally Mr. Eric Praline")
         return 1
     name = Name(raw_name)
-    print(str(name))
-    print(name.as_dict())
+    d = {"raw": raw_name, "parsed": str(name)}
+    d.update(name.as_dict())
+    prettier_print(d)
     return 0
+
+
+def prettier_print(d):
+    """pprint.pprint unacceptably sorts"""
+    for k, v in d.items():
+        print(f"{k:>10}: {v}")

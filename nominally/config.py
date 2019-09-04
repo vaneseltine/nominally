@@ -64,4 +64,3 @@ PREFIXES = {
     "vel",
     "von",
 }
-

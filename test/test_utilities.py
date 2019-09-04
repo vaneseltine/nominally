@@ -76,7 +76,6 @@ class TestCleanName:
             ("Dins_dale-", "dins-dale"),
             ("Dins'dale", "dins'dale"),
             ("'Dinsdale'", "'dinsdale'"),
-            ('"Dinsdale"', '"dinsdale"'),
         ],
     )
     def t_keep_certain_symbols(self, raw, cooked):

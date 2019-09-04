@@ -65,10 +65,7 @@ class Name:
         return self
 
     def __len__(self):
-        l = 0
-        for x in self:
-            l += 1
-        return l
+        return len([v for k, v in self.as_dict().items() if v])
 
     def __eq__(self, other):
         if self.unparsable:
@@ -88,7 +85,6 @@ class Name:
             return getattr(self, self._members[c]) or next(self)
 
     def __str__(self):
-        # STRING_FORMAT = "{title} {first} {middle} {last} {suffix} ({nickname})"
         s = " ".join(
             x
             for x in [self.title, self.first, self.middle, self.last, self.suffix]
@@ -106,41 +102,6 @@ class Name:
     def as_dict(self, include_empty=True):
         """Return the parsed name as a dictionary of its attributes."""
         return {m: getattr(self, m) for m in self._members}
-
-    ### attributes
-
-    @property
-    def title(self):
-        return " ".join(self.title_list) or ""
-
-    @property
-    def first(self):
-        return " ".join(self.first_list) or ""
-
-    @property
-    def middle(self):
-        return " ".join(self.middle_list) or ""
-
-    @property
-    def last(self):
-        return " ".join(self.last_list) or ""
-
-    @property
-    def suffix(self):
-        return ", ".join(self.suffix_list) or ""
-
-    @property
-    def nickname(self):
-        return " ".join(self.nickname_list) or ""
-
-    @property
-    def unparsable(self):
-        return len(self) == 0
-
-    @property
-    def full_name(self):
-        """The string output of the Name instance."""
-        return str(self)
 
     def pre_process(self):
         """
@@ -215,8 +176,8 @@ class Name:
 
         if len(parts) == 1:
 
-            # no commas, title first middle middle middle last suffix
-            #            part[0]
+            # ~ no commas, title first middle middle middle last suffix
+            # ~           part[0]
 
             pieces = self.parse_pieces(parts, additional_parts_count=0)
             p_len = len(pieces)
@@ -259,8 +220,8 @@ class Name:
             if are_suffixes(parts[1].split(" ")) and len(parts[0].split(" ")) > 1:
 
                 # suffix comma:
-                # title first middle last [suffix], suffix [suffix] [, suffix]
-                #               parts[0],          parts[1:...]
+                # * title first middle last [suffix], suffix [suffix] [, suffix]
+                # *               parts[0],          parts[1:...]
 
                 self.suffix_list += parts[1:]
                 pieces = self.parse_pieces(
@@ -290,8 +251,8 @@ class Name:
             else:
 
                 # lastname comma:
-                # last [suffix], title first middles[,] suffix [,suffix]
-                #      parts[0],      parts[1],              parts[2:...]
+                # * last [suffix], title first middles[,] suffix [,suffix]
+                # *     parts[0],      parts[1],              parts[2:...]
                 pieces = self.parse_pieces(
                     parts[1].split(" "), additional_parts_count=1
                 )
@@ -455,6 +416,39 @@ class Name:
             logger.debug("Not expecting to arrive at only one piece; throwing back")
             return original
         return pieces
+
+    @property
+    def title(self):
+        return " ".join(self.title_list) or ""
+
+    @property
+    def first(self):
+        return " ".join(self.first_list) or ""
+
+    @property
+    def middle(self):
+        return " ".join(self.middle_list) or ""
+
+    @property
+    def last(self):
+        return " ".join(self.last_list) or ""
+
+    @property
+    def suffix(self):
+        return ", ".join(self.suffix_list) or ""
+
+    @property
+    def nickname(self):
+        return " ".join(self.nickname_list) or ""
+
+    @property
+    def unparsable(self):
+        return len(self) == 0
+
+    @property
+    def full_name(self):
+        """The string output of the Name instance."""
+        return str(self)
 
 
 def collapse_whitespace(s):
