@@ -41,8 +41,6 @@ from nominally.config.titles import TITLES
 from nominally.config.titles import FIRST_NAME_TITLES
 from nominally.config.regexes import REGEXES
 
-DEFAULT_ENCODING = "UTF-8"
-
 
 class SetManager(abc.Set):
     """
@@ -86,26 +84,13 @@ class SetManager(abc.Set):
             self.count = c + 1
             return getattr(self, self.elements[c]) or next(self)
 
-    def add_with_encoding(self, s, encoding=None):
-        """
-        Add the lower case and no-period version of the string to the set. Pass an
-        explicit `encoding` parameter to specify the encoding of binary strings that
-        are not DEFAULT_ENCODING (UTF-8).
-        """
-        stdin_encoding = None
-        if sys.stdin:
-            stdin_encoding = sys.stdin.encoding
-        encoding = encoding or stdin_encoding or DEFAULT_ENCODING
-        if type(s) == binary_type:
-            s = s.decode(encoding)
-        self.elements.add(lc(s))
-
     def add(self, *strings):
         """
         Add the lower case and no-period version of the string arguments to the set.
         Can pass a list of strings. Returns ``self`` for chaining.
         """
-        [self.add_with_encoding(s) for s in strings]
+        for s in strings:
+            self.elements.add(lc(s))
         return self
 
     def remove(self, *strings):

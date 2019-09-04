@@ -3,10 +3,8 @@ from itertools import groupby
 from operator import itemgetter
 
 from nominally import util
-from nominally.config import CONSTANTS, DEFAULT_ENCODING, Constants
+from nominally.config import CONSTANTS, Constants
 from nominally.util import binary_type, lc, log, text_types, u
-
-ENCODING = "utf-8"
 
 
 def group_contiguous_integers(data):
@@ -41,14 +39,9 @@ class HumanName(object):
     * :py:attr:`surnames`
 
     :param str full_name: The name string to be parsed.
-    :param constants constants:
-        a :py:class:`~nominally.config.Constants` instance. Pass ``None`` for
-        `per-instance config <customize.html>`_.
-    :param str encoding: string representing the encoding of your input
     :param str string_format: python string formatting
     """
 
-    C = CONSTANTS
     """
     A reference to the configuration for this instance, which may or may not be
     a reference to the shared, module-wide instance at
@@ -59,22 +52,12 @@ class HumanName(object):
     _count = 0
     _members = ["title", "first", "middle", "last", "suffix", "nickname"]
 
-    def __init__(
-        self,
-        full_name="",
-        constants=CONSTANTS,
-        encoding=DEFAULT_ENCODING,
-        string_format=None,
-    ):
+    def __init__(self, full_name="", constants=CONSTANTS, string_format=None):
         self.original = ""
         self._full_name = ""
         self.unparsable = True
-        self.C = constants
-        if type(self.C) is not type(CONSTANTS):
-            self.C = Constants()
 
-        self.encoding = encoding
-        self.string_format = string_format or self.C.string_format
+        self.string_format = string_format or CONSTANTS.string_format
         # full_name setter triggers the parse
         self.full_name = full_name
 
@@ -177,14 +160,6 @@ class HumanName(object):
                 if val:
                     d[m] = val
         return d
-
-    @property
-    def has_own_config(self):
-        """
-        True if this instance is not using the shared module-level
-        configuration.
-        """
-        return self.C is not CONSTANTS
 
     ### attributes
 
@@ -299,18 +274,18 @@ class HumanName(object):
 
     def is_title(self, value):
         """Is in the :py:data:`~nominally.config.titles.TITLES` set."""
-        return lc(value) in self.C.titles
+        return lc(value) in CONSTANTS.titles
 
     def is_conjunction(self, piece):
         """Is in the conjuctions set and not :py:func:`is_an_initial()`."""
-        return piece.lower() in self.C.conjunctions and not self.is_an_initial(piece)
+        return piece.lower() in CONSTANTS.conjunctions and not self.is_an_initial(piece)
 
     def is_prefix(self, piece):
         """
         Lowercase and no periods version of piece is in the
         :py:data:`~nominally.config.prefixes.PREFIXES` set.
         """
-        return lc(piece) in self.C.prefixes
+        return lc(piece) in CONSTANTS.prefixes
 
     def is_roman_numeral(self, value):
         """
@@ -318,7 +293,7 @@ class HumanName(object):
         :py:data:`~nominally.config.regexes.REGEXES`.
         """
         return False
-        return bool(self.C.regexes.roman_numeral.match(value))
+        return bool(CONSTANTS.regexes.roman_numeral.match(value))
 
     def is_suffix(self, piece):
         """
@@ -330,8 +305,8 @@ class HumanName(object):
         """
         # suffixes may have periods inside them like "M.D."
         return (
-            (lc(piece).replace(".", "") in self.C.suffix_acronyms)
-            or (lc(piece) in self.C.suffix_not_acronyms)
+            (lc(piece).replace(".", "") in CONSTANTS.suffix_acronyms)
+            or (lc(piece) in CONSTANTS.suffix_not_acronyms)
         ) and not self.is_an_initial(piece)
 
     def are_suffixes(self, pieces):
@@ -347,7 +322,7 @@ class HumanName(object):
         """
         return lc(
             piece
-        ) not in self.C.suffixes_prefixes_titles and not self.is_an_initial(piece)
+        ) not in CONSTANTS.suffixes_prefixes_titles and not self.is_an_initial(piece)
 
     def is_an_initial(self, value):
         """
@@ -356,7 +331,7 @@ class HumanName(object):
         Matches the ``initial`` regular expression in
         :py:data:`~nominally.config.regexes.REGEXES`.
         """
-        return bool(self.C.regexes.initial.match(value))
+        return bool(CONSTANTS.regexes.initial.match(value))
 
     ### full_name parser
 
@@ -369,13 +344,11 @@ class HumanName(object):
     def full_name(self, value):
         self.original = value
         self._full_name = value.lower()
-        if isinstance(value, binary_type):
-            self._full_name = value.decode(self.encoding)
         self.parse_full_name()
 
     def collapse_whitespace(self, string):
         # collapse multiple spaces into single space
-        string = self.C.regexes.spaces.sub(" ", string.strip())
+        string = CONSTANTS.regexes.spaces.sub(" ", string.strip())
         if string.endswith(","):
             string = string[:-1]
         return string
@@ -412,9 +385,9 @@ class HumanName(object):
         `quoted_word`, `double_quotes` and `parenthesis`.
         """
 
-        re_quoted_word = self.C.regexes.quoted_word
-        re_double_quotes = self.C.regexes.double_quotes
-        re_parenthesis = self.C.regexes.parenthesis
+        re_quoted_word = CONSTANTS.regexes.quoted_word
+        re_double_quotes = CONSTANTS.regexes.double_quotes
+        re_parenthesis = CONSTANTS.regexes.parenthesis
 
         for _re in (re_quoted_word, re_double_quotes, re_parenthesis):
             if _re.search(self._full_name):
@@ -434,7 +407,7 @@ class HumanName(object):
         if (
             self.title
             and len(self) == 2
-            and not lc(self.title) in self.C.first_name_titles
+            and not lc(self.title) in CONSTANTS.first_name_titles
         ):
             self.last, self.first = self.first, self.last
 
@@ -627,7 +600,7 @@ class HumanName(object):
         # constants so they get parsed correctly later
         for part in output:
             # if this part has a period not at the beginning or end
-            if self.C.regexes.period_not_at_end.match(part):
+            if CONSTANTS.regexes.period_not_at_end.match(part):
                 # split on periods, any of the split pieces titles or suffixes?
                 # ("Lt.Gov.")
                 period_chunks = part.split(".")
@@ -636,10 +609,10 @@ class HumanName(object):
 
                 # add the part to the constant so it will be found
                 if len(list(titles)):
-                    self.C.titles.add(part)
+                    CONSTANTS.titles.add(part)
                     continue
                 if len(list(suffixes)):
-                    self.C.suffix_not_acronyms.add(part)
+                    CONSTANTS.suffix_not_acronyms.add(part)
                     continue
 
         pieces = self.join_on_conjunctions(output, additional_parts_count)
@@ -703,7 +676,7 @@ class HumanName(object):
                 delete_i += [i + 1]
                 pieces[i] = new_piece
             # add newly joined conjunctions to constants to be found later
-            self.C.conjunctions.add(new_piece)
+            CONSTANTS.conjunctions.add(new_piece)
 
         for i in reversed(delete_i):
             # delete pieces in reverse order or the index changes on each delete
@@ -728,7 +701,7 @@ class HumanName(object):
                 new_piece = " ".join(pieces[i : i + 2])
                 if self.is_title(pieces[i + 1]):
                     # when joining to a title, make new_piece a title too
-                    self.C.titles.add(new_piece)
+                    CONSTANTS.titles.add(new_piece)
                 pieces[i] = new_piece
                 pieces.pop(i + 1)
                 # subtract 1 from the index of all the remaining conjunctions
@@ -740,7 +713,7 @@ class HumanName(object):
                 new_piece = " ".join(pieces[i - 1 : i + 2])
                 if self.is_title(pieces[i - 1]):
                     # when joining to a title, make new_piece a title too
-                    self.C.titles.add(new_piece)
+                    CONSTANTS.titles.add(new_piece)
                 pieces[i - 1] = new_piece
                 pieces.pop(i)
                 rm_count = 2
