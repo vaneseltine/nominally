@@ -127,14 +127,6 @@
         "suffix": "v"
     },
     {
-        "id": "test_four_name_parts_with_suffix_that_could_be_initial_uppercase_no_p",
-        "raw": "larry james johnson i",
-        "first": "larry",
-        "middle": "james",
-        "last": "johnson",
-        "suffix": "i"
-    },
-    {
         "id": "test_roman_numeral_initials_one",
         "raw": "larry v i",
         "first": "larry",

@@ -130,12 +130,9 @@ class HumanName(object):
             # string_format = "{title} {first} {middle} {last} {suffix} ({nickname})"
             _s = self.string_format.format(**self.as_dict())
             # remove trailing punctuation from missing nicknames
-            _s = (
-                _s.replace(str(self.C.empty_attribute_default), "")
-                .replace(" ()", "")
-                .replace(" ''", "")
-                .replace(' ""', "")
-            )
+            _s = _s.replace(" ()", "")
+            _s = _s.replace(" ''", "")
+            _s = _s.replace(' ""', "")
             return self.collapse_whitespace(_s).strip(", ")
         return " ".join(self)
 
@@ -210,7 +207,7 @@ class HumanName(object):
         :py:mod:`~nominally.config.conjunctions`
         at the beginning of :py:attr:`full_name`.
         """
-        return " ".join(self.title_list) or self.C.empty_attribute_default
+        return " ".join(self.title_list) or ""
 
     @property
     def first(self):
@@ -218,7 +215,7 @@ class HumanName(object):
         The person's first name. The first name piece after any known
         :py:attr:`title` pieces parsed from :py:attr:`full_name`.
         """
-        return " ".join(self.first_list) or self.C.empty_attribute_default
+        return " ".join(self.first_list) or ""
 
     @property
     def middle(self):
@@ -226,7 +223,7 @@ class HumanName(object):
         The person's middle names. All name pieces after the first name and
         before the last name parsed from :py:attr:`full_name`.
         """
-        return " ".join(self.middle_list) or self.C.empty_attribute_default
+        return " ".join(self.middle_list) or ""
 
     @property
     def last(self):
@@ -234,7 +231,7 @@ class HumanName(object):
         The person's last name. The last name piece parsed from
         :py:attr:`full_name`.
         """
-        return " ".join(self.last_list) or self.C.empty_attribute_default
+        return " ".join(self.last_list) or ""
 
     @property
     def suffix(self):
@@ -245,7 +242,7 @@ class HumanName(object):
         "Lastname, Title Firstname Middle[,] Suffix [, Suffix]" parsed
         from :py:attr:`full_name`.
         """
-        return ", ".join(self.suffix_list) or self.C.empty_attribute_default
+        return ", ".join(self.suffix_list) or ""
 
     @property
     def nickname(self):
@@ -253,7 +250,7 @@ class HumanName(object):
         The person's nicknames. Any text found inside of quotes (``""``) or
         parenthesis (``()``)
         """
-        return " ".join(self.nickname_list) or self.C.empty_attribute_default
+        return " ".join(self.nickname_list) or ""
 
     @property
     def surnames_list(self):
@@ -267,7 +264,7 @@ class HumanName(object):
         """
         A string of all middle names followed by the last name.
         """
-        return " ".join(self.surnames_list) or self.C.empty_attribute_default
+        return " ".join(self.surnames_list) or ""
 
     ### setter methods
 
@@ -331,6 +328,7 @@ class HumanName(object):
         Matches the ``roman_numeral`` regular expression in
         :py:data:`~nominally.config.regexes.REGEXES`.
         """
+        return False
         return bool(self.C.regexes.roman_numeral.match(value))
 
     def is_suffix(self, piece):
@@ -402,7 +400,6 @@ class HumanName(object):
         subclass. Runs :py:func:`parse_nicknames` and py:func:`squash_emoji`.
 
         """
-        self.fix_phd()
         self.parse_nicknames()
         self.squash_emoji()
         # self.thoroughly_clean()
@@ -413,13 +410,6 @@ class HumanName(object):
         all other processing has taken place. Runs :py:func:`handle_firstnames`.
         """
         self.handle_firstnames()
-
-    def fix_phd(self):
-        _re = self.C.regexes.phd
-        match = _re.search(self._full_name)
-        if match:
-            self.suffix_list.append(match.group(1))
-            self._full_name = _re.sub("", self._full_name)
 
     def parse_nicknames(self):
         """

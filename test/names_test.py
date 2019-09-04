@@ -26,9 +26,10 @@ def load_bank(category):
 
 def dict_entry_test(dict_entry):
     hn = HumanName(dict_entry["raw"])
+    print(hn)
     for attr in hn._members:
         actual = getattr(hn, attr)
-        expected = dict_entry.get(attr, CONSTANTS.empty_attribute_default)
+        expected = dict_entry.get(attr, "")
         assert actual == expected
 
 
@@ -72,15 +73,8 @@ class TestCoreFunctionality:
 
     def test_blank(self):
         # This can't be parametrized in the same way as test_basics, because
-        # CONSTANTS.empty_attribute_default is itself paramatrized at the module level
-        dict_entry_test(
-            {
-                "id": "test_blank_name",
-                "raw": "",
-                "first": CONSTANTS.empty_attribute_default,
-                "last": CONSTANTS.empty_attribute_default,
-            }
-        )
+        # "" is itself paramatrized at the module level
+        dict_entry_test({"id": "test_blank_name", "raw": "", "first": "", "last": ""})
 
     def test_string_output(self,):
         hn = HumanName("de la Véña, Jüan")
@@ -163,13 +157,7 @@ class TestCoreFunctionality:
     def test_slice(self):
         hn = HumanName("Doe-Ray, Dr. John P., CLU, CFP, LUTC")
         assert list(hn), ["Dr.", "John", "P.", "Doe-Ray", "CLU, CFP, LUTC"]
-        assert hn[1:] == [
-            "John",
-            "P.",
-            "Doe-Ray",
-            "CLU, CFP, LUTC",
-            hn.C.empty_attribute_default,
-        ]
+        assert hn[1:] == ["John", "P.", "Doe-Ray", "CLU, CFP, LUTC", ""]
         assert hn[1:-2], ["John", "P.", "Doe-Ray"]
 
     def test_getitem(self):
@@ -198,26 +186,6 @@ class TestCoreFunctionality:
     def test_surnames_attribute(self):
         hn = HumanName("John Edgar Casey Williams III")
         assert hn.surnames == "Edgar Casey Williams"
-
-
-class TestPickle:
-
-    try:
-        import dill
-
-        no_dill = False
-    except ImportError:
-        no_dill = True
-
-    @pytest.mark.skipif(no_dill, reason="requires python-dill module to test pickling")
-    def test_config_pickle(self):
-        constants = Constants()
-        self.dill.pickles(constants)
-
-    @pytest.mark.skipif(no_dill, reason="requires python-dill module to test pickling")
-    def test_name_instance_pickle(self):
-        hn = HumanName("Title First Middle Middle Last, Jr.")
-        self.dill.pickles(hn)
 
 
 class TestHumanNameBruteForce:
@@ -277,108 +245,6 @@ class TestHumanNameConjunction:
         assert hn.first == "Elizabeth"
 
 
-class TestConstantsCustomization:
-    def test_add_title(self):
-        hn = HumanName("Te Awanui-a-Rangi Black", constants=None)
-        start_len = len(hn.C.titles)
-        assert start_len > 0
-        hn.C.titles.add("te")
-        assert start_len + 1 == len(hn.C.titles)
-        hn.parse_full_name()
-        assert hn.title == "Te"
-        assert hn.first == "Awanui-a-Rangi"
-        assert hn.last == "Black"
-
-    def test_remove_title(self):
-        hn = HumanName("Hon Solo", constants=None)
-        start_len = len(hn.C.titles)
-        assert start_len > 0
-        hn.C.titles.remove("hon")
-        assert start_len - 1 == len(hn.C.titles)
-        hn.parse_full_name()
-        assert hn.first == "Hon"
-        assert hn.last == "Solo"
-
-    def test_add_multiple_arguments(self):
-        hn = HumanName("Assoc Dean of Chemistry Robert Johns", constants=None)
-        hn.C.titles.add("dean", "Chemistry")
-        hn.parse_full_name()
-        assert hn.title == "Assoc Dean of Chemistry"
-        assert hn.first == "Robert"
-        assert hn.last == "Johns"
-
-    def test_instances_can_have_own_constants(self):
-        hn = HumanName("", None)
-        hn2 = HumanName("")
-        hn.C.titles.remove("hon")
-        assert "hon" not in hn.C.titles
-        assert hn.has_own_config
-        assert "hon" in hn2.C.titles
-        assert not hn2.has_own_config
-
-    def test_can_change_global_constants(self):
-        hn = HumanName("")
-        hn2 = HumanName("")
-        hn.C.titles.remove("hon")
-        assert "hon" not in hn.C.titles
-        assert "hon" not in hn2.C.titles
-        assert not hn.has_own_config
-        assert not hn2.has_own_config
-        # clean up so we don't mess up other tests
-        hn.C.titles.add("hon")
-
-    def test_remove_multiple_arguments(self):
-        hn = HumanName("Ms Hon Solo", constants=None)
-        hn.C.titles.remove("hon", "ms")
-        hn.parse_full_name()
-        assert hn.first == "Ms"
-        assert hn.middle == "Hon"
-        assert hn.last == "Solo"
-
-    def test_chain_multiple_arguments(self):
-        hn = HumanName("Dean Ms Hon Solo", constants=None)
-        hn.C.titles.remove("hon", "ms").add("dean")
-        hn.parse_full_name()
-        assert hn.title == "Dean"
-        assert hn.first == "Ms"
-        assert hn.middle == "Hon"
-        assert hn.last == "Solo"
-
-    def test_empty_attribute_default(self):
-        from nominally.config import CONSTANTS
-
-        _orig = CONSTANTS.empty_attribute_default
-        CONSTANTS.empty_attribute_default = None
-        hn = HumanName("")
-        assert hn.title is None
-        assert hn.first is None
-        assert hn.middle is None
-        assert hn.last is None
-        assert hn.suffix is None
-        assert hn.nickname is None
-        CONSTANTS.empty_attribute_default = _orig
-
-    def test_empty_attribute_on_instance(self):
-        hn = HumanName("", None)
-        hn.C.empty_attribute_default = None
-        assert hn.title is None
-        assert hn.first is None
-        assert hn.middle is None
-        assert hn.last is None
-        assert hn.suffix is None
-        assert hn.nickname is None
-
-    def test_none_empty_attribute_string_formatting(self):
-        hn = HumanName("", None)
-        hn.C.empty_attribute_default = None
-        assert str(hn) == ""
-
-    def test_add_constant_with_explicit_encoding(self):
-        c = Constants()
-        c.titles.add_with_encoding(b"b\351ck", encoding="latin_1")
-        assert "béck" in c.titles
-
-
 class TestNickname:
     @pytest.mark.parametrize("entry", load_bank("nickname"), ids=lambda x: make_ids(x))
     def test_json_nickname(self, entry):
@@ -389,7 +255,7 @@ class TestNickname:
         hn = HumanName("John Jones (Unknown)")
         assert hn.first == "John"
         assert hn.last == "Jones"
-        assert hn.nickname != CONSTANTS.empty_attribute_default
+        assert hn.nickname != ""
 
     # http://code.google.com/p/python-nominally/issues/detail?id=17
     # not testing nicknames because we don't actually care about Google Docs here
@@ -398,13 +264,13 @@ class TestNickname:
         assert hn.first == "John"
         assert hn.last == "Jones"
         assert hn.suffix == "Jr."
-        assert hn.nickname != CONSTANTS.empty_attribute_default
+        assert hn.nickname != ""
 
     @pytest.mark.xfail
     def test_nickname_and_last_name_with_title(self):
         hn = HumanName('Senator "Rick" Edmonds')
         assert hn.title == "Senator"
-        assert hn.first == CONSTANTS.empty_attribute_default
+        assert hn.first == ""
         assert hn.last == "Edmonds"
         assert hn.nickname == "Rick"
 
@@ -465,105 +331,6 @@ class TestTitle:
         assert hn.last == "ben Husain"
 
 
-class TestHumanNameOutputFormat:
-    def test_formatting_init_argument(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)", string_format="TEST1")
-        assert u(hn) == "TEST1"
-
-    def test_formatting_constants_attribute(self):
-        from nominally.config import CONSTANTS
-
-        _orig = CONSTANTS.string_format
-        CONSTANTS.string_format = "TEST2"
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        assert u(hn) == "TEST2"
-        CONSTANTS.string_format = _orig
-
-    def test_quote_nickname_formating(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        hn.string_format = "{title} {first} {middle} {last} {suffix} '{nickname}'"
-        assert u(hn) == "Rev John A. Kenneth Doe III 'Kenny'"
-        hn.string_format = "{last}, {title} {first} {middle}, {suffix} '{nickname}'"
-        assert u(hn) == "Doe, Rev John A. Kenneth, III 'Kenny'"
-
-    def test_formating_removing_keys_from_format_string(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        hn.string_format = "{title} {first} {middle} {last} {suffix} '{nickname}'"
-        assert u(hn) == "Rev John A. Kenneth Doe III 'Kenny'"
-        hn.string_format = "{last}, {title} {first} {middle}, {suffix}"
-        assert u(hn) == "Doe, Rev John A. Kenneth, III"
-        hn.string_format = "{last}, {title} {first} {middle}"
-        assert u(hn) == "Doe, Rev John A. Kenneth"
-        hn.string_format = "{last}, {first} {middle}"
-        assert u(hn) == "Doe, John A. Kenneth"
-        hn.string_format = "{last}, {first}"
-        assert u(hn) == "Doe, John"
-        hn.string_format = "{first} {last}"
-        assert u(hn) == "John Doe"
-
-    def test_formating_removing_pieces_from_name_buckets(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        hn.string_format = "{title} {first} {middle} {last} {suffix} '{nickname}'"
-        assert u(hn) == "Rev John A. Kenneth Doe III 'Kenny'"
-        hn.string_format = "{title} {first} {middle} {last} {suffix}"
-        assert u(hn) == "Rev John A. Kenneth Doe III"
-        hn.middle = ""
-        assert u(hn) == "Rev John Doe III"
-        hn.suffix = ""
-        assert u(hn) == "Rev John Doe"
-        hn.title = ""
-        assert u(hn) == "John Doe"
-
-    def test_formating_of_nicknames_with_parenthesis(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        hn.string_format = "{title} {first} {middle} {last} {suffix} ({nickname})"
-        assert u(hn) == "Rev John A. Kenneth Doe III (Kenny)"
-        hn.nickname = ""
-        assert u(hn) == "Rev John A. Kenneth Doe III"
-
-    def test_formating_of_nicknames_with_single_quotes(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        hn.string_format = "{title} {first} {middle} {last} {suffix} '{nickname}'"
-        assert u(hn) == "Rev John A. Kenneth Doe III 'Kenny'"
-        hn.nickname = ""
-        assert u(hn) == "Rev John A. Kenneth Doe III"
-
-    def test_formating_of_nicknames_with_double_quotes(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        hn.string_format = '{title} {first} {middle} {last} {suffix} "{nickname}"'
-        assert u(hn) == 'Rev John A. Kenneth Doe III "Kenny"'
-        hn.nickname = ""
-        assert u(hn) == "Rev John A. Kenneth Doe III"
-
-    def test_formating_of_nicknames_in_middle(self):
-        hn = HumanName("Rev John A. Kenneth Doe III (Kenny)")
-        hn.string_format = "{title} {first} ({nickname}) {middle} {last} {suffix}"
-        assert u(hn) == "Rev John (Kenny) A. Kenneth Doe III"
-        hn.nickname = ""
-        assert u(hn) == "Rev John A. Kenneth Doe III"
-
-    def test_remove_emojis(self):
-        hn = HumanName("Sam Smith 😊")
-        assert hn.first == "Sam"
-        assert hn.last == "Smith"
-        assert u(hn) == "Sam Smith"
-
-    def test_keep_non_emojis(self):
-        hn = HumanName("∫≜⩕ Smith 😊")
-        assert hn.first == "∫≜⩕"
-        assert hn.last == "Smith"
-        assert u(hn) == "∫≜⩕ Smith"
-
-    def test_keep_emojis(self):
-        constants = Constants()
-        constants.regexes.emoji = False
-        hn = HumanName("∫≜⩕ Smith😊", constants)
-        assert hn.first == "∫≜⩕"
-        assert hn.last == "Smith😊"
-        assert u(hn) == "∫≜⩕ Smith😊"
-        # test cleanup
-
-
 class TestHumanNameVariations:
     """Test automated variations of names in TEST_NAMES.
 
@@ -586,8 +353,6 @@ class TestHumanNameVariations:
                     ","
                 )[0]
             )
-        # format strings below require empty string
-        hn.C.empty_attribute_default = ""
         hn_dict = hn.as_dict()
         nocomma = HumanName(
             "{title} {first} {middle} {last} {suffix}".format(**hn_dict)

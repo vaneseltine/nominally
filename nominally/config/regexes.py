@@ -33,7 +33,6 @@ REGEXES = set(
         ("no_vowels", re.compile(r"^[^aeyiuo]+$", re.I | re.U)),
         ("period_not_at_end", re.compile(r".*\..+$", re.I | re.U)),
         ("emoji", re_emoji),
-        ("phd", re.compile(r"\s(ph\.?\s+d\.?)", re.I | re.U)),
     ]
 )
 """

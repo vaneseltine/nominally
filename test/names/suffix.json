@@ -72,19 +72,6 @@
         "suffix": "jr., md"
     },
     {
-        "id": "test_phd_with_erroneous_space",
-        "raw": "john smith, ph. d.",
-        "first": "john",
-        "last": "smith",
-        "suffix": "ph. d."
-    },
-    {
-        "id": "test_phd_conflict",
-        "raw": "adolph d",
-        "first": "adolph",
-        "last": "d"
-    },
-    {
         "id": "test_potential_suffix_that_is_also_last_name_with_suffix",
         "raw": "jack ma jr",
         "first": "jack",

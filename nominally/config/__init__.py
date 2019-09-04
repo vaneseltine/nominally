@@ -164,21 +164,6 @@ class Constants(object):
     """
     The default string format use for all new `HumanName` instances.
     """
-    empty_attribute_default = ""
-    """
-    Default return value for empty attributes.
-
-    .. doctest::
-
-        >>> from nominally.config import CONSTANTS
-        >>> CONSTANTS.empty_attribute_default = None
-        >>> name = HumanName("John Doe")
-        >>> name.title
-        None
-        >>>name.first
-        'John'
-
-    """
 
     def __init__(
         self,
