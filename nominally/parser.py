@@ -56,15 +56,8 @@ class HumanName(object):
     <customize.html>`_.
     """
 
-    original = ""
-    """
-    The original string, untouched by the parser.
-    """
-
     _count = 0
     _members = ["title", "first", "middle", "last", "suffix", "nickname"]
-    unparsable = True
-    _full_name = ""
 
     def __init__(
         self,
@@ -73,6 +66,9 @@ class HumanName(object):
         encoding=DEFAULT_ENCODING,
         string_format=None,
     ):
+        self.original = ""
+        self._full_name = ""
+        self.unparsable = True
         self.C = constants
         if type(self.C) is not type(CONSTANTS):
             self.C = Constants()
@@ -653,7 +649,8 @@ class HumanName(object):
                     self.C.suffix_not_acronyms.add(part)
                     continue
 
-        return self.join_on_conjunctions(output, additional_parts_count)
+        pieces = self.join_on_conjunctions(output, additional_parts_count)
+        return pieces
 
     def join_on_conjunctions(self, pieces, additional_parts_count=0):
         """
@@ -701,6 +698,8 @@ class HumanName(object):
         contiguous_conj_i = group_contiguous_integers(conj_index)
 
         delete_i = []
+        if contiguous_conj_i:
+            print(contiguous_conj_i)
         for i in contiguous_conj_i:
             if type(i) == tuple:
                 new_piece = " ".join(pieces[i[0] : i[1] + 1])
@@ -803,4 +802,5 @@ class HumanName(object):
                         pieces = pieces[:i] + [new_piece]
 
         log.debug("pieces: %s", pieces)
+        print(f"pieces: {pieces}")
         return pieces
