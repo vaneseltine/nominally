@@ -106,23 +106,8 @@ class HumanName(object):
 
     def __repr__(self):
         if self.unparsable:
-            _string = "<%(class)s : [ Unparsable ] >" % {
-                "class": self.__class__.__name__
-            }
-        else:
-            _string = (
-                "<%(class)s : [\n\ttitle: '%(title)s' \n\tfirst: '%(first)s' \n\tmiddle: '%(middle)s' \n\tlast: '%(last)s' \n\tsuffix: '%(suffix)s'\n\tnickname: '%(nickname)s'\n]>"
-                % {
-                    "class": self.__class__.__name__,
-                    "title": self.title or "",
-                    "first": self.first or "",
-                    "middle": self.middle or "",
-                    "last": self.last or "",
-                    "suffix": self.suffix or "",
-                    "nickname": self.nickname or "",
-                }
-            )
-        return _string
+            return f"<{self.__class__.__name__}: *Unparsable* >"
+        return f"<{self.__class__.__name__}: {self.as_dict()} >"
 
     def as_dict(self, include_empty=True):
         """Return the parsed name as a dictionary of its attributes."""
