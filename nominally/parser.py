@@ -206,15 +206,9 @@ class HumanName:
     def handle_firstnames(self):
         """
         If there are only two parts and one is a title, assume it's a last name
-        instead of a first name. e.g. Mr. Johnson. Unless it's a special title
-        like "Sir", then when it's followed by a single name that name is always
-        a first name.
+        instead of a first name. e.g. Mr. Johnson.
         """
-        if (
-            self.title
-            and len(self) == 2
-            and not lc(self.title) in CONSTANTS.first_name_titles
-        ):
+        if self.title and len(self) == 2:
             self.first_list, self.last_list = self.last_list, self.first_list
 
     def parse_full_name(self):
@@ -536,9 +530,7 @@ def is_rootname(piece):
     """
     Is not a known title, suffix or prefix. Just first, middle, last names.
     """
-    return lc(piece) not in CONSTANTS.suffixes_prefixes_titles and not is_an_initial(
-        piece
-    )
+    return not any((is_prefix(piece), is_an_initial(piece), is_suffix(piece)))
 
 
 def is_an_initial(value):

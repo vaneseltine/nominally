@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """pytest ./pytest/"""
 
 import json
@@ -15,11 +14,7 @@ TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 def load_bank(category):
     test_bank_file = (TEST_DATA_DIRECTORY / category).with_suffix(".json")
     test_bank = json.loads(test_bank_file.read_text(encoding="utf8"))
-    print(
-        "Loading {} cases for {} from {}.".format(
-            len(test_bank), category, test_bank_file.resolve()
-        )
-    )
+    print(f"Loading {len(test_bank)} cases for {category} from {test_bank_file}.")
     return test_bank
 
 
@@ -205,12 +200,6 @@ class TestSuffixes:
     def test_json_suffix(self, entry):
         dict_entry_test(entry)
 
-    # @pytest.mark.xfail()
-    def test_potential_suffix_that_is_also_first_name_comma_with_conjunction(self):
-        hn = HumanName("De la Vina, Bart")
-        assert hn.first == "bart"
-        assert hn.last == "de la vina"
-
 
 class TestTitle:
     @pytest.mark.parametrize("entry", load_bank("title"), ids=lambda x: make_ids(x))
@@ -219,13 +208,13 @@ class TestTitle:
 
 
 class TestHumanNameVariations:
-    """Test automated variations of names in TEST_NAMES.
+    """Test automated variations of raw names in the 'brute_force' bank.
 
     Helps test that the 3 code trees work the same"""
 
-    @pytest.mark.parametrize("name", load_bank("bare_names"))
+    @pytest.mark.parametrize("name", load_bank("brute_force"))
     def test_json_variations(self, name):
-        self.run_variations(name)
+        self.run_variations(name["raw"])
 
     def run_variations(self, name):
         """ Run several variations
