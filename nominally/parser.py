@@ -71,14 +71,7 @@ class HumanName(object):
         return l
 
     def __eq__(self, other):
-        """
-        HumanName instances are equal to other objects whose
-        lower case unicode representation is the same.
-        """
         return str(self).lower() == str(other).lower()
-
-    def __ne__(self, other):
-        return not (u(self)).lower() == (u(other)).lower()
 
     def __getitem__(self, key):
         if isinstance(key, slice):
