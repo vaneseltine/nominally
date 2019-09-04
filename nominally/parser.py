@@ -4,7 +4,7 @@ from operator import itemgetter
 
 from nominally import util
 from nominally.config import CONSTANTS, Constants
-from nominally.util import binary_type, lc, log, text_types, u
+from nominally.util import lc, log
 
 
 def group_contiguous_integers(data):
@@ -187,7 +187,7 @@ class HumanName(object):
     def _set_list(self, attr, value):
         if isinstance(value, list):
             val = value
-        elif isinstance(value, text_types):
+        elif isinstance(value, str):
             val = [value]
         elif value is None:
             val = []
@@ -445,7 +445,7 @@ class HumanName(object):
 
                 self.suffix_list += parts[1:]
                 pieces = self.parse_pieces(parts[0].split(" "))
-                log.debug("pieces: %s", u(pieces))
+                log.debug(f"pieces: {pieces}")
                 for i, piece in enumerate(pieces):
                     try:
                         nxt = pieces[i + 1]
@@ -477,7 +477,7 @@ class HumanName(object):
                 #      parts[0],      parts[1],              parts[2:...]
                 pieces = self.parse_pieces(parts[1].split(" "), 1)
 
-                log.debug("pieces: %s", u(pieces))
+                log.debug(f"pieces: {pieces}")
 
                 # lastname part may have suffixes in it
                 lastname_pieces = self.parse_pieces(parts[0].split(" "), 1)
@@ -542,10 +542,8 @@ class HumanName(object):
 
         output = []
         for part in parts:
-            if not isinstance(part, text_types):
-                raise TypeError(
-                    "Name parts must be strings. " "Got {0}".format(type(part))
-                )
+            if not isinstance(part, str):
+                raise TypeError(f"Name parts must be strings. Got {type(part)}")
             output += [x.strip(" ,") for x in part.split(" ")]
 
         # If part contains periods, check if it's multiple titles or suffixes

@@ -31,7 +31,6 @@ unexpected results. See `Customizing the Parser <customize.html>`_.
 from collections import abc
 import sys
 
-from nominally.util import binary_type
 from nominally.util import lc
 from nominally.config.prefixes import PREFIXES
 from nominally.config.conjunctions import CONJUNCTIONS

@@ -8,7 +8,6 @@ import pytest
 
 from nominally import HumanName
 from nominally.config import Constants, CONSTANTS
-from nominally.util import u
 
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
