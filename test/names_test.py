@@ -117,36 +117,6 @@ class TestCoreFunctionality:
         hn.first_list = ["larry"]
         assert hn.full_name == "larry williams"
 
-    def test_assignment_to_attribute(self):
-        hn = HumanName("John A. Kenneth Doe, Jr.")
-        hn.last = "de la vega"
-        assert hn.last == "de la vega"
-        hn.title = "test"
-        assert hn.title == "test"
-        hn.first = "test"
-        assert hn.first == "test"
-        hn.middle = "test"
-        assert hn.middle == "test"
-        hn.suffix = "test"
-        assert hn.suffix == "test"
-        with pytest.raises(TypeError):
-            hn.suffix = [["test"]]
-        with pytest.raises(TypeError):
-            hn.suffix = {"test": "test"}
-
-    def test_assign_list_to_attribute(self):
-        hn = HumanName("John A. Kenneth Doe, Jr.")
-        hn.title = ["test1", "test2"]
-        assert hn.title == "test1 test2"
-        hn.first = ["test3", "test4"]
-        assert hn.first == "test3 test4"
-        hn.middle = ["test5", "test6", "test7"]
-        assert hn.middle == "test5 test6 test7"
-        hn.last = ["test8", "test9", "test10"]
-        assert hn.last == "test8 test9 test10"
-        hn.suffix = ["test"]
-        assert hn.suffix == "test"
-
     def test_comparison_case_insensitive(self):
         hn1 = HumanName("Doe-Ray, Dr. John P., CLU, CFP, LUTC")
         hn2 = HumanName("dr. john p. doe-Ray, CLU, CFP, LUTC")
@@ -167,17 +137,6 @@ class TestCoreFunctionality:
         assert hn["last"] == "doe"
         assert hn["middle"] == "a. kenneth"
         assert hn["suffix"] == "jr."
-
-    def test_setitem(self):
-        hn = HumanName("Dr. John A. Kenneth Doe, Jr.")
-        hn["title"] = "test"
-        assert hn["title"] == "test"
-        hn["last"] = ["test", "test2"]
-        assert hn["last"] == "test test2"
-        with pytest.raises(TypeError):
-            hn["suffix"] = [["test"]]
-        with pytest.raises(TypeError):
-            hn["suffix"] = {"test": "test"}
 
     def test_surnames_list_attribute(self):
         hn = HumanName("John Edgar Casey Williams III")

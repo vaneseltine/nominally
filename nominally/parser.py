@@ -76,15 +76,6 @@ class HumanName:
         else:
             return getattr(self, key)
 
-    def __setitem__(self, key, value):
-        if key in self._members:
-            self._set_list(key, value)
-        else:
-            raise KeyError("Not a valid HumanName attribute", key)
-
-    def next(self):
-        return self.__next__()
-
     def __next__(self):
         if self._count >= len(self._members):
             self._count = 0
@@ -181,46 +172,6 @@ class HumanName:
         A string of all middle names followed by the last name.
         """
         return " ".join(self.surnames_list) or ""
-
-    ### setter methods
-
-    def _set_list(self, attr, value):
-        if isinstance(value, list):
-            val = value
-        elif isinstance(value, str):
-            val = [value]
-        elif value is None:
-            val = []
-        else:
-            raise TypeError(
-                "Can only assign strings, lists or None to name attributes."
-                " Got {0}".format(type(value))
-            )
-        setattr(self, attr + "_list", self.parse_pieces(val))
-
-    @title.setter
-    def title(self, value):
-        self._set_list("title", value)
-
-    @first.setter
-    def first(self, value):
-        self._set_list("first", value)
-
-    @middle.setter
-    def middle(self, value):
-        self._set_list("middle", value)
-
-    @last.setter
-    def last(self, value):
-        self._set_list("last", value)
-
-    @suffix.setter
-    def suffix(self, value):
-        self._set_list("suffix", value)
-
-    @nickname.setter
-    def nickname(self, value):
-        self._set_list("nickname", value)
 
     ### Parse helpers
 
@@ -361,7 +312,7 @@ class HumanName:
             and len(self) == 2
             and not lc(self.title) in CONSTANTS.first_name_titles
         ):
-            self.last, self.first = self.first, self.last
+            self.first_list, self.last_list = self.last_list, self.first_list
 
     def parse_full_name(self):
         """
@@ -539,11 +490,9 @@ class HumanName:
         :return: pieces split on spaces and joined on conjunctions
         :rtype: list
         """
-
         output = []
+        # for part in self.properly_list_pieces(parts):
         for part in parts:
-            if not isinstance(part, str):
-                raise TypeError(f"Name parts must be strings. Got {type(part)}")
             output += [x.strip(" ,") for x in part.split(" ")]
 
         # If part contains periods, check if it's multiple titles or suffixes

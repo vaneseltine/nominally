@@ -92,25 +92,6 @@
         "suffix": "iii, jr"
     },
     {
-        "id": "test_couples_names",
-        "raw": "john and jane smith",
-        "first": "john and jane",
-        "last": "smith"
-    },
-    {
-        "id": "test_couples_names_with_conjunction_lastname",
-        "raw": "john and jane aznar y lopez",
-        "first": "john and jane",
-        "last": "aznar y lopez"
-    },
-    {
-        "id": "test_couple_titles",
-        "raw": "mr. and mrs. john and jane smith",
-        "title": "mr. and mrs.",
-        "first": "john and jane",
-        "last": "smith"
-    },
-    {
         "id": "test_roman_numeral_initials_one",
         "raw": "larry v i",
         "first": "larry",

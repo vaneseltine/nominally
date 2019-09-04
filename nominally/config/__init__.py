@@ -56,12 +56,6 @@ class SetManager(abc.Set):
     def __init__(self, elements):
         self.elements = set(elements)
 
-    def __call__(self):
-        return self.elements
-
-    def __repr__(self):
-        return "SetManager({})".format(self.elements)  # used for docs
-
     def __iter__(self):
         return iter(self.elements)
 
@@ -71,18 +65,6 @@ class SetManager(abc.Set):
     def __len__(self):
         return len(self.elements)
 
-    def next(self):
-        return self.__next__()
-
-    def __next__(self):
-        if self.count >= len(self.elements):
-            self.count = 0
-            raise StopIteration
-        else:
-            c = self.count
-            self.count = c + 1
-            return getattr(self, self.elements[c]) or next(self)
-
     def add(self, *strings):
         """
         Add the lower case and no-period version of the string arguments to the set.
@@ -90,14 +72,6 @@ class SetManager(abc.Set):
         """
         for s in strings:
             self.elements.add(lc(s))
-        return self
-
-    def remove(self, *strings):
-        """
-        Remove the lower case and no-period version of the string arguments from the set.
-        Returns ``self`` for chaining.
-        """
-        [self.elements.remove(lc(s)) for s in strings if lc(s) in self.elements]
         return self
 
 
@@ -112,15 +86,6 @@ class TupleManager(dict):
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
-
-    def __getstate__(self):
-        return dict(self)
-
-    def __setstate__(self, state):
-        self.__init__(state)
-
-    def __reduce__(self):
-        return (TupleManager, (), self.__getstate__())
 
 
 class Constants(object):
@@ -173,16 +138,6 @@ class Constants(object):
                 | self.titles
             )
         return self._pst
-
-    def __repr__(self):
-        return "<Constants() instance>"
-
-    def __setstate__(self, state):
-        self.__init__(state)
-
-    def __getstate__(self):
-        attrs = [x for x in dir(self) if not x.startswith("_")]
-        return dict([(a, getattr(self, a)) for a in attrs])
 
 
 #: A module-level instance of the :py:class:`Constants()` class.
