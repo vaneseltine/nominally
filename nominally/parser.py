@@ -397,11 +397,10 @@ class HumanName(object):
         This method happens at the beginning of the :py:func:`parse_full_name`
         before any other processing of the string aside from unicode
         normalization, so it's a good place to do any custom handling in a
-        subclass. Runs :py:func:`parse_nicknames` and py:func:`squash_emoji`.
+        subclass. Runs :py:func:`parse_nicknames` .
 
         """
         self.parse_nicknames()
-        self.squash_emoji()
         # self.thoroughly_clean()
 
     def post_process(self):
@@ -435,14 +434,6 @@ class HumanName(object):
 
     def thoroughly_clean(self):
         self._full_name = util.clean(self._full_name)
-
-    def squash_emoji(self):
-        """
-        Remove emoji from the input string.
-        """
-        re_emoji = self.C.regexes.emoji
-        if re_emoji and re_emoji.search(self._full_name):
-            self._full_name = re_emoji.sub("", self._full_name)
 
     def handle_firstnames(self):
         """
