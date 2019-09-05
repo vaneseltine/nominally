@@ -403,7 +403,7 @@ class Name:
         return cls._keys
 
     @staticmethod
-    def extract_titles(pieces):
+    def extract_title(pieces):
         return pieces, ["dr"]
 
     @staticmethod
