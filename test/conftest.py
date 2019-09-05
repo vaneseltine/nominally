@@ -19,8 +19,8 @@ def load_bank(category):
     return test_bank
 
 
-@pytest.fixture(autouse=False)
-def add_spacing():
+@pytest.fixture(autouse=True)
+def add_output_spacing():
     print("\n")
     yield
     print("\n")

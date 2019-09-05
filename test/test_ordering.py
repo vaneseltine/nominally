@@ -1,6 +1,6 @@
 import pytest
 import re
-from nominally.parser import Name, flatten, pieces_to_words
+from nominally.parser import Name, pieces_to_words, logger
 
 from .conftest import load_bank, make_ids
 
@@ -58,13 +58,27 @@ def test_ordering(entry, pyramid):
 # @pytest.mark.xfail(reason="working")
 def test_suffix_extraction(entry):
     scrubbed, fake_working = Name.pre_process(entry["raw"])
-    assert not any(bool(v) for v in fake_working.values())  # verify no side eff of pp
+
+    # pre_processing didn't have any weird side effects to worry about
+    assert not any(bool(v) for v in fake_working.values())
 
     pieces, suffixes = Name.extract_suffixes(scrubbed)
+    logger.warning(f"FINAL {pieces}")
+    logger.warning(f"FINAL {suffixes}")
+
     # The suffixes are what we want
     assert set(suffixes) == set(entry.get("suffix", "").split())
     # We got back a sequence of strings for the pieces
     assert all(isinstance(x, str) for x in pieces)
     # No words were lost or gained
     assert set(pieces_to_words(scrubbed)) == set(pieces_to_words(pieces + suffixes))
+
+    ugly_in = str(scrubbed)
+    ugly_out = str(pieces)
+    if "junior" in ugly_out:
+        last_name_first_in = ugly_in.index("junior") > ugly_in.index("berg")
+        last_name_first_out = ugly_out.index("junior") > ugly_out.index("berg")
+        print(f"last name is first: {last_name_first_in}")
+        print(f"last name is first: {last_name_first_out}")
+        assert last_name_first_in == last_name_first_out
 

@@ -415,51 +415,34 @@ class Name:
         MIN_WORDS_TOTAL = 2
 
         word_clusters = [piece.split() for piece in pieces]
-        print(pieces)
-        print(word_clusters)
+        logger.warning(pieces)
+        logger.warning(word_clusters)
         while word_clusters:
-            logger.warning(
-                f"{repr(word_clusters):<15} {repr(outgoing)}, {repr(suffixes)}"
-            )
 
             words_count = count_words(flatten(word_clusters + outgoing))
-            logger.warning(words_count)
             if words_count <= MIN_WORDS_TOTAL:
-                logger.warning(f"word_clusters {word_clusters}")
-                logger.warning(f"outgoing {outgoing}")
                 outgoing.extend(" ".join(x) for x in word_clusters)
-                logger.warning(f"word_clusters {word_clusters}")
-                logger.warning(f"outgoing {outgoing}")
-                break
+                logger.warning("Bail outer loop")
+                return outgoing, suffixes
 
             words = word_clusters.pop()
-            # logger.warning(f"{repr(words):<15} {repr(outgoing)}, {repr(suffixes)}")
             min_words_remaining = 0 if is_only_suffixes(words) else 1
             while count_words(words) > min_words_remaining:
-                logger.warning(f"words {words}")
 
                 words_count = count_words(flatten(word_clusters + words + outgoing))
-                logger.warning(words_count)
                 if words_count <= MIN_WORDS_TOTAL:
                     word_clusters.append(words)
-                    logger.warning(f"word_clusters {word_clusters}")
-                    # logger.warning(f"words {words}")
-                    logger.warning(f"outgoing {outgoing}")
-                    logger.warning(f"suffixes {suffixes}")
                     outgoing.extend(" ".join(x) for x in word_clusters)
+                    logger.warning("Bail inner loop")
                     return outgoing, suffixes
-                    logger.warning(f"word_clusters {word_clusters}")
-                    logger.warning(f"outgoing {outgoing}")
-                    break
 
                 next_word = words[-1]
                 if not is_suffix(next_word):
                     break
                 suffixes.append(words.pop())
-                logger.warning(f"words {words}")
             if words:
-                outgoing.insert(0, " ".join(words))
-        logger.warning(f"outgoing {repr(outgoing)} suffixes {repr(suffixes)}")
+                outgoing.append(" ".join(words))
+        outgoing.reverse()
         return outgoing, suffixes
 
 
