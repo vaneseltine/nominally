@@ -18,9 +18,9 @@ def load_bank(category):
 
 
 def dict_entry_test(dict_entry):
-    hn = Name(dict_entry["raw"])
-    expected = {key: dict_entry.get(key, "") for key in dict(hn).keys()}
-    assert dict(hn) == expected
+    n = Name(dict_entry["raw"])
+    expected = {key: dict_entry.get(key, "") for key in dict(n).keys()}
+    assert dict(n) == expected
 
 
 def make_ids(entry):
@@ -50,35 +50,35 @@ class TestCoreFunctionality:
                 "last": "la",
             },
         ],
-        ids=lambda x: make_ids(x),
+        ids=make_ids,
     )
     def test_basics(self, entry):
         dict_entry_test(entry)
 
     def test_string_output(self):
-        hn = Name('de la Véña, Dr. Jüan "Paco", Jr.')
-        assert str(hn) == "dr juan de la vena jr (paco)"
+        n = Name('de la Véña, Dr. Jüan "Paco", Jr.')
+        assert str(n) == "dr juan de la vena jr (paco)"
 
     def test_repr_output(self):
-        hn = Name('de la Véña, Dr. Jüan "Paco", Jr.')
-        assert repr(hn) == (
+        n = Name('de la Véña, Dr. Jüan "Paco", Jr.')
+        assert repr(n) == (
             "Name({'title': 'dr', "
             "'first': 'juan', 'middle': '', 'last': 'de la vena', "
             "'suffix': 'jr', 'nickname': 'paco'})"
         )
 
     def test_blank(self):
-        hn = Name("")
-        assert hn.unparsable
-        assert "unparsable" in repr(hn).lower()
+        n = Name("")
+        assert n.unparsable
+        assert "unparsable" in repr(n).lower()
 
     def test_nonblank(self):
-        hn = Name("Bob")
-        assert not hn.unparsable
-        assert "unparsable" not in repr(hn).lower()
+        n = Name("Bob")
+        assert not n.unparsable
+        assert "unparsable" not in repr(n).lower()
 
     def test_unparsable_are_not_equal(self):
-        assert not Name("") == Name("")
+        assert Name("") != Name("")
 
     @pytest.mark.parametrize(
         "raw, length", [("Doe-Ray, Dr. John P., Jr", 5), ("John Doe", 2)]
@@ -87,125 +87,119 @@ class TestCoreFunctionality:
         assert len(Name(raw)) == length
 
     def test_comparison(self):
-        hn1 = Name("Doe-Ray, Dr. John P., jr")
-        hn2 = Name("Dr. John P. Doe-Ray, jr")
-        assert hn1
-        assert hn2
-        assert hn1 == hn2
-        assert hn1 is not hn2
-        assert hn1 == "dr john p doe-ray jr"
-        hn1 = Name("Doe, Dr. John P., Jr")
-        hn2 = Name("Dr. John P. Doe-Ray, jr")
-        assert hn1 != hn2
-        assert hn1 != 0
-        assert hn1 != "test"
-        assert hn1 != ["test"]
-        assert hn1 != {"test": hn2}
+        name1 = Name("Doe-Ray, Dr. John P., jr")
+        name2 = Name("Dr. John P. Doe-Ray, jr")
+        assert name1
+        assert name2
+        assert name1 == name2
+        assert name1 is not name2
+        assert name1 == "dr john p doe-ray jr"
+        name1 = Name("Doe, Dr. John P., Jr")
+        name2 = Name("Dr. John P. Doe-Ray, jr")
+        assert name1 != name2
+        assert name1 != 0
+        assert name1 != "test"
+        assert name1 != ["test"]
+        assert name1 != {"test": name2}
 
     def test_get_full_name_attribute_references_internal_lists(self):
-        hn = Name("John Williams")
-        hn.first_list = ["larry"]
-        assert hn.full_name == "larry williams"
+        n = Name("John Williams")
+        n.first_list = ["larry"]
+        assert n.full_name == "larry williams"
 
     def test_comparison_case_insensitive(self):
-        hn1 = Name("Doe-Ray, Dr. John P., Jr")
-        hn2 = Name("dr john p. doe-Ray, jr")
-        assert hn1 == hn2
-        assert hn1 is not hn2
-        assert hn1 == "dr john p doe-ray jr"
+        name1 = Name("Doe-Ray, Dr. John P., Jr")
+        name2 = Name("dr john p. doe-Ray, jr")
+        assert name1 is not name2
+        assert name1 == name2
+        assert name1 == "dr john p doe-ray jr"
 
     def test_as_list(self):
-        hn = Name("Doe-Ray, Dr. John (Doctor Doo) P., Jr")
-        assert list(hn) == ["dr", "john", "p", "doe-ray", "jr", "doctor doo"]
+        n = Name("Doe-Ray, Dr. John (Doctor Doo) P., Jr")
+        assert list(n) == ["dr", "john", "p", "doe-ray", "jr", "doctor doo"]
 
     def test_getitem(self):
-        hn = Name("Dr. John A. Kenneth Doe, Jr.")
-        assert hn["title"] == "dr"
-        assert hn["first"] == "john"
-        assert hn["last"] == "doe"
-        assert hn["middle"] == "a kenneth"
-        assert hn["suffix"] == "jr"
+        n = Name("Dr. John A. Kenneth Doe, Jr.")
+        assert n["title"] == "dr"
+        assert n["first"] == "john"
+        assert n["last"] == "doe"
+        assert n["middle"] == "a kenneth"
+        assert n["suffix"] == "jr"
 
 
 class TestNameBruteForce:
-    @pytest.mark.parametrize(
-        "entry", load_bank("brute_force"), ids=lambda x: make_ids(x)
-    )
+    @pytest.mark.parametrize("entry", load_bank("brute_force"), ids=make_ids)
     def test_brute(self, entry):
         dict_entry_test(entry)
 
 
 class TestFirstNameHandling:
-    @pytest.mark.parametrize(
-        "entry", load_bank("first_name"), ids=lambda x: make_ids(x)
-    )
+    @pytest.mark.parametrize("entry", load_bank("first_name"), ids=make_ids)
     def test_json_first_name(self, entry):
         dict_entry_test(entry)
 
     def test_first_name_is_prefix_if_three_parts(self):
         """Not sure how to fix this without breaking Mr and Mrs"""
-        hn = Name("Mr. Van Nguyen")
-        assert hn.last == "van nguyen"
+        n = Name("Mr. Van Nguyen")
+        assert n.last == "van nguyen"
 
 
 class TestNameConjunction:
-    @pytest.mark.parametrize(
-        "entry", load_bank("conjunction"), ids=lambda x: make_ids(x)
-    )
+    @pytest.mark.parametrize("entry", load_bank("conjunction"), ids=make_ids)
     def test_json_conjunction(self, entry):
         dict_entry_test(entry)
 
     @pytest.mark.xfail
     def test_two_initials_conflict_with_conjunction(self):
         # Supporting this seems to screw up titles with periods in them like M.B.A.
-        hn = Name("E.T. Smith")
-        assert hn.first == "e"
-        assert hn.middle == "t"
-        assert hn.last == "smith"
+        n = Name("E.T. Smith")
+        assert n.first == "e"
+        assert n.middle == "t"
+        assert n.last == "smith"
 
     @pytest.mark.xfail
     def test_four_name_parts_with_suffix_that_could_be_initial_lowercase_no_p(self):
-        hn = Name("larry james edward johnson v")
-        assert hn.first == "larry"
-        assert hn.middle == "james edward"
-        assert hn.last == "johnson"
-        assert hn.suffix == "v"
+        n = Name("larry james edward johnson v")
+        assert n.first == "larry"
+        assert n.middle == "james edward"
+        assert n.last == "johnson"
+        assert n.suffix == "v"
 
 
 class TestNickname:
-    @pytest.mark.parametrize("entry", load_bank("nickname"), ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("nickname"), ids=make_ids)
     def test_json_nickname(self, entry):
         dict_entry_test(entry)
 
     def test_parenthesis_are_removed_from_name(self):
-        hn = Name("John Jones (Unknown)")
-        assert hn.first == "john"
-        assert hn.last == "jones"
-        assert hn.nickname != ""
+        n = Name("John Jones (Unknown)")
+        assert n.first == "john"
+        assert n.last == "jones"
+        assert n.nickname != ""
 
     # not testing nicknames because we don't actually care about Google Docs here
     def test_duplicate_parenthesis_are_removed_from_name(self):
-        hn = Name("John Jones (Google Docs), Jr. (Unknown)")
-        assert hn.first == "john"
-        assert hn.last == "jones"
-        assert hn.suffix == "jr"
-        assert hn.nickname != ""
+        n = Name("John Jones (Google Docs), Jr. (Unknown)")
+        assert n.first == "john"
+        assert n.last == "jones"
+        assert n.suffix == "jr"
+        assert n.nickname != ""
 
 
 class TestPrefixes:
-    @pytest.mark.parametrize("entry", load_bank("prefix"), ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("prefix"), ids=make_ids)
     def test_json_prefix(self, entry):
         dict_entry_test(entry)
 
 
 class TestSuffixes:
-    @pytest.mark.parametrize("entry", load_bank("suffix"), ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("suffix"), ids=make_ids)
     def test_json_suffix(self, entry):
         dict_entry_test(entry)
 
 
 class TestTitle:
-    @pytest.mark.parametrize("entry", load_bank("title"), ids=lambda x: make_ids(x))
+    @pytest.mark.parametrize("entry", load_bank("title"), ids=make_ids)
     def test_json_title(self, entry):
         dict_entry_test(entry)
 
@@ -225,23 +219,23 @@ class TestNameVariations:
         This is a separate function so that individual non-parametrized tests can be
         added if desired.
         """
-        hn = Name(name)
-        if len(hn.suffix_list) > 1:
-            hn = Name(
-                "{title} {first} {middle} {last} {suffix}".format(**dict(hn)).split(
-                    ","
-                )[0]
+        n = Name(name)
+        if len(n.suffix_list) > 1:
+            n = Name(
+                "{title} {first} {middle} {last} {suffix}".format(**dict(n)).split(",")[
+                    0
+                ]
             )
-        hn_dict = dict(hn)
+        hn_dict = dict(n)
         nocomma = Name("{title} {first} {middle} {last} {suffix}".format(**hn_dict))
         lastnamecomma = Name(
             "{last}, {title} {first} {middle} {suffix}".format(**hn_dict)
         )
-        if hn.suffix:
+        if n.suffix:
             suffixcomma = Name(
                 "{title} {first} {middle} {last}, {suffix}".format(**hn_dict)
             )
-        if hn.nickname:
+        if n.nickname:
             nocomma = Name(
                 "{title} {first} {middle} {last} {suffix} ({nickname})".format(
                     **hn_dict
@@ -252,20 +246,20 @@ class TestNameVariations:
                     **hn_dict
                 )
             )
-            if hn.suffix:
+            if n.suffix:
                 suffixcomma = Name(
                     "{title} {first} {middle} {last}, {suffix} ({nickname})".format(
                         **hn_dict
                     )
                 )
-        for key in hn.keys():
-            assert hn[key] == nocomma[key]
-            assert getattr(hn, key) == getattr(nocomma, key)
-            assert hn[key] == lastnamecomma[key]
-            assert getattr(hn, key) == getattr(lastnamecomma, key)
-            if hn.suffix:
-                assert hn[key] == suffixcomma[key]
-                assert getattr(hn, key) == getattr(suffixcomma, key)
+        for key in n.keys():
+            assert n[key] == nocomma[key]
+            assert getattr(n, key) == getattr(nocomma, key)
+            assert n[key] == lastnamecomma[key]
+            assert getattr(n, key) == getattr(lastnamecomma, key)
+            if n.suffix:
+                assert n[key] == suffixcomma[key]
+                assert getattr(n, key) == getattr(suffixcomma, key)
 
 
 if __name__ == "__main__":

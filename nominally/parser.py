@@ -10,9 +10,9 @@ LOGS_ON = True
 logger = logging.getLogger()
 if LOGS_ON:
     logger.setLevel(logging.DEBUG)
-    fmt = logging.Formatter("%(asctime)s - %(levelname)-8s - %(message)s")
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(fmt)
+    MESSAGE_FORMAT = "{levelname:<8s} {funcName:<24s} {lineno:<4} {message}"
+    stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
+    stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
     stream_handler.setLevel(logging.DEBUG)
     logger.addHandler(stream_handler)
 else:
@@ -108,7 +108,7 @@ class Name:
                 self._full_name = pattern.sub("", self._full_name)
 
     def thoroughly_clean(self):
-        self._full_name = clean_name(self._full_name)
+        self._full_name = clean_input(self._full_name)
 
     def make_single_name_last(self):
         """
@@ -133,129 +133,132 @@ class Name:
         """
 
         # break up full_name by commas
-        parts = [x.strip() for x in self._full_name.split(",")]
+        parts = re.split(r"\s*,\s*", self._full_name)
 
         logger.debug("full_name: %s", self._full_name)
         logger.debug("parts: %s", parts)
 
         if len(parts) == 1:
+            self.parse_v_no_commas(parts)
 
-            # ~ no commas, title first middle middle middle last suffix
-            # ~           part[0
-
-            pieces = self.parse_pieces(parts, additional_parts_count=0)
-            p_len = len(pieces)
-            for i, piece in enumerate(pieces):
-                try:
-                    nxt = pieces[i + 1]
-                except IndexError:
-                    nxt = None
-
-                # title must have a next piece, unless it's just a title
-                if is_title(piece) and (nxt or p_len == 1) and not self.first:
-                    self.title_list.append(piece)
-                    continue
-                if not self.first:
-                    if p_len == 1 and self.nickname:
-                        self.last_list.append(piece)
-                        continue
-                    self.first_list.append(piece)
-                    continue
-                if are_suffixes(pieces[i + 1 :]) or (
-                    # if the next piece is the last piece and a roman
-                    # numeral but this piece is not an initial
-                    is_roman_numeral(nxt)
-                    and i == p_len - 2
-                    and not is_an_initial(piece)
-                ):
-                    self.last_list.append(piece)
-                    self.suffix_list += pieces[i + 1 :]
-                    break
-                if not nxt:
-                    self.last_list.append(piece)
-                    continue
-
-                self.middle_list.append(piece)
         else:
             # if all the end parts are suffixes and there is more than one piece
             # in the first part. (Suffixes will never appear after last names
             # only, and allows potential first names to be in suffixes, e.g.
             # "Johnson, Bart"
             if are_suffixes(parts[1].split(" ")) and len(parts[0].split(" ")) > 1:
-
-                # suffix comma:
-                # * title first middle last [suffix], suffix [suffix] [, suffix]
-                # *               parts0,          parts1..
-
-                self.suffix_list += parts[1:]
-                pieces = self.parse_pieces(
-                    parts[0].split(" "), additional_parts_count=0
-                )
-                logger.debug(f"pieces: {pieces}")
-                for i, piece in enumerate(pieces):
-                    try:
-                        nxt = pieces[i + 1]
-                    except IndexError:
-                        nxt = None
-
-                    if is_title(piece) and (nxt or len(pieces) == 1) and not self.first:
-                        self.title_list.append(piece)
-                        continue
-                    if not self.first:
-                        self.first_list.append(piece)
-                        continue
-                    if are_suffixes(pieces[i + 1 :]):
-                        self.last_list.append(piece)
-                        self.suffix_list = pieces[i + 1 :] + self.suffix_list
-                        break
-                    if not nxt:
-                        self.last_list.append(piece)
-                        continue
-                    self.middle_list.append(piece)
+                self.parse_v_suffix_comma(parts)
             else:
-
-                # lastname comma:
-                # * last [suffix], title first middles[,] suffix [,suffix]
-                # *     parts0      parts1,              parts2..
-                pieces = self.parse_pieces(
-                    parts[1].split(" "), additional_parts_count=1
-                )
-
-                logger.debug(f"pieces: {pieces}")
-
-                # lastname part may have suffixes in it
-                lastname_pieces = self.parse_pieces(
-                    parts[0].split(" "), additional_parts_count=1
-                )
-                for piece in lastname_pieces:
-                    # the first one is always a last name, even if it looks like
-                    # a suffix
-                    if is_suffix(piece) and self.last_list:
-                        self.suffix_list.append(piece)
-                    else:
-                        self.last_list.append(piece)
-
-                for i, piece in enumerate(pieces):
-                    try:
-                        nxt = pieces[i + 1]
-                    except IndexError:
-                        nxt = None
-
-                    if is_title(piece) and (nxt or len(pieces) == 1) and not self.first:
-                        self.title_list.append(piece)
-                        continue
-                    if not self.first:
-                        self.first_list.append(piece)
-                        continue
-                    if is_suffix(piece):
-                        self.suffix_list.append(piece)
-                        continue
-                    self.middle_list.append(piece)
-                if len(parts) > 2:
-                    self.suffix_list += parts[2:]
+                self.parse_v_lastname_comma(parts)
 
         if self.unparsable:
             logger.info('Unparsable: "%s" ', self.original)
+
+    def parse_v_suffix_comma(self, parts):
+        # suffix comma:
+        # * title first middle last [suffix], suffix [suffix] [, suffix]
+        # *               parts0,          parts1..
+
+        self.suffix_list += parts[1:]
+        pieces = self.parse_pieces(parts[0].split(" "), additional_parts_count=0)
+        logger.debug(f"parse_v_suffix_comma pieces: {pieces}")
+        for i, piece in enumerate(pieces):
+            try:
+                nxt = pieces[i + 1]
+            except IndexError:
+                nxt = None
+
+            if is_title(piece) and (nxt or len(pieces) == 1) and not self.first:
+                self.title_list.append(piece)
+                continue
+            if not self.first:
+                self.first_list.append(piece)
+                continue
+            if are_suffixes(pieces[i + 1 :]):
+                self.last_list.append(piece)
+                self.suffix_list = pieces[i + 1 :] + self.suffix_list
+                break
+            if not nxt:
+                self.last_list.append(piece)
+                continue
+            self.middle_list.append(piece)
+
+    def parse_v_lastname_comma(self, parts):
+        # lastname comma:
+        # * last [suffix], title first middles[,] suffix [,suffix]
+        # *     parts0      parts1,              parts2..
+        pieces = self.parse_pieces(parts[1].split(" "), additional_parts_count=1)
+
+        logger.debug(f"parse_v_lastname_comma pieces: {pieces}")
+
+        # lastname part may have suffixes in it
+        lastname_pieces = self.parse_pieces(
+            parts[0].split(" "), additional_parts_count=1
+        )
+        for piece in lastname_pieces:
+            # the first one is always a last name, even if it looks like
+            # a suffix
+            if is_suffix(piece) and self.last_list:
+                self.suffix_list.append(piece)
+            else:
+                self.last_list.append(piece)
+
+        for i, piece in enumerate(pieces):
+            try:
+                nxt = pieces[i + 1]
+            except IndexError:
+                nxt = None
+
+            if is_title(piece) and (nxt or len(pieces) == 1) and not self.first:
+                self.title_list.append(piece)
+                continue
+            if not self.first:
+                self.first_list.append(piece)
+                continue
+            if is_suffix(piece):
+                self.suffix_list.append(piece)
+                continue
+            self.middle_list.append(piece)
+        if len(parts) > 2:
+            self.suffix_list += parts[2:]
+
+    def parse_v_no_commas(self, parts):
+        # ~ no commas, title first middle middle middle last suffix
+        # ~           part[0
+        pieces = self.parse_pieces(parts, additional_parts_count=0)
+        logger.debug(f"parse_v_no_commas pieces: {pieces}")
+        p_len = len(pieces)
+        for i, piece in enumerate(pieces):
+            try:
+                nxt = pieces[i + 1]
+            except IndexError:
+                nxt = None
+
+            # title must have a next piece, unless it's just a title
+            if is_title(piece) and (nxt or p_len == 1) and not self.first:
+                self.title_list.append(piece)
+                continue
+            if not self.first:
+                if p_len == 1 and self.nickname:
+                    self.last_list.append(piece)
+                    continue
+                self.first_list.append(piece)
+                continue
+            if are_suffixes(pieces[i + 1 :]) or (
+                # if the next piece is the last piece and a roman
+                # numeral but this piece is not an initial
+                is_roman_numeral(nxt)
+                and i == p_len - 2
+                and not is_an_initial(piece)
+            ):
+                self.last_list.append(piece)
+                self.suffix_list += pieces[i + 1 :]
+                break
+            if not nxt:
+                self.last_list.append(piece)
+                continue
+
+            self.middle_list.append(piece)
 
     def parse_pieces(self, parts, additional_parts_count=0):
         """
@@ -273,21 +276,23 @@ class Name:
         :return: pieces split on spaces and joined on conjunctions
         :rtype: list
         """
-        output = []
+        words = []
         # for part in self.properly_list_pieces(parts):
+        logger.info(parts)
         for part in parts:
-            output += [x.strip(" ,") for x in part.split(" ")]
-
-        logger.debug(f"Incoming pieces: {output}")
-        pieces = self.join_on_conjunctions(output, additional_parts_count)
-        pieces = self.join_prefixes(pieces, original=output)
+            for word in part.split():
+                words.append(word)
+        # words = [x for x in part.split(" ")]
+        logger.debug(f"Incoming pieces: {words}")
+        pieces = self.join_on_conjunctions(words)
+        pieces = self.join_prefixes(pieces)
         logger.debug(f"Outgoing pieces: {pieces}")
         return pieces
 
     @staticmethod
-    def join_on_conjunctions(pieces, additional_parts_count=0):
+    def join_on_conjunctions(words):
         """
-        Join conjunctions to surrounding pieces. Title- and prefix-aware. e.g.:
+        Join conjunctions to surrounding words. Title- and prefix-aware. e.g.:
 
             ['Mr.', 'and'. 'Mrs.', 'John', 'Doe'] ==>
                             ['Mr. and Mrs.', 'John', 'Doe']
@@ -300,41 +305,27 @@ class Name:
         example names above, 'The Secretary of State' and 'Mr. and Mrs.' would
         be present in the titles constant set.
 
-        :param list pieces: name pieces strings after split on spaces
-        :param int additional_parts_count:
-        :return: new list with piece next to conjunctions merged into one piece
-        with spaces in it.
-        :rtype: list
 
         """
-        if len(pieces) == 1:
-            return pieces
-        original = pieces.copy()
+        if len(words) <= 3:
+            # No conjunctive mononyms
+            return words
 
-        length = len(pieces) + additional_parts_count
-        logger.debug(f"length {length} additional_parts_count {additional_parts_count}")
-        # don't join on conjunctions if there's only 2 parts
-        if length < 3:
-            return original
-
-        conj_index = [i for i, piece in enumerate(pieces) if is_conjunction(piece)]
+        conj_index = [i for i, piece in enumerate(words) if is_conjunction(piece)]
         logger.debug(f"conj_index: {conj_index}")
 
         for i in conj_index:
-            new_piece = " ".join(pieces[i - 1 : i + 2])
-            pieces[i - 1] = new_piece
-            pieces.pop(i)
-            pieces.pop(i)
+            new_piece = " ".join(words[i - 1 : i + 2])
+            words[i - 1] = new_piece
+            words.pop(i)
+            words.pop(i)
 
-        if len(pieces) == 1:
-            logger.debug("pieces: %s", pieces)
-            logger.debug("Not expecting to arrive at only one piece; throwing back")
-            return original
-
-        return pieces
+        return words
 
     @staticmethod
-    def join_prefixes(pieces, original):
+    def join_prefixes(pieces):
+        original = pieces
+        logger.warning(pieces)
         if len(pieces) == 1:
             return pieces
         # join prefixes to following lastnames: ['de la Vega'], ['van Buren']
@@ -380,7 +371,8 @@ class Name:
         if len(pieces) == 1:
             logger.debug("pieces: %s", pieces)
             logger.debug("Not expecting to arrive at only one piece; throwing back")
-            return original
+            pieces = original
+        logger.warning(pieces)
         return pieces
 
     @property
@@ -417,14 +409,9 @@ class Name:
         return str(self)
 
 
-def collapse_whitespace(s):
-    # collapse multiple spaces into single space
-    return config.RE_SPACES.sub(" ", s.strip())
-
-
 def is_title(value):
     """Is in the :py:data:`~nominally.config.titles.TITLES` set."""
-    return gently_clean(value) in config.TITLES
+    return value in config.TITLES
 
 
 def is_conjunction(piece):
@@ -437,7 +424,7 @@ def is_prefix(piece):
     Lowercase and no periods version of piece is in the
     :py:data:`~nominally.config.prefixes.PREFIXES` set.
     """
-    return gently_clean(piece) in config.PREFIXES
+    return piece in config.PREFIXES
 
 
 def is_roman_numeral(value):
@@ -449,18 +436,7 @@ def is_roman_numeral(value):
 
 
 def is_suffix(piece):
-    """
-    Is in the suffixes set and not :py:func:`is_an_initial()`.
-
-    Some suffixes may be acronyms (M.B.A) while some are not (Jr.),
-    so we remove the periods from `piece` when testing against
-    `C.suffix_acronyms`.
-    """
-    # suffixes may have periods inside them like "M.D."
-    return (
-        (gently_clean(piece).replace(".", "") in config.SUFFIX_ACRONYMS)
-        or (gently_clean(piece) in config.SUFFIX_NOT_ACRONYMS)
-    ) and not is_an_initial(piece)
+    return piece in config.SUFFIXES and not is_an_initial(piece)
 
 
 def are_suffixes(pieces):
@@ -471,19 +447,13 @@ def is_an_initial(value):
     return bool(config.RE_INITIAL.match(value))
 
 
-def gently_clean(value):
-    """Lower case and remove any periods to normalize for comparison."""
-    if not value:
-        return ""
-    return value.lower().strip(".")
-
-
-def clean_name(s):
+def clean_input(s):
+    # Note: nicknames have already been removed
     s = unidecode_expect_ascii(s).lower()
-    s = s.replace("`", "'")
-    s = s.replace('"', "'")
-    s = re.sub(r"[-_/\\]+", "-", s)
-    s = re.sub(r"[^ \-a-z'\"(),]+", "", s)
-    s = re.sub(r"\s+", " ", s)  # condense spaces
-    s = s.strip("- ")
+    s = re.sub('"|`', "'", s)  # convert all quotes/ticks to single quotes
+    s = re.sub(";|:|,", ", ", s)  # convert : ; , to , with spacing
+    s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
+    s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all but - ' ,
+    s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
+    s = s.strip("- ")  # drop leading/trailing hyphens and spaces
     return s

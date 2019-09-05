@@ -23,7 +23,7 @@ def clean_dir(s):
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
 def test_version(session):
-    session.install("-r", "requirements.txt")
+    session.install("-r", "requirements-dev.txt")
     session.install("-e", ".")
     session.run("coverage", "run", "--parallel-mode", "-m", "pytest", "-rxXs")
 
@@ -33,6 +33,7 @@ def coverage(session):
     clean_dir("./build/coverage")
     session.install("coverage")
     if len(list(Path(".").glob(".coverage*"))) > 1:
+        # Combine multiple coverage files if they exist
         try:
             Path(".coverage").unlink()
         except FileNotFoundError:
@@ -44,27 +45,29 @@ def coverage(session):
 
 @nox.session(reuse_venv=True)
 def coveralls(session):
-    if os.getenv("COVERALLS_REPO_TOKEN"):
-        session.install("coverage", "coveralls")
-        session.run("coveralls")
+    if not os.getenv("COVERALLS_REPO_TOKEN"):
+        return
+    session.install("coverage", "coveralls")
+    session.run("coveralls")
 
 
 @nox.session(reuse_venv=True)
 def lint_flake8(session):
-    session.install("-U", "flake8")
+    session.install("-r", "requirements-dev.txt")
     session.run("python", "-m", "flake8", "./nominally", "--show-source")
 
 
 @nox.session(reuse_venv=True)
 def lint_pylint(session):
-    session.install("-U", "pylint")
-    session.run("pylint", "./nominally", "-d", "import-error")
+    session.install("-r", "requirements-dev.txt")
+    session.run("pylint", "./nominally")  # , "-d", "import-error")
+    session.run("pylint", "./test", "-d", "no-self-use")
 
 
 @nox.session(reuse_venv=True)
 def lint_black(session):
     session.install("-U", "black")
-    session.run("python", "-m", "black", "-t", "py36", ".")
+    session.run("python", "-m", "black", "-t", "py36", "--diff", ".")
 
 
 if __name__ == "__main__":

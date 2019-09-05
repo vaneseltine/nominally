@@ -172,8 +172,6 @@ docstring-min-length=-1
 # Good variable names which should always be accepted, separated by a comma.
 good-names = df, i, k, n, s, v, logger
 
-
-
 # Regular expression which should only match function or class names that do
 # not require a docstring.
 no-docstring-rgx=^_

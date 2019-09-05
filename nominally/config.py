@@ -1,6 +1,5 @@
 import re
 
-RE_SPACES = re.compile(r"\s+")
 RE_INITIAL = re.compile(r"^(\w\.|[A-Z])?$")
 RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)")
 RE_DOUBLE_QUOTES = re.compile(r'"(.*?)"')
@@ -10,19 +9,47 @@ RE_ROMAN_NUMERAL = re.compile(r"^(ii|iii|iv|vi|vii|viii|ix)$", re.I)
 # Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".
 # "of" and "the" are also include to facilitate joining multiple titles,
 # e.g. "President of the United States".
-CONJUNCTIONS = {"y"}  # "&", "and", "et", "e", "of", "the", "und", "y"}
+# Previously included: "&", "and", "et", "e", "of", "the", "und"
+CONJUNCTIONS = {"y"}
 
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
-# Post-nominal pieces that are not acronyms. The parser does not remove periods
-# when matching against these pieces.
-SUFFIX_NOT_ACRONYMS = {"jr", "junior", "sr", "snr", "2", "ii", "iii", "iv"}
-
-# Post-nominal acronyms. Titles, degrees and other things people stick after their name
-# that may or may not have periods between the letters. The parser removes periods
-# when matching against these pieces.
-SUFFIX_ACRONYMS = {"jd", "ma", "mba", "mbe", "mc", "md", "msc", "msm", "phd"}
+SUFFIXES = {
+    "sr",
+    "jr",
+    "junior",
+    "2",
+    "2nd",
+    "3",
+    "3rd",
+    "4",
+    "4th",
+    "5",
+    "5th",
+    "6",
+    "6th",
+    "7",
+    "7th",
+    "8",
+    "8th",
+    "9",
+    "9th",
+    "10",
+    "10th",
+    "ii",
+    "iii",
+    "iv",
+    "jd",
+    "ma",
+    "mba",
+    "mbe",
+    "mc",
+    "md",
+    "msc",
+    "msm",
+    "phd",
+}
 
 # Name pieces that appear before a last name. Prefixes join to the piece
 # that follows them to make one new piece. They can be chained together, e.g
@@ -49,7 +76,6 @@ PREFIXES = {
     "dello",
     "der",
     "di",
-    "dí",
     "do",
     "dos",
     "du",
