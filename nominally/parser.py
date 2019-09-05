@@ -160,7 +160,7 @@ class Name:
         # *               parts0,          parts1..
 
         self.suffix_list += parts[1:]
-        pieces = self.parse_pieces(parts[0].split(" "), additional_parts_count=0)
+        pieces = self.parse_pieces(parts[0].split(" "))
         logger.debug(f"parse_v_suffix_comma pieces: {pieces}")
         for i, piece in enumerate(pieces):
             try:
@@ -187,14 +187,12 @@ class Name:
         # lastname comma:
         # * last [suffix], title first middles[,] suffix [,suffix]
         # *     parts0      parts1,              parts2..
-        pieces = self.parse_pieces(parts[1].split(" "), additional_parts_count=1)
+        pieces = self.parse_pieces(parts[1].split(" "))
 
         logger.debug(f"parse_v_lastname_comma pieces: {pieces}")
 
         # lastname part may have suffixes in it
-        lastname_pieces = self.parse_pieces(
-            parts[0].split(" "), additional_parts_count=1
-        )
+        lastname_pieces = self.parse_pieces(parts[0].split(" "))
         for piece in lastname_pieces:
             # the first one is always a last name, even if it looks like
             # a suffix
@@ -225,7 +223,7 @@ class Name:
     def parse_v_no_commas(self, parts):
         # ~ no commas, title first middle middle middle last suffix
         # ~           part[0
-        pieces = self.parse_pieces(parts, additional_parts_count=0)
+        pieces = self.parse_pieces(parts)
         logger.debug(f"parse_v_no_commas pieces: {pieces}")
         p_len = len(pieces)
         for i, piece in enumerate(pieces):
@@ -260,7 +258,7 @@ class Name:
 
             self.middle_list.append(piece)
 
-    def parse_pieces(self, parts, additional_parts_count=0):
+    def parse_pieces(self, parts):
         """
         Split parts on spaces and remove commas, join on conjunctions and
         lastname prefixes. If parts have periods in the middle, try splitting
@@ -268,112 +266,55 @@ class Name:
         add to the constant so they will be found.
 
         :param list parts: name part strings from the comma split
-        :param int additional_parts_count:
-
-            if the comma format contains other parts, we need to know
-            how many there are to decide if things should be considered a
-            conjunction.
         :return: pieces split on spaces and joined on conjunctions
         :rtype: list
         """
         words = []
-        # for part in self.properly_list_pieces(parts):
         logger.info(parts)
         for part in parts:
             for word in part.split():
                 words.append(word)
-        # words = [x for x in part.split(" ")]
-        logger.debug(f"Incoming pieces: {words}")
-        pieces = self.join_on_conjunctions(words)
-        pieces = self.join_prefixes(pieces)
-        logger.debug(f"Outgoing pieces: {pieces}")
+        pieces = self.combine_conjunctions(words)
+        pieces = self.combine_prefixes(pieces)
         return pieces
 
     @staticmethod
-    def join_on_conjunctions(words):
-        """
-        Join conjunctions to surrounding words. Title- and prefix-aware. e.g.:
-
-            ['Mr.', 'and'. 'Mrs.', 'John', 'Doe'] ==>
-                            ['Mr. and Mrs.', 'John', 'Doe']
-
-            ['The', 'Secretary', 'of', 'State', 'Hillary', 'Clinton'] ==>
-                            ['The Secretary of State', 'Hillary', 'Clinton']
-
-        When joining titles, saves newly formed piece to the instance's titles
-        constant so they will be parsed correctly later. E.g. after parsing the
-        example names above, 'The Secretary of State' and 'Mr. and Mrs.' would
-        be present in the titles constant set.
-
-
-        """
-        if len(words) <= 3:
-            # No conjunctive mononyms
+    def combine_conjunctions(words):
+        if len(words) < 4:
             return words
 
-        conj_index = [i for i, piece in enumerate(words) if is_conjunction(piece)]
-        logger.debug(f"conj_index: {conj_index}")
-
-        for i in conj_index:
-            new_piece = " ".join(words[i - 1 : i + 2])
-            words[i - 1] = new_piece
-            words.pop(i)
-            words.pop(i)
-
-        return words
+        result = []
+        queued = words.copy()
+        while queued:
+            word = queued.pop(-1)
+            if is_conjunction(word) and result and queued:
+                clause = [queued.pop(-1), word, result.pop(0)]
+                word = " ".join(clause)
+            result.insert(0, word)
+        return result
 
     @staticmethod
-    def join_prefixes(pieces):
-        original = pieces
-        logger.warning(pieces)
-        if len(pieces) == 1:
-            return pieces
-        # join prefixes to following lastnames: ['de la Vega'], ['van Buren']
-        prefixes = [x for x in pieces if is_prefix(x)]
-        logger.debug(f"prefixes {prefixes}")
-        for prefix in prefixes:
-            try:
-                i = pieces.index(prefix)
-            except ValueError:
-                # If the prefix is no longer in pieces, it's because it has been
-                # combined with the prefix that appears right before (or before that when
-                # chained together) in the last loop, so the index of that newly created
-                # piece is the same as in the last loop, i==i still, and we want to join
-                # it to the next piece.
-                pass
+    def combine_prefixes(words):
+        if len(words) < 3:
+            return words
 
-            new_piece = ""
-
-            # join everything after the prefix until the next prefix or suffix
-
-            try:
-                next_prefix = next(iter(filter(is_prefix, pieces[i + 1 :])))
-                j = pieces.index(next_prefix)
-                if j == i + 1:
-                    # if there are two prefixes in sequence, join to the following piece
-                    j += 1
-                new_piece = " ".join(pieces[i:j])
-                pieces = pieces[:i] + [new_piece] + pieces[j:]
-            except StopIteration:
-                try:
-                    # if there are no more prefixes, look for a suffix to stop at
-                    stop_at = next(iter(filter(is_suffix, pieces[i + 1 :])))
-                    j = pieces.index(stop_at)
-                    new_piece = " ".join(pieces[i:j])
-                    pieces = pieces[:i] + [new_piece] + pieces[j:]
-                except StopIteration:
-                    # if there were no suffixes, nothing to stop at so join all
-                    # remaining pieces
-                    new_piece = " ".join(pieces[i:])
-                    pieces = pieces[:i] + [new_piece]
-
-        logger.debug("pieces: %s", pieces)
-        if len(pieces) == 1:
-            logger.debug("pieces: %s", pieces)
-            logger.debug("Not expecting to arrive at only one piece; throwing back")
-            pieces = original
-        logger.warning(pieces)
-        return pieces
+        result = []
+        queued = words.copy()
+        while queued:
+            word = queued.pop(-1)
+            if is_prefix(word) and result:
+                accumulating = []
+                while result:
+                    next_most_recent = result[0]
+                    next_word = next_most_recent.split(" ")[0]
+                    if is_suffix(next_word):
+                        break
+                    if accumulating and is_prefix(next_word):
+                        break
+                    accumulating.append(result.pop(0))
+                word = " ".join([word, *accumulating])
+            result.insert(0, word)
+        return result
 
     @property
     def title(self):
@@ -405,33 +346,22 @@ class Name:
 
     @property
     def full_name(self):
-        """The string output of the Name instance."""
         return str(self)
 
 
 def is_title(value):
-    """Is in the :py:data:`~nominally.config.titles.TITLES` set."""
     return value in config.TITLES
 
 
 def is_conjunction(piece):
-    """Is in the conjuctions set and not :py:func:`is_an_initial()`."""
     return piece.lower() in config.CONJUNCTIONS and not is_an_initial(piece)
 
 
 def is_prefix(piece):
-    """
-    Lowercase and no periods version of piece is in the
-    :py:data:`~nominally.config.prefixes.PREFIXES` set.
-    """
     return piece in config.PREFIXES
 
 
 def is_roman_numeral(value):
-    """
-    Matches the ``roman_numeral`` regular expression in
-    :py:data:`~nominally.config.regexes.REGEXES`.
-    """
     return bool(config.RE_ROMAN_NUMERAL.match(value))
 
 
@@ -450,8 +380,8 @@ def is_an_initial(value):
 def clean_input(s):
     # Note: nicknames have already been removed
     s = unidecode_expect_ascii(s).lower()
-    s = re.sub('"|`', "'", s)  # convert all quotes/ticks to single quotes
-    s = re.sub(";|:|,", ", ", s)  # convert : ; , to , with spacing
+    s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
+    s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
     s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
     s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all but - ' ,
     s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space

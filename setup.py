@@ -1,5 +1,6 @@
-import setuptools
 from pathlib import Path
+
+import setuptools
 
 REQUIREMENTS = Path("./requirements.txt")
 

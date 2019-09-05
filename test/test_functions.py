@@ -7,14 +7,13 @@ from nominally.parser import Name
     "incoming, outgoing",
     (
         (["oni", "de", "la", "soul"], ["oni", "de la soul"]),
-        (["oni", "von", "der", "kind"], ["oni", "von der kind"]),
         (["oni", "della", "soul"], ["oni", "della soul"]),
         (["oni", "bin", "baloney"], ["oni", "bin baloney"]),
         (["oni", "van", "mooface"], ["oni", "van mooface"]),
     ),
 )
 def test_prefix_combining(incoming, outgoing):
-    assert Name.join_prefixes(incoming) == outgoing
+    assert Name.combine_prefixes(incoming) == outgoing
 
 
 @pytest.mark.parametrize(
@@ -24,9 +23,33 @@ def test_prefix_combining(incoming, outgoing):
         (["della", "jones"]),
         (["bin", "jones"]),
         (["abu", "jones"]),
-        (["van", "jones"]),
-        (["van", "jones"]),
+        (["von", "jones"]),
     ),
 )
-def test_prefix_avoid_combining(static):
-    assert Name.join_prefixes(static) == static
+def test_prefix_avoid(static):
+    assert Name.combine_prefixes(static) == static
+
+
+@pytest.mark.parametrize(
+    "incoming, outgoing",
+    (
+        (["joe", "suerte", "y", "claro"], ["joe", "suerte y claro"]),
+        (["joe", "suerte", "y", "claro"], ["joe", "suerte y claro"]),
+    ),
+)
+def test_conjunction_combine(incoming, outgoing):
+    assert Name.combine_conjunctions(incoming) == outgoing
+
+
+@pytest.mark.parametrize(
+    "static",
+    (
+        ["joe", "y", "blow"],
+        ["joe", "blow", "y"],
+        ["joe", "st.", "blow", "y"],
+        ["y", "joe", "blow", "y"],
+        ["y", "joe", "blow", "jr"],
+    ),
+)
+def test_conjunction_avoid(static):
+    assert Name.combine_conjunctions(static) == static
