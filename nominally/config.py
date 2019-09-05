@@ -15,6 +15,7 @@ CONJUNCTIONS = {"y"}
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
+# Cannot include things that could also be middle or last names
 SUFFIXES = {
     "sr",
     "jr",

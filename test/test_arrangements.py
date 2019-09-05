@@ -3,20 +3,53 @@ import pytest
 from nominally.parser import Name
 
 ARRANGEMENTS = [
-    "j. h. c. goatberger",
-    "j. h. c. goatberger md",
-    "j. h. c. goatberger jr.",
-    "j. h. c. goatberger jr. md",
-    "j. h. c. goatberger, jr.",
-    "j. h. c. goatberger, jr. md",
-    "j. h. c. goatberger, jr., md",
-    "goatberger, j. h. c., jr., md",
-    "goatberger, j. h. c., jr. md",
-    "goatberger, j. h. c. jr. md",
-    "goatberger, j. h. c., jr.",
-    "goatberger, j. h. c. jr.",
-    "goatberger, j. h. c. md",
+    pytest.param("j. h. c. goatberger"),
+    pytest.param("j. h. c. goatberger md"),
+    pytest.param("j. h. c. goatberger ii."),
+    pytest.param("j. h. c. goatberger junior"),
+    pytest.param("j. h. c. goatberger ii. md"),
+    pytest.param("j. h. c. goatberger junior md"),
+    pytest.param("j. h. c. goatberger, ii."),
+    pytest.param("j. h. c. goatberger, junior"),
+    pytest.param("j. h. c. goatberger, ii. md"),
+    pytest.param("j. h. c. goatberger, junior md"),
+    pytest.param("j. h. c. goatberger, ii., md"),
+    pytest.param("j. h. c. goatberger, junior, md"),
+    pytest.param("goatberger, j. h. c., ii., md"),
+    pytest.param("goatberger, j. h. c., junior, md"),
+    pytest.param("goatberger, j. h. c., ii. md"),
+    pytest.param("goatberger, j. h. c., junior md"),
+    pytest.param("goatberger, j. h. c. ii. md"),
+    pytest.param("goatberger, j. h. c. junior md"),
+    pytest.param("goatberger, j. h. c., ii."),
+    pytest.param("goatberger, j. h. c., junior"),
+    pytest.param("goatberger, j. h. c. ii."),
+    pytest.param("goatberger, j. h. c. junior"),
+    pytest.param("goatberger, j. h. c. md"),
+    pytest.param("junior h. c. goatberger"),
+    pytest.param("junior h. c. goatberger md"),
+    pytest.param("junior h. c. goatberger phd."),
+    pytest.param("junior h. c. goatberger phd. md"),
+    pytest.param("junior h. c. goatberger, phd."),
+    pytest.param("junior h. c. goatberger, phd. md"),
+    pytest.param("junior h. c. goatberger, phd., md"),
+    pytest.param("goatberger, junior h. c., phd., md"),
+    pytest.param("goatberger, junior h. c., phd. md"),
+    pytest.param("goatberger, junior h. c. phd. md"),
+    pytest.param("goatberger, junior h. c., phd."),
+    pytest.param("goatberger, junior h. c. phd."),
+    pytest.param("goatberger, junior h. c. md"),
+    pytest.param("goatberger, junior h. c."),
+    pytest.param("goatberger, phd., junior h. c.", marks=pytest.mark.xfail()),
+    pytest.param("goatberger, ii., j. h. c.", marks=pytest.mark.xfail()),
+    pytest.param("goatberger, junior, j. h. c.", marks=pytest.mark.xfail()),
 ]
+
+
+# @pytest.mark.parametrize("incoming", ARRANGEMENTS)
+# def test_suffix_extraction(incoming):
+#     n_suffixes
+#     assert False
 
 
 @pytest.fixture(autouse=True)
@@ -27,36 +60,24 @@ def add_spacing():
 
 
 @pytest.mark.parametrize("incoming", ARRANGEMENTS)
-def test_arrangements_end_to_end(incoming):
-    print("END_TO_END start", incoming)
-    n = Name(incoming)
-    assert (n["first"], n["middle"], n["last"]) == ("j", "h c", "goatberger")
-    for sfx in ["jr", "md"]:
-        assert (sfx in n["suffix"]) == (sfx in incoming)
-    print("END_TO_END end", dict(n))
+@pytest.mark.parametrize("pyramid", ["unit", "end-to-end"])
+def test_arrangements(incoming, pyramid):
 
+    firstname = "j" if "j." in incoming else "junior"
 
-@pytest.mark.parametrize("incoming", ARRANGEMENTS)
-def test_arrangements_unit(incoming):
-    empty = {k: [] for k in Name.keys()}
-    remaining = incoming.replace(".", "")  # relevant part of pre_process()
-    remaining, working = Name.parse_full_name(remaining, working=empty)
-    assert (working["first"], working["middle"], working["last"]) == (
-        ["j"],
+    if pyramid == "unit":
+        empty = {k: [] for k in Name.keys()}
+        remaining = incoming.replace(".", "")  # relevant part of pre_process()
+        _, name_dict = Name.parse_full_name(remaining, working=empty)
+    else:
+        name_dict = {k: v.split() for k, v in dict(Name(incoming)).items()}
+    print(pyramid, name_dict)
+
+    assert (name_dict["first"], name_dict["middle"], name_dict["last"]) == (
+        [firstname],
         ["h", "c"],
         ["goatberger"],
     )
-    for sfx in ["jr", "md"]:
-        assert (sfx in working["suffix"]) == (sfx in incoming)
-
-
-# @pytest.mark.parametrize("incoming", ("goatberger, jr., j. h. c.",))
-# @pytest.mark.xfail(reason="To be implemented")
-# def test_failing_arrangements(incoming):
-#     empty = {k: [] for k in Name.keys()}
-
-#     n = Name(incoming)
-#     assert (n.first, n.middle, n.last) == ("j", "h c", "goatberger")
-#     for sfx in ["jr", "md"]:
-#         assert (sfx in n.suffix) == (sfx in incoming)
+    for sfx in ["ii", "md", "phd"]:
+        assert (sfx in name_dict["suffix"]) == (sfx in incoming)
 

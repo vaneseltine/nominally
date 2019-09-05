@@ -83,10 +83,10 @@ class Name:
         return cls._keys
 
     @classmethod
-    def pre_process(self, remaining, working):
+    def pre_process(cls, remaining, working):
         print("pre-pp", remaining, working)
-        remaining, working = self.parse_nicknames(remaining, working)
-        remaining, working = self.thoroughly_clean(remaining, working)
+        remaining, working = cls.parse_nicknames(remaining, working)
+        remaining, working = cls.thoroughly_clean(remaining, working)
         print("post-pp", remaining, working)
         return remaining, working
 
@@ -155,18 +155,13 @@ class Name:
                 working = cls.parse_v_suffix_comma(pieces, working)
             else:
                 working = cls.parse_v_lastname_comma(pieces, working)
+
         # TODO suffixes are not all fully pieced out above
         if working["suffix"]:
-            print(repr(working["suffix"]))
             rejoined = " ".join(working["suffix"])
-            print(repr(rejoined))
-            resplit = rejoined.replace(",", " ").split()
-            print(repr(resplit))
-            working["suffix"] = resplit
-            print(repr(working["suffix"]))
+            working["suffix"] = rejoined.replace(",", " ").split()
 
         remaining = ""
-
         logger.debug(f"remaining out {repr(remaining)}")
         logger.debug(f"working   out {repr(working)}")
         return remaining, working
@@ -412,3 +407,7 @@ def clean_input(s):
     s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
     s = s.strip("- ")  # drop leading/trailing hyphens and spaces
     return s
+
+
+def extract_suffixes(incoming):
+    print(incoming)
