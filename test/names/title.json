@@ -21,24 +21,6 @@
         "last": "smith"
     },
     {
-        "id": "test_possible_conflict_with_middle_initial_that_could_be_suffix",
-        "raw": "doe, dr. john v, jr.",
-        "title": "dr",
-        "first": "john",
-        "last": "doe",
-        "middle": "v",
-        "suffix": "jr"
-    },
-    {
-        "id": "test_possible_conflict_with_suffix_that_could_be_initial",
-        "raw": "doe, dr. john a., v, jr.",
-        "title": "dr",
-        "first": "john",
-        "last": "doe",
-        "middle": "a",
-        "suffix": "v, jr"
-    },
-    {
         "id": "test_ben_as_first_name",
         "raw": "ben johnson",
         "first": "ben",

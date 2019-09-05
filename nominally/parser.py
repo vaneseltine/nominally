@@ -30,12 +30,19 @@ class Name:
 
     def __init__(self, raw=""):
         self.original = raw
-        self._full_name = self.original.lower()
+        self.__remaining = self.original.lower()
         self.__working = {k: [] for k in self.keys()}
 
-        self.pre_process()
-        self.parse_full_name()
-        self.post_process()
+        self.__remaining, self.__working = self.pre_process(
+            self.__remaining, self.__working
+        )
+        self.__remaining, self.__working = self.parse_full_name(
+            self.__remaining, self.__working
+        )
+        self.__working = self.post_process(self.__working)
+
+        if self.unparsable:
+            logger.info('Unparsable: "%s" ', self.original)
 
     def __len__(self):
         return len([v for k, v in dict(self).items() if v])
@@ -75,14 +82,21 @@ class Name:
     def keys(cls):
         return cls._keys
 
-    def pre_process(self):
-        self.parse_nicknames()
-        self.thoroughly_clean()
+    @classmethod
+    def pre_process(self, remaining, working):
+        print("pre-pp", remaining, working)
+        remaining, working = self.parse_nicknames(remaining, working)
+        remaining, working = self.thoroughly_clean(remaining, working)
+        print("post-pp", remaining, working)
+        return remaining, working
 
-    def post_process(self):
-        self.make_single_name_last()
+    @classmethod
+    def post_process(cls, working):
+        working = cls.make_single_name_last(working)
+        return working
 
-    def parse_nicknames(self):
+    @staticmethod
+    def parse_nicknames(remaining, working):
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -100,38 +114,37 @@ class Name:
             config.RE_DOUBLE_QUOTES,
             config.RE_PARENTHESIS,
         ):
-            if pattern.search(self._full_name):
-                self.__working["nickname"] += [
-                    x for x in pattern.findall(self._full_name)
-                ]
-                logger.debug(f"{pattern}, {self.__working['nickname']}")
-                self._full_name = pattern.sub("", self._full_name)
+            if pattern.search(remaining):
+                working["nickname"] += [x for x in pattern.findall(remaining)]
+                remaining = pattern.sub("", remaining)
+        return remaining, working
 
-    def thoroughly_clean(self):
-        self._full_name = clean_input(self._full_name)
+    @staticmethod
+    def thoroughly_clean(remaining, working):
+        remaining = clean_input(remaining)
+        return remaining, working
 
-    def make_single_name_last(self):
+    @staticmethod
+    def make_single_name_last(working):
         """
         If there are only two parts and one is a title, assume it's a last name
         instead of a first name. e.g. Mr. Johnson.
         """
-        if self.title and len(self) == 2:
-            self.__working["first"], self.__working["last"] = (
-                self.__working["last"],
-                self.__working["first"],
-            )
+        if working["title"] and len([x for x in working.values() if x]) == 2:
+            working["first"], working["last"] = (working["last"], working["first"])
+        return working
 
-    def parse_full_name(self):
+    @classmethod
+    def parse_full_name(cls, remaining, working):
         """The main parse method."""
 
-        # break up full_name into pieces by commas
-        pieces = re.split(r"\s*,\s*", self._full_name)
-
-        logger.debug("full_name: %s", self._full_name)
-        logger.debug("pieces: %s", pieces)
+        # break up remaining into pieces by commas
+        logger.debug(f"remaining in  {repr(remaining)}")
+        logger.debug(f"working   in  {repr(working)}")
+        pieces = re.split(r"\s*,\s*", remaining)
 
         if len(pieces) == 1:
-            self.parse_v_no_commas(pieces)
+            working = cls.parse_v_no_commas(pieces, working)
 
         else:
             # if all the end pieces are suffixes and there is more than one piece
@@ -139,59 +152,77 @@ class Name:
             # only, and allows potential first names to be in suffixes, e.g.
             # "Johnson, Bart"
             if are_all_suffixes(pieces[1].split()) and len(pieces[0].split()) > 1:
-                self.parse_v_suffix_comma(pieces)
+                working = cls.parse_v_suffix_comma(pieces, working)
             else:
-                self.parse_v_lastname_comma(pieces)
+                working = cls.parse_v_lastname_comma(pieces, working)
+        # TODO suffixes are not all fully pieced out above
+        if working["suffix"]:
+            print(repr(working["suffix"]))
+            rejoined = " ".join(working["suffix"])
+            print(repr(rejoined))
+            resplit = rejoined.replace(",", " ").split()
+            print(repr(resplit))
+            working["suffix"] = resplit
+            print(repr(working["suffix"]))
 
-        if self.unparsable:
-            logger.info('Unparsable: "%s" ', self.original)
+        remaining = ""
 
-    def parse_v_suffix_comma(self, parts):
+        logger.debug(f"remaining out {repr(remaining)}")
+        logger.debug(f"working   out {repr(working)}")
+        return remaining, working
+
+    @classmethod
+    def parse_v_suffix_comma(cls, parts, working):
         # suffix comma:
         # * title first middle last [suffix], suffix [suffix] [, suffix]
         # *               parts0,          parts1..
 
-        self.__working["suffix"] += parts[1:]
-        pieces = self.parse_pieces(parts[0].split())
-        logger.debug(f"parse_v_suffix_comma pieces: {pieces}")
+        working["suffix"] += parts[1:]
+        pieces = cls.parse_pieces(parts[0].split())
+        logger.debug(f"parts     in  {repr(parts)}")
+        logger.debug(f"working   in  {repr(working)}")
         for i, piece in enumerate(pieces):
             try:
                 nxt = pieces[i + 1]
             except IndexError:
                 nxt = None
 
-            if is_title(piece) and (nxt or len(pieces) == 1) and not self.first:
-                self.__working["title"].append(piece)
+            if is_title(piece) and (nxt or len(pieces) == 1) and not working["first"]:
+                working["title"].append(piece)
                 continue
-            if not self.first:
-                self.__working["first"].append(piece)
+            if not working["first"]:
+                working["first"].append(piece)
                 continue
             if are_all_suffixes(pieces[i + 1 :]):
-                self.__working["last"].append(piece)
-                self.__working["suffix"] = pieces[i + 1 :] + self.__working["suffix"]
+                working["last"].append(piece)
+                working["suffix"] = pieces[i + 1 :] + working["suffix"]
                 break
             if not nxt:
-                self.__working["last"].append(piece)
+                working["last"].append(piece)
                 continue
-            self.__working["middle"].append(piece)
+            working["middle"].append(piece)
+        logger.debug(f"working   out {repr(working)}")
+        return working
 
-    def parse_v_lastname_comma(self, parts):
+    @classmethod
+    def parse_v_lastname_comma(cls, parts, working):
         # lastname comma:
         # * last [suffix], title first middles[,] suffix [,suffix]
         # *     parts0      parts1,              parts2..
-        pieces = self.parse_pieces(parts[1].split())
+        pieces = cls.parse_pieces(parts[1].split())
 
-        logger.debug(f"parse_v_lastname_comma pieces: {pieces}")
+        logger.debug(f"parts     in  {repr(parts)}")
+        logger.debug(f"working   in  {repr(working)}")
 
         # lastname part may have suffixes in it
-        lastname_pieces = self.parse_pieces(parts[0].split())
+        lastname_pieces = cls.parse_pieces(parts[0].split())
         for piece in lastname_pieces:
             # the first one is always a last name, even if it looks like
             # a suffix
-            if is_suffix(piece) and self.__working["last"]:
-                self.__working["suffix"].append(piece)
+            if is_suffix(piece) and working["last"]:
+                working["suffix"].append(piece)
             else:
-                self.__working["last"].append(piece)
+                working["last"].append(piece)
 
         for i, piece in enumerate(pieces):
             try:
@@ -199,24 +230,28 @@ class Name:
             except IndexError:
                 nxt = None
 
-            if is_title(piece) and (nxt or len(pieces) == 1) and not self.first:
-                self.__working["title"].append(piece)
+            if is_title(piece) and (nxt or len(pieces) == 1) and not working["first"]:
+                working["title"].append(piece)
                 continue
-            if not self.first:
-                self.__working["first"].append(piece)
+            if not working["first"]:
+                working["first"].append(piece)
                 continue
             if is_suffix(piece):
-                self.__working["suffix"].append(piece)
+                working["suffix"].append(piece)
                 continue
-            self.__working["middle"].append(piece)
+            working["middle"].append(piece)
         if len(parts) > 2:
-            self.__working["suffix"] += parts[2:]
+            working["suffix"] += parts[2:]
+        logger.debug(f"working   out {repr(working)}")
+        return working
 
-    def parse_v_no_commas(self, parts):
+    @classmethod
+    def parse_v_no_commas(cls, parts, working):
         # ~ no commas, title first middle middle middle last suffix
         # ~           part[0
-        pieces = self.parse_pieces(parts)
-        logger.debug(f"parse_v_no_commas pieces: {pieces}")
+        pieces = cls.parse_pieces(parts)
+        logger.debug(f"parts     in {repr(parts)}")
+        logger.debug(f"working   in {repr(working)}")
         p_len = len(pieces)
         for i, piece in enumerate(pieces):
             try:
@@ -225,14 +260,14 @@ class Name:
                 nxt = None
 
             # title must have a next piece, unless it's just a title
-            if is_title(piece) and (nxt or p_len == 1) and not self.first:
-                self.__working["title"].append(piece)
+            if is_title(piece) and (nxt or p_len == 1) and not working["first"]:
+                working["title"].append(piece)
                 continue
-            if not self.first:
-                if p_len == 1 and self.nickname:
-                    self.__working["last"].append(piece)
+            if not working["first"]:
+                if p_len == 1 and working["nickname"]:
+                    working["last"].append(piece)
                     continue
-                self.__working["first"].append(piece)
+                working["first"].append(piece)
                 continue
             if are_all_suffixes(pieces[i + 1 :]) or (
                 # if the next piece is the last piece and a roman
@@ -241,24 +276,27 @@ class Name:
                 and i == p_len - 2
                 and not is_an_initial(piece)
             ):
-                self.__working["last"].append(piece)
-                self.__working["suffix"] += pieces[i + 1 :]
+                working["last"].append(piece)
+                working["suffix"] += pieces[i + 1 :]
                 break
             if not nxt:
-                self.__working["last"].append(piece)
+                working["last"].append(piece)
                 continue
 
-            self.__working["middle"].append(piece)
+            working["middle"].append(piece)
+        logger.debug(f"working   out {repr(working)}")
+        return working
 
-    def parse_pieces(self, parts):
+    @classmethod
+    def parse_pieces(cls, parts):
         """
         Split group of pieces down to individual words and
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        words = self.break_down_to_words(parts)
-        pieces = self.combine_conjunctions(words)
-        pieces = self.combine_prefixes(pieces)
+        words = cls.break_down_to_words(parts)
+        pieces = cls.combine_conjunctions(words)
+        pieces = cls.combine_prefixes(pieces)
         return pieces
 
     @staticmethod
@@ -325,7 +363,7 @@ class Name:
 
     @property
     def suffix(self):
-        return ", ".join(self.__working["suffix"]) or ""
+        return " ".join(self.__working["suffix"]) or ""
 
     @property
     def nickname(self):

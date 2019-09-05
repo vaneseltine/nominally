@@ -5,23 +5,21 @@
         "raw": "kenneth clarke md phd",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "md, phd"
+        "suffix": "md phd"
     },
     {
         "id": "test_three_suffixes",
-        "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
         "raw": "kenneth clarke md md phd",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "md, md, phd"
+        "suffix": "md md phd"
     },
     {
         "id": "test_two_suffixes_lastname_comma_format",
-        "_note": "this adds a comma when the original format did not have one.",
         "raw": "washington jr. md, franklin",
         "first": "franklin",
         "last": "washington",
-        "suffix": "jr, md"
+        "suffix": "jr md"
     },
     {
         "id": "test_suffix",
@@ -63,21 +61,21 @@
         "raw": "kenneth clarke m.d., ph.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "md, phd"
+        "suffix": "md phd"
     },
     {
         "id": "test_suffix_with_single_comma_format",
         "raw": "john doe jr., md",
         "first": "john",
         "last": "doe",
-        "suffix": "jr, md"
+        "suffix": "jr md"
     },
     {
         "id": "test_suffix_with_double_comma_format",
         "raw": "doe, john jr., md",
         "first": "john",
         "last": "doe",
-        "suffix": "jr, md"
+        "suffix": "jr md"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_with_suffix",
@@ -91,7 +89,7 @@
         "raw": "ma iii, jack jr",
         "first": "jack",
         "last": "ma",
-        "suffix": "iii, jr"
+        "suffix": "iii jr"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name",

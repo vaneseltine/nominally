@@ -58,7 +58,7 @@
         "raw": "von bergen wessels md, pennie iii",
         "first": "pennie",
         "last": "von bergen wessels",
-        "suffix": "md, iii"
+        "suffix": "md iii"
     },
     {
         "id": "test_comma_two_part_last_name_with_acronym_suffix",
@@ -72,7 +72,7 @@
         "raw": "pennie von bergen wessels md, iii",
         "first": "pennie",
         "last": "von bergen wessels",
-        "suffix": "md, iii"
+        "suffix": "md iii"
     },
     {
         "id": "test_portuguese_dos",

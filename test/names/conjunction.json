@@ -55,7 +55,7 @@
         "first": "john",
         "middle": "e",
         "last": "smith",
-        "suffix": "iii, jr"
+        "suffix": "iii jr"
     },
     {
         "id": "test_roman_numeral_initials_one",
