@@ -85,7 +85,7 @@ class TestCleanName:
             ("'Dinsdale'", "'dinsdale'"),
         ],
     )
-    def t_keep_certain_symbols(self, raw, cooked):
+    def t_handle_certain_symbols(self, raw, cooked):
         assert clean_input(raw) == cooked
 
     @pytest.mark.parametrize(

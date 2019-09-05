@@ -1,12 +1,8 @@
 """pytest ./pytest/"""
 
-import json
-from pathlib import Path
-
 import pytest
 
 from nominally import Name
-from nominally.parser import logger
 
 from .conftest import load_bank, make_ids
 
@@ -85,7 +81,6 @@ class TestCoreFunctionality:
         assert name2
         assert name1 == name2
         assert name1 is not name2
-        correct = "dr john p doe-ray jr"
         assert name1 == "dr john p doe-ray jr"
         name1 = Name("Doe, Dr. John P., Jr")
         name2 = Name("Dr. John P. Doe-Ray, jr")
@@ -196,7 +191,7 @@ class TestNameVariations:
 
     Helps test that the 3 code trees work the same"""
 
-    @pytest.mark.parametrize("name", load_bank("brute_force"))
+    @pytest.mark.parametrize("name", load_bank("brute_force"), ids=make_ids)
     def test_json_variations(self, name):
         self.run_variations(name["raw"])
 

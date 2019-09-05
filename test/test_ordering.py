@@ -1,6 +1,8 @@
-import pytest
 import re
-from nominally.parser import Name, pieces_to_words, logger
+
+import pytest
+
+from nominally.parser import Name, pieces_to_words
 
 from .conftest import load_bank, make_ids
 
@@ -37,48 +39,66 @@ BROKEN = [
 BROKEN_XFAIL = [pytest.param(x, marks=pytest.mark.xfail()) for x in BROKEN]
 
 
+@pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
+def test_meta_no_pre_process_side_effects_these_names(entry):
+    _, working = Name.pre_process(entry["raw"])
+    assert not any(bool(v) for v in working.values())
+
+
 @pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN_XFAIL, ids=make_ids)
-@pytest.mark.parametrize("pyramid", ["end-to-end", "unit"])
-def test_ordering(entry, pyramid):
+def test_ordering_unit(entry):
+    scrubbed, _ = Name.pre_process(entry["raw"])
+    working = Name.parse_full_name(scrubbed)
+    name_dict = {k: " ".join(v) for k, v in working.items()}
+    assert name_dict == {key: entry.get(key, "") for key in name_dict.keys()}
 
-    if pyramid == "unit":
-        empty = {k: [] for k in Name.keys()}
-        # relevant part of pre_process()
-        remaining = re.split(r"\s*,\s*", (entry["raw"].replace(".", "")))
-        working = Name.parse_full_name(remaining)
-        name_dict = {k: " ".join(v) for k, v in working.items()}
-    else:
-        name_dict = dict(Name(entry["raw"]))
 
-    expected = {key: entry.get(key, "") for key in name_dict.keys()}
-    assert name_dict == expected
+@pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN_XFAIL, ids=make_ids)
+def test_ordering_end_to_end(entry):
+    name_dict = dict(Name(entry["raw"]))
+    assert name_dict == {key: entry.get(key, "") for key in name_dict.keys()}
 
 
 @pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
-# @pytest.mark.xfail(reason="working")
-def test_suffix_extraction(entry):
-    scrubbed, fake_working = Name.pre_process(entry["raw"])
-
-    # pre_processing didn't have any weird side effects to worry about
-    assert not any(bool(v) for v in fake_working.values())
-
+def test_suffix_extraction_has_correct_suffixes(entry):
+    scrubbed, _ = Name.pre_process(entry["raw"])
     pieces, suffixes = Name.extract_suffixes(scrubbed)
-    logger.warning(f"FINAL {pieces}")
-    logger.warning(f"FINAL {suffixes}")
-
-    # The suffixes are what we want
     assert set(suffixes) == set(entry.get("suffix", "").split())
-    # We got back a sequence of strings for the pieces
+
+
+@pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
+def test_suffix_extraction_returns_appropriate_types(entry):
+    # TODO -- add typing instead
+    scrubbed, _ = Name.pre_process(entry["raw"])
+    pieces, suffixes = Name.extract_suffixes(scrubbed)
     assert all(isinstance(x, str) for x in pieces)
-    # No words were lost or gained
+
+
+@pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
+def test_suffix_extraction_did_not_mistrack_words(entry):
+    scrubbed, _ = Name.pre_process(entry["raw"])
+    pieces, suffixes = Name.extract_suffixes(scrubbed)
     assert set(pieces_to_words(scrubbed)) == set(pieces_to_words(pieces + suffixes))
 
-    ugly_in = str(scrubbed)
-    ugly_out = str(pieces)
-    if "junior" in ugly_out:
-        last_name_first_in = ugly_in.index("junior") > ugly_in.index("berg")
-        last_name_first_out = ugly_out.index("junior") > ugly_out.index("berg")
-        print(f"last name is first: {last_name_first_in}")
-        print(f"last name is first: {last_name_first_out}")
-        assert last_name_first_in == last_name_first_out
 
+@pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
+def test_suffix_extraction_maintained_first_last_order(entry):
+    scrubbed, _ = Name.pre_process(entry["raw"])
+    pieces, suffixes = Name.extract_suffixes(scrubbed)
+    ugly_in = str(scrubbed).replace("'", " ")
+    ugly_out = str(pieces).replace("'", " ")
+    for marker in (" junior ", " j ", " h c "):
+        if marker in ugly_out:
+            order_in = ugly_in.index(marker) > ugly_in.index("berger")
+            order_out = ugly_out.index(marker) > ugly_out.index("berger")
+            assert order_in == order_out
+
+
+@pytest.mark.parametrize(
+    "entry", load_bank("title_ordering") + load_bank("ordering"), ids=make_ids
+)
+@pytest.mark.xfail(reason="TODO")
+def test_title(entry):
+    scrubbed, _ = Name.pre_process(entry["raw"])
+    pieces, title = Name.extract_title(scrubbed)
+    assert set(title) == set(entry.get("title", "").split())

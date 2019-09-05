@@ -1,6 +1,5 @@
 import logging
 import re
-from copy import deepcopy
 
 from unidecode import unidecode_expect_ascii
 
@@ -404,44 +403,41 @@ class Name:
         return cls._keys
 
     @staticmethod
+    def extract_titles(pieces):
+        return pieces, ["dr"]
+
+    @staticmethod
     def extract_suffixes(pieces):
-
-        if count_words(pieces) < 3:
-            return pieces, []
-
-        logger.warning(repr(pieces))
         outgoing = []
         suffixes = []
-        MIN_WORDS_TOTAL = 2
+        min_words = 2
 
         word_clusters = [piece.split() for piece in pieces]
-        logger.warning(pieces)
-        logger.warning(word_clusters)
+
         while word_clusters:
 
-            words_count = count_words(flatten(word_clusters + outgoing))
-            if words_count <= MIN_WORDS_TOTAL:
-                outgoing.extend(" ".join(x) for x in word_clusters)
-                logger.warning("Bail outer loop")
-                return outgoing, suffixes
+            if count_words(flatten(word_clusters + outgoing)) <= min_words:
+                rejoined = [" ".join(x) for x in word_clusters]
+                rejoined.extend(outgoing)
+                return rejoined, suffixes
 
             words = word_clusters.pop()
+
             min_words_remaining = 0 if is_only_suffixes(words) else 1
             while count_words(words) > min_words_remaining:
 
-                words_count = count_words(flatten(word_clusters + words + outgoing))
-                if words_count <= MIN_WORDS_TOTAL:
+                if count_words(flatten(word_clusters + words + outgoing)) <= min_words:
                     word_clusters.append(words)
                     outgoing.extend(" ".join(x) for x in word_clusters)
-                    logger.warning("Bail inner loop")
                     return outgoing, suffixes
 
-                next_word = words[-1]
-                if not is_suffix(next_word):
+                if not is_suffix(words[-1]):
                     break
                 suffixes.append(words.pop())
+
             if words:
                 outgoing.append(" ".join(words))
+
         outgoing.reverse()
         return outgoing, suffixes
 
