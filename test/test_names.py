@@ -19,8 +19,8 @@ def load_bank(category):
 
 def dict_entry_test(dict_entry):
     hn = Name(dict_entry["raw"])
-    expected = {attr: dict_entry.get(attr, "") for attr in hn._members}
-    assert hn.as_dict() == expected
+    expected = {key: dict_entry.get(key, "") for key in dict(hn).keys()}
+    assert dict(hn) == expected
 
 
 def make_ids(entry):
@@ -114,9 +114,9 @@ class TestCoreFunctionality:
         assert hn1 is not hn2
         assert hn1 == "dr john p doe-ray jr"
 
-    def test_slice(self):
-        hn = Name("Doe-Ray, Dr. John P., Jr")
-        assert list(hn) == ["dr", "john", "p", "doe-ray", "jr"]
+    def test_as_list(self):
+        hn = Name("Doe-Ray, Dr. John (Doctor Doo) P., Jr")
+        assert list(hn) == ["dr", "john", "p", "doe-ray", "jr", "doctor doo"]
 
     def test_getitem(self):
         hn = Name("Dr. John A. Kenneth Doe, Jr.")
@@ -228,11 +228,11 @@ class TestNameVariations:
         hn = Name(name)
         if len(hn.suffix_list) > 1:
             hn = Name(
-                "{title} {first} {middle} {last} {suffix}".format(**hn.as_dict()).split(
+                "{title} {first} {middle} {last} {suffix}".format(**dict(hn)).split(
                     ","
                 )[0]
             )
-        hn_dict = hn.as_dict()
+        hn_dict = dict(hn)
         nocomma = Name("{title} {first} {middle} {last} {suffix}".format(**hn_dict))
         lastnamecomma = Name(
             "{last}, {title} {first} {middle} {suffix}".format(**hn_dict)
@@ -258,11 +258,14 @@ class TestNameVariations:
                         **hn_dict
                     )
                 )
-        for attr in hn._members:
-            assert getattr(hn, attr) == getattr(nocomma, attr)
-            assert getattr(hn, attr) == getattr(lastnamecomma, attr)
+        for key in hn.keys():
+            assert hn[key] == nocomma[key]
+            assert getattr(hn, key) == getattr(nocomma, key)
+            assert hn[key] == lastnamecomma[key]
+            assert getattr(hn, key) == getattr(lastnamecomma, key)
             if hn.suffix:
-                assert getattr(hn, attr) == getattr(suffixcomma, attr)
+                assert hn[key] == suffixcomma[key]
+                assert getattr(hn, key) == getattr(suffixcomma, key)
 
 
 if __name__ == "__main__":

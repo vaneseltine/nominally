@@ -170,7 +170,7 @@ include-naming-hint=yes
 docstring-min-length=-1
 
 # Good variable names which should always be accepted, separated by a comma.
-good-names = df, i, n, s, logger
+good-names = df, i, k, n, s, v, logger
 
 
 
@@ -210,8 +210,7 @@ expected-line-ending-format=
 # Number of spaces of indent required inside a hanging  or continued line.
 indent-after-paren=4
 
-# String used as indentation unit. This is usually "    " (4 spaces) or "\t" (1
-# tab).
+# String used as indentation unit.
 indent-string='    '
 
 # Maximum number of characters on a single line.

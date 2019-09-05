@@ -3,7 +3,7 @@ import re
 RE_SPACES = re.compile(r"\s+")
 RE_INITIAL = re.compile(r"^(\w\.|[A-Z])?$")
 RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)")
-RE_DOUBLE_QUOTES = re.compile(r"\"(.*?)\"")
+RE_DOUBLE_QUOTES = re.compile(r'"(.*?)"')
 RE_PARENTHESIS = re.compile(r"\((.*?)\)")
 RE_ROMAN_NUMERAL = re.compile(r"^(ii|iii|iv|vi|vii|viii|ix)$", re.I)
 

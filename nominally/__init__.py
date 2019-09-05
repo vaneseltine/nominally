@@ -1,23 +1,23 @@
-from nominally.parser import Name
-
 import sys
+
+from nominally.parser import Name
 
 
 def parse():
     sys.argv.pop(0)
-    print(sys.argv)
     raw_name = " ".join(sys.argv)
     if not raw_name:
         print("Usage: nominally Mr. Eric Praline")
         return 1
     name = Name(raw_name)
-    d = {"raw": raw_name, "parsed": str(name)}
-    d.update(name.as_dict())
-    prettier_print(d)
+    output = {"raw": raw_name, "parsed": str(name)}
+    output.update(name)
+    prettier_print(output)
+    print("list:", list(name))
     return 0
 
 
-def prettier_print(d):
+def prettier_print(dictionary):
     """pprint.pprint unacceptably sorts"""
-    for k, v in d.items():
+    for k, v in dictionary.items():
         print(f"{k:>10}: {v}")
