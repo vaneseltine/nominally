@@ -2,18 +2,18 @@
     {
         "id": "test_two_suffixes",
         "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
-        "raw": "kenneth clarke msc phd",
+        "raw": "kenneth clarke md phd",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "msc, phd"
+        "suffix": "md, phd"
     },
     {
         "id": "test_three_suffixes",
         "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
-        "raw": "kenneth clarke msc md phd",
+        "raw": "kenneth clarke md md phd",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "msc, md, phd"
+        "suffix": "md, md, phd"
     },
     {
         "id": "test_two_suffixes_lastname_comma_format",
@@ -46,24 +46,24 @@
     },
     {
         "id": "test_suffix_containing_periods",
-        "raw": "kenneth clarke m.s.c.",
+        "raw": "kenneth clarke m.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "msc"
+        "suffix": "md"
     },
     {
         "id": "test_suffix_containing_periods_lastname_comma_format",
-        "raw": "clarke, kenneth, m.s.c. ph.d.",
+        "raw": "clarke, kenneth, m.d. ph.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "msc phd"
+        "suffix": "md phd"
     },
     {
         "id": "test_suffix_containing_periods_suffix_comma_format",
-        "raw": "kenneth clarke m.s.c., ph.d.",
+        "raw": "kenneth clarke m.d., ph.d.",
         "first": "kenneth",
         "last": "clarke",
-        "suffix": "msc, phd"
+        "suffix": "md, phd"
     },
     {
         "id": "test_suffix_with_single_comma_format",

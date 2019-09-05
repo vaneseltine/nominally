@@ -41,13 +41,7 @@ SUFFIXES = {
     "iii",
     "iv",
     "jd",
-    "ma",
-    "mba",
-    "mbe",
-    "mc",
     "md",
-    "msc",
-    "msm",
     "phd",
 }
 

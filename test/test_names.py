@@ -57,7 +57,7 @@ class TestCoreFunctionality:
 
     def test_string_output(self):
         n = Name('de la Véña, Dr. Jüan "Paco", Jr.')
-        assert str(n) == "dr juan de la vena jr (paco)"
+        assert str(n) == 'dr juan "paco" de la vena jr'
 
     def test_repr_output(self):
         n = Name('de la Véña, Dr. Jüan "Paco", Jr.')
@@ -93,6 +93,10 @@ class TestCoreFunctionality:
         assert name2
         assert name1 == name2
         assert name1 is not name2
+        print(name1)
+        print(name2)
+        correct = "dr john p doe-ray jr"
+        print(correct)
         assert name1 == "dr john p doe-ray jr"
         name1 = Name("Doe, Dr. John P., Jr")
         name2 = Name("Dr. John P. Doe-Ray, jr")
@@ -102,16 +106,12 @@ class TestCoreFunctionality:
         assert name1 != ["test"]
         assert name1 != {"test": name2}
 
-    def test_get_full_name_attribute_references_internal_lists(self):
-        n = Name("John Williams")
-        n.first_list = ["larry"]
-        assert n.full_name == "larry williams"
-
     def test_comparison_case_insensitive(self):
         name1 = Name("Doe-Ray, Dr. John P., Jr")
         name2 = Name("dr john p. doe-Ray, jr")
         assert name1 is not name2
         assert name1 == name2
+        print(name1)
         assert name1 == "dr john p doe-ray jr"
 
     def test_as_list(self):
@@ -220,7 +220,7 @@ class TestNameVariations:
         added if desired.
         """
         n = Name(name)
-        if len(n.suffix_list) > 1:
+        if len(n.suffix.split()) > 1:
             n = Name(
                 "{title} {first} {middle} {last} {suffix}".format(**dict(n)).split(",")[
                     0
