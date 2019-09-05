@@ -6,25 +6,15 @@ from pathlib import Path
 import pytest
 
 from nominally import Name
+from nominally.parser import logger
 
-TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
-
-
-def load_bank(category):
-    test_bank_file = (TEST_DATA_DIRECTORY / category).with_suffix(".json")
-    test_bank = json.loads(test_bank_file.read_text(encoding="utf8"))
-    print(f"Loading {len(test_bank)} cases for {category} from {test_bank_file}.")
-    return test_bank
+from .conftest import load_bank, make_ids
 
 
-def dict_entry_test(dict_entry):
-    n = Name(dict_entry["raw"])
-    expected = {key: dict_entry.get(key, "") for key in dict(n).keys()}
+def dict_entry_test(entry):
+    n = Name(entry["raw"])
+    expected = {key: entry.get(key, "") for key in dict(n).keys()}
     assert dict(n) == expected
-
-
-def make_ids(entry):
-    return entry.get("id") or entry.get("raw")
 
 
 class TestCoreFunctionality:
@@ -78,7 +68,9 @@ class TestCoreFunctionality:
         assert "unparsable" not in repr(n).lower()
 
     def test_unparsable_are_not_equal(self):
-        assert Name("") != Name("")
+        name1 = Name("")
+        name2 = Name("")
+        assert name1 != name2
 
     @pytest.mark.parametrize(
         "raw, length", [("Doe-Ray, Dr. John P., Jr", 5), ("John Doe", 2)]
@@ -93,10 +85,7 @@ class TestCoreFunctionality:
         assert name2
         assert name1 == name2
         assert name1 is not name2
-        print(name1)
-        print(name2)
         correct = "dr john p doe-ray jr"
-        print(correct)
         assert name1 == "dr john p doe-ray jr"
         name1 = Name("Doe, Dr. John P., Jr")
         name2 = Name("Dr. John P. Doe-Ray, jr")
@@ -111,7 +100,6 @@ class TestCoreFunctionality:
         name2 = Name("dr john p. doe-Ray, jr")
         assert name1 is not name2
         assert name1 == name2
-        print(name1)
         assert name1 == "dr john p doe-ray jr"
 
     def test_as_list(self):
@@ -149,13 +137,12 @@ class TestNameConjunction:
     def test_json_conjunction(self, entry):
         dict_entry_test(entry)
 
-    @pytest.mark.xfail
+    @pytest.mark.xfail(reason="Support this vs. removing periods for M.B.A., Ph.D.")
     def test_two_initials_conflict_with_conjunction(self):
-        # Supporting this seems to screw up titles with periods in them like M.B.A.
-        n = Name("E.T. Smith")
-        assert n.first == "e"
-        assert n.middle == "t"
-        assert n.last == "smith"
+        n = Name("J.R.R. Tolkien")
+        assert n.first == "j"
+        assert n.middle == "r r"
+        assert n.last == "tolkien"
 
     @pytest.mark.xfail
     def test_four_name_parts_with_suffix_that_could_be_initial_lowercase_no_p(self):

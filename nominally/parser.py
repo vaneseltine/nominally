@@ -9,11 +9,11 @@ LOGS_ON = True
 
 logger = logging.getLogger()
 if LOGS_ON:
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.WARNING)
     MESSAGE_FORMAT = "{levelname:<8s} {funcName:<24s} {lineno:<4} {message}"
     stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
     stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
-    stream_handler.setLevel(logging.DEBUG)
+    stream_handler.setLevel(logging.WARNING)
     logger.addHandler(stream_handler)
 else:
     logger.addHandler(logging.NullHandler())
@@ -49,7 +49,6 @@ class Name:
 
     def __eq__(self, other):
         if self.unparsable:
-            logger.warning("Unparsable!")
             return False
         return str(self) == str(other)
 
@@ -84,10 +83,10 @@ class Name:
 
     @classmethod
     def pre_process(cls, remaining, working):
-        print("pre-pp", remaining, working)
+        logger.debug("pre-pp", remaining, working)
         remaining, working = cls.parse_nicknames(remaining, working)
         remaining, working = cls.thoroughly_clean(remaining, working)
-        print("post-pp", remaining, working)
+        logger.debug("post-pp", remaining, working)
         return remaining, working
 
     @classmethod
@@ -151,7 +150,7 @@ class Name:
             # in the first part. (Suffixes will never appear after last names
             # only, and allows potential first names to be in suffixes, e.g.
             # "Johnson, Bart"
-            if are_all_suffixes(pieces[1].split()) and len(pieces[0].split()) > 1:
+            if only_suffixes(pieces[1].split()) and len(pieces[0].split()) > 1:
                 working = cls.parse_v_suffix_comma(pieces, working)
             else:
                 working = cls.parse_v_lastname_comma(pieces, working)
@@ -188,7 +187,7 @@ class Name:
             if not working["first"]:
                 working["first"].append(piece)
                 continue
-            if are_all_suffixes(pieces[i + 1 :]):
+            if only_suffixes(pieces[i + 1 :]):
                 working["last"].append(piece)
                 working["suffix"] = pieces[i + 1 :] + working["suffix"]
                 break
@@ -264,7 +263,7 @@ class Name:
                     continue
                 working["first"].append(piece)
                 continue
-            if are_all_suffixes(pieces[i + 1 :]) or (
+            if only_suffixes(pieces[i + 1 :]) or (
                 # if the next piece is the last piece and a roman
                 # numeral but this piece is not an initial
                 is_roman_numeral(nxt)
@@ -368,6 +367,10 @@ class Name:
     def unparsable(self):
         return len(self) == 0
 
+    @staticmethod
+    def extract_suffixes(incoming):
+        return incoming.split(",")
+
 
 def is_title(value):
     return value in config.TITLES
@@ -385,12 +388,14 @@ def is_roman_numeral(value):
     return bool(config.RE_ROMAN_NUMERAL.match(value))
 
 
+def only_suffixes(thing):
+    if isinstance(thing, str):
+        thing = thing.split()
+    return all(is_suffix(x) for x in thing)
+
+
 def is_suffix(piece):
     return piece in config.SUFFIXES and not is_an_initial(piece)
-
-
-def are_all_suffixes(pieces):
-    return all(is_suffix(x) for x in pieces)
 
 
 def is_an_initial(value):
@@ -408,6 +413,3 @@ def clean_input(s):
     s = s.strip("- ")  # drop leading/trailing hyphens and spaces
     return s
 
-
-def extract_suffixes(incoming):
-    print(incoming)

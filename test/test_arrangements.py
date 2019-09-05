@@ -2,82 +2,41 @@ import pytest
 
 from nominally.parser import Name
 
-ARRANGEMENTS = [
-    pytest.param("j. h. c. goatberger"),
-    pytest.param("j. h. c. goatberger md"),
-    pytest.param("j. h. c. goatberger ii."),
-    pytest.param("j. h. c. goatberger junior"),
-    pytest.param("j. h. c. goatberger ii. md"),
-    pytest.param("j. h. c. goatberger junior md"),
-    pytest.param("j. h. c. goatberger, ii."),
-    pytest.param("j. h. c. goatberger, junior"),
-    pytest.param("j. h. c. goatberger, ii. md"),
-    pytest.param("j. h. c. goatberger, junior md"),
-    pytest.param("j. h. c. goatberger, ii., md"),
-    pytest.param("j. h. c. goatberger, junior, md"),
-    pytest.param("goatberger, j. h. c., ii., md"),
-    pytest.param("goatberger, j. h. c., junior, md"),
-    pytest.param("goatberger, j. h. c., ii. md"),
-    pytest.param("goatberger, j. h. c., junior md"),
-    pytest.param("goatberger, j. h. c. ii. md"),
-    pytest.param("goatberger, j. h. c. junior md"),
-    pytest.param("goatberger, j. h. c., ii."),
-    pytest.param("goatberger, j. h. c., junior"),
-    pytest.param("goatberger, j. h. c. ii."),
-    pytest.param("goatberger, j. h. c. junior"),
-    pytest.param("goatberger, j. h. c. md"),
-    pytest.param("junior h. c. goatberger"),
-    pytest.param("junior h. c. goatberger md"),
-    pytest.param("junior h. c. goatberger phd."),
-    pytest.param("junior h. c. goatberger phd. md"),
-    pytest.param("junior h. c. goatberger, phd."),
-    pytest.param("junior h. c. goatberger, phd. md"),
-    pytest.param("junior h. c. goatberger, phd., md"),
-    pytest.param("goatberger, junior h. c., phd., md"),
-    pytest.param("goatberger, junior h. c., phd. md"),
-    pytest.param("goatberger, junior h. c. phd. md"),
-    pytest.param("goatberger, junior h. c., phd."),
-    pytest.param("goatberger, junior h. c. phd."),
-    pytest.param("goatberger, junior h. c. md"),
-    pytest.param("goatberger, junior h. c."),
-    pytest.param("goatberger, phd., junior h. c.", marks=pytest.mark.xfail()),
-    pytest.param("goatberger, ii., j. h. c.", marks=pytest.mark.xfail()),
-    pytest.param("goatberger, junior, j. h. c.", marks=pytest.mark.xfail()),
+from .conftest import load_bank, make_ids
+
+BROKEN = [
+    pytest.param({"raw": "goatberger, phd., junior h. c."}, marks=pytest.mark.xfail()),
+    pytest.param({"raw": "goatberger, ii., j. h. c."}, marks=pytest.mark.xfail()),
+    pytest.param({"raw": "goatberger, junior, j. h. c."}, marks=pytest.mark.xfail()),
+    pytest.param({"raw": "goatberger, junior, j."}, marks=pytest.mark.xfail()),
 ]
 
 
-# @pytest.mark.parametrize("incoming", ARRANGEMENTS)
-# def test_suffix_extraction(incoming):
-#     n_suffixes
-#     assert False
-
-
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=False)
 def add_spacing():
     print("\n")
     yield
     print("\n")
 
 
-@pytest.mark.parametrize("incoming", ARRANGEMENTS)
-@pytest.mark.parametrize("pyramid", ["unit", "end-to-end"])
-def test_arrangements(incoming, pyramid):
-
-    firstname = "j" if "j." in incoming else "junior"
+@pytest.mark.parametrize("entry", load_bank("arrangements") + BROKEN, ids=make_ids)
+@pytest.mark.parametrize("pyramid", ["end-to-end", "unit"])
+def test_arrangements(entry, pyramid):
 
     if pyramid == "unit":
         empty = {k: [] for k in Name.keys()}
-        remaining = incoming.replace(".", "")  # relevant part of pre_process()
-        _, name_dict = Name.parse_full_name(remaining, working=empty)
+        remaining = entry["raw"].replace(".", "")  # relevant part of pre_process()
+        _, working = Name.parse_full_name(remaining, working=empty)
+        name_dict = {k: " ".join(v) for k, v in working.items()}
     else:
-        name_dict = {k: v.split() for k, v in dict(Name(incoming)).items()}
-    print(pyramid, name_dict)
+        name_dict = dict(Name(entry["raw"]))
 
-    assert (name_dict["first"], name_dict["middle"], name_dict["last"]) == (
-        [firstname],
-        ["h", "c"],
-        ["goatberger"],
-    )
-    for sfx in ["ii", "md", "phd"]:
-        assert (sfx in name_dict["suffix"]) == (sfx in incoming)
+    expected = {key: entry.get(key, "") for key in name_dict.keys()}
+    assert name_dict == expected
+
+
+@pytest.mark.parametrize("entry", load_bank("arrangements") + BROKEN, ids=make_ids)
+@pytest.mark.xfail(reason="working")
+def test_suffix_extraction(entry):
+    assert Name.extract_suffixes(entry["raw"]) == "pie"
 
