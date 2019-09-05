@@ -1,5 +1,8 @@
 import json
 from pathlib import Path
+
+import pytest
+
 from nominally.parser import logger
 
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
@@ -14,3 +17,10 @@ def load_bank(category):
     test_bank = json.loads(test_bank_file.read_text(encoding="utf8"))
     logger.debug(f"{category:>15}: {len(test_bank):>3} from {test_bank_file}")
     return test_bank
+
+
+@pytest.fixture(autouse=False)
+def add_spacing():
+    print("\n")
+    yield
+    print("\n")

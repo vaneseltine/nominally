@@ -1,5 +1,6 @@
 import logging
 import re
+from copy import deepcopy
 
 from unidecode import unidecode_expect_ascii
 
@@ -23,7 +24,28 @@ def parse_name(s):
     return dict(Name(s))
 
 
-from copy import deepcopy
+def flatten(foo):
+    """Take any set of nests in an iterator and reduce it into one generator.
+
+    'Nests' include any iterable except strings.
+
+    :param foo:
+
+    .. note::
+
+        :py:func:`flatten` was authored
+        by `Amber Yust <https://stackoverflow.com/users/148870/amber>`_
+        at https://stackoverflow.com/a/5286571. This function is not claimed
+        under the laforge license.
+
+    """
+    # pylint: disable=invalid-name,blacklisted-name
+    for x in foo:
+        if hasattr(x, "__iter__") and not isinstance(x, str):
+            for y in flatten(x):
+                yield y
+        else:
+            yield x
 
 
 class Name:
@@ -33,65 +55,29 @@ class Name:
 
     def __init__(self, raw=""):
         self.original = raw
-        self.__working = {k: [] for k in self.keys()}
+        working = {k: [] for k in self.keys()}
 
-        pieces, self.__working = self.process_string_to_pieces(
-            self.original, self.__working
-        )
-        self.__working = self.parse_full_name(pieces, self.__working)
-        self.__working = self.post_process(self.__working)
+        pieces, working = self.pre_process(self.original, working)
+        working = self.parse_full_name(pieces, working)
+        working = self.post_process(working)
 
-        self._final = deepcopy(self.__working)
+        self._final = working
 
         if self.unparsable:
             logger.info('Unparsable: "%s" ', self.original)
 
-    def __len__(self):
-        return len([v for k, v in dict(self).items() if v])
-
-    def __eq__(self, other):
-        if self.unparsable:
-            return False
-        return str(self) == str(other)
-
-    def __getitem__(self, key):
-        if key not in self.keys():
-            true_key = self.keys()[key]
-            return self[true_key]
-        return getattr(self, key)
-
-    def __str__(self):
-        string_parts = [
-            self.title,
-            self.first,
-            f'"{self.nickname}"' if self.nickname else "",
-            self.middle,
-            self.last,
-            self.suffix,
-        ]
-        joined = " ".join(string_parts)
-        return re.sub(r"\s+", " ", joined).strip()
-
-    def __repr__(self):
-        if self.unparsable:
-            text = "Unparsable"
-        else:
-            text = str(dict(self))
-        return f"{self.__class__.__name__}({text})"
-
     @classmethod
-    def keys(cls):
-        return cls._keys
+    def pre_process(cls, s, working=None):
+        if working is None:
+            working = {k: [] for k in cls.keys()}
+        s = s.lower()
+        s, working = cls.parse_nicknames(s, working)
+        s = clean_input(s)
+        return cls.string_to_pieces(s), working
 
-    @classmethod
-    def process_string_to_pieces(cls, remaining, working):
-        logger.debug("pre-pp", remaining, working)
-        remaining = remaining.lower()
-        remaining, working = cls.parse_nicknames(remaining, working)
-        remaining = clean_input(remaining)
-        pieces = re.split(r"\s*,\s*", remaining)
-        logger.debug("post-pp", pieces, working)
-        return pieces, working
+    @staticmethod
+    def string_to_pieces(remaining):
+        return re.split(r"\s*,\s*", remaining)
 
     @classmethod
     def post_process(cls, working):
@@ -133,8 +119,14 @@ class Name:
         return working
 
     @classmethod
-    def parse_full_name(cls, pieces, working):
+    def new_working(cls):
+        return {k: [] for k in cls.keys()}
+
+    @classmethod
+    def parse_full_name(cls, pieces, working=None):
         """The main parse method."""
+
+        working = working or cls.new_working()
 
         # break up pieces into pieces by commas
         logger.debug(f"pieces    in  {repr(pieces)}")
@@ -148,7 +140,7 @@ class Name:
             # in the first part. (Suffixes will never appear after last names
             # only, and allows potential first names to be in suffixes, e.g.
             # "Johnson, Bart"
-            if only_suffixes(pieces[1].split()) and len(pieces[0].split()) > 1:
+            if is_only_suffixes(pieces[1].split()) and len(pieces[0].split()) > 1:
                 working = cls.parse_v_suffix_comma(pieces, working)
             else:
                 working = cls.parse_v_lastname_comma(pieces, working)
@@ -162,10 +154,13 @@ class Name:
         return working
 
     @classmethod
-    def parse_v_suffix_comma(cls, parts, working):
-        # suffix comma:
-        # * title first middle last [suffix], suffix [suffix] [, suffix]
-        # *               parts0,          parts1..
+    def parse_v_suffix_comma(cls, parts, working=None):
+        """
+        suffix comma:
+        title first middle last [suffix], suffix [suffix] [, suffix]
+                       parts0,          parts1..
+        """
+        working = working or cls.new_working()
 
         working["suffix"] += parts[1:]
         pieces = cls.parse_pieces(parts[0].split())
@@ -183,7 +178,7 @@ class Name:
             if not working["first"]:
                 working["first"].append(piece)
                 continue
-            if only_suffixes(pieces[i + 1 :]):
+            if is_only_suffixes(pieces[i + 1 :]):
                 working["last"].append(piece)
                 working["suffix"] = pieces[i + 1 :] + working["suffix"]
                 break
@@ -195,10 +190,14 @@ class Name:
         return working
 
     @classmethod
-    def parse_v_lastname_comma(cls, parts, working):
-        # lastname comma:
-        # * last [suffix], title first middles[,] suffix [,suffix]
-        # *     parts0      parts1,              parts2..
+    def parse_v_lastname_comma(cls, parts, working=None):
+        """
+        lastname comma:
+        last [suffix], title first middles[,] suffix [,suffix]
+            parts0      parts1,              parts2..
+        """
+        working = working or cls.new_working()
+
         pieces = cls.parse_pieces(parts[1].split())
 
         logger.debug(f"parts     in  {repr(parts)}")
@@ -236,9 +235,13 @@ class Name:
         return working
 
     @classmethod
-    def parse_v_no_commas(cls, parts, working):
-        # ~ no commas, title first middle middle middle last suffix
-        # ~           part[0
+    def parse_v_no_commas(cls, parts, working=None):
+        """
+        no commas, title first middle middle middle last suffix
+                  part[0]
+        """
+        working = working or cls.new_working()
+
         pieces = cls.parse_pieces(parts)
         logger.debug(f"parts     in {repr(parts)}")
         logger.debug(f"working   in {repr(working)}")
@@ -259,7 +262,7 @@ class Name:
                     continue
                 working["first"].append(piece)
                 continue
-            if only_suffixes(pieces[i + 1 :]) or (
+            if is_only_suffixes(pieces[i + 1 :]) or (
                 # if the next piece is the last piece and a roman
                 # numeral but this piece is not an initial
                 is_roman_numeral(nxt)
@@ -363,9 +366,109 @@ class Name:
     def unparsable(self):
         return len(self) == 0
 
+    def __len__(self):
+        return len([v for v in dict(self).values() if v])
+
+    def __eq__(self, other):
+        if self.unparsable:
+            return False
+        return str(self) == str(other)
+
+    def __getitem__(self, key):
+        if key not in self.keys():
+            true_key = self.keys()[key]
+            return self[true_key]
+        return getattr(self, key)
+
+    def __str__(self):
+        string_parts = [
+            self.title,
+            self.first,
+            f'"{self.nickname}"' if self.nickname else "",
+            self.middle,
+            self.last,
+            self.suffix,
+        ]
+        joined = " ".join(string_parts)
+        return re.sub(r"\s+", " ", joined).strip()
+
+    def __repr__(self):
+        if self.unparsable:
+            text = "Unparsable"
+        else:
+            text = str(dict(self))
+        return f"{self.__class__.__name__}({text})"
+
+    @classmethod
+    def keys(cls):
+        return cls._keys
+
     @staticmethod
-    def extract_suffixes(incoming):
-        return incoming.split(",")
+    def extract_suffixes(pieces):
+
+        if count_words(pieces) < 3:
+            return pieces, []
+
+        logger.warning(repr(pieces))
+        outgoing = []
+        suffixes = []
+        MIN_WORDS_TOTAL = 2
+
+        word_clusters = [piece.split() for piece in pieces]
+        print(pieces)
+        print(word_clusters)
+        while word_clusters:
+            logger.warning(
+                f"{repr(word_clusters):<15} {repr(outgoing)}, {repr(suffixes)}"
+            )
+
+            words_count = count_words(flatten(word_clusters + outgoing))
+            logger.warning(words_count)
+            if words_count <= MIN_WORDS_TOTAL:
+                logger.warning(f"word_clusters {word_clusters}")
+                logger.warning(f"outgoing {outgoing}")
+                outgoing.extend(" ".join(x) for x in word_clusters)
+                logger.warning(f"word_clusters {word_clusters}")
+                logger.warning(f"outgoing {outgoing}")
+                break
+
+            words = word_clusters.pop()
+            # logger.warning(f"{repr(words):<15} {repr(outgoing)}, {repr(suffixes)}")
+            min_words_remaining = 0 if is_only_suffixes(words) else 1
+            while count_words(words) > min_words_remaining:
+                logger.warning(f"words {words}")
+
+                words_count = count_words(flatten(word_clusters + words + outgoing))
+                logger.warning(words_count)
+                if words_count <= MIN_WORDS_TOTAL:
+                    word_clusters.append(words)
+                    logger.warning(f"word_clusters {word_clusters}")
+                    # logger.warning(f"words {words}")
+                    logger.warning(f"outgoing {outgoing}")
+                    logger.warning(f"suffixes {suffixes}")
+                    outgoing.extend(" ".join(x) for x in word_clusters)
+                    return outgoing, suffixes
+                    logger.warning(f"word_clusters {word_clusters}")
+                    logger.warning(f"outgoing {outgoing}")
+                    break
+
+                next_word = words[-1]
+                if not is_suffix(next_word):
+                    break
+                suffixes.append(words.pop())
+                logger.warning(f"words {words}")
+            if words:
+                outgoing.insert(0, " ".join(words))
+        logger.warning(f"outgoing {repr(outgoing)} suffixes {repr(suffixes)}")
+        return outgoing, suffixes
+
+
+def pieces_to_words(pieces):
+    return " ".join(pieces).split()
+
+
+def count_words(pieces):
+    return len(pieces_to_words(pieces))
 
 
 def is_title(value):
@@ -384,14 +487,14 @@ def is_roman_numeral(value):
     return bool(config.RE_ROMAN_NUMERAL.match(value))
 
 
-def only_suffixes(thing):
+def is_only_suffixes(thing):
     if isinstance(thing, str):
         thing = thing.split()
     return all(is_suffix(x) for x in thing)
 
 
 def is_suffix(piece):
-    return piece in config.SUFFIXES and not is_an_initial(piece)
+    return piece in (config.SUFFIXES) and not is_an_initial(piece)
 
 
 def is_an_initial(value):
@@ -408,4 +511,3 @@ def clean_input(s):
     s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
     s = s.strip("- ")  # drop leading/trailing hyphens and spaces
     return s
-

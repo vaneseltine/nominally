@@ -1,9 +1,23 @@
 [
     {
+        "raw": "j. h. c. goatberger, ii.",
+        "first": "j",
+        "middle": "h c",
+        "last": "goatberger",
+        "suffix": "ii"
+    },
+    {
         "raw": "j. h. c. goatberger",
         "first": "j",
         "middle": "h c",
         "last": "goatberger"
+    },
+    {
+        "raw": "j. h. c. goatberger, junior",
+        "first": "j",
+        "middle": "h c",
+        "last": "goatberger",
+        "suffix": "junior"
     },
     {
         "raw": "j. h. c. goatberger md",
@@ -39,20 +53,6 @@
         "middle": "h c",
         "last": "goatberger",
         "suffix": "junior md"
-    },
-    {
-        "raw": "j. h. c. goatberger, ii.",
-        "first": "j",
-        "middle": "h c",
-        "last": "goatberger",
-        "suffix": "ii"
-    },
-    {
-        "raw": "j. h. c. goatberger, junior",
-        "first": "j",
-        "middle": "h c",
-        "last": "goatberger",
-        "suffix": "junior"
     },
     {
         "raw": "j. h. c. goatberger, ii. md",

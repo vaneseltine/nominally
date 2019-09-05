@@ -15,11 +15,12 @@ CONJUNCTIONS = {"y"}
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
+SUFFIX_OR_NAME = {"junior"}
+
 # Cannot include things that could also be middle or last names
-SUFFIXES = {
+SUFFIX_NOT_NAME = {
     "sr",
     "jr",
-    "junior",
     "2",
     "2nd",
     "3",
@@ -45,6 +46,8 @@ SUFFIXES = {
     "md",
     "phd",
 }
+
+SUFFIXES = SUFFIX_OR_NAME ^ SUFFIX_NOT_NAME
 
 # Name pieces that appear before a last name. Prefixes join to the piece
 # that follows them to make one new piece. They can be chained together, e.g
