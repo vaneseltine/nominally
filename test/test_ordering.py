@@ -1,5 +1,5 @@
 import pytest
-
+import re
 from nominally.parser import Name
 
 from .conftest import load_bank, make_ids
@@ -25,8 +25,9 @@ def test_arrangements(entry, pyramid):
 
     if pyramid == "unit":
         empty = {k: [] for k in Name.keys()}
-        remaining = entry["raw"].replace(".", "")  # relevant part of pre_process()
-        _, working = Name.parse_full_name(remaining, working=empty)
+        # relevant part of pre_process()
+        remaining = re.split(r"\s*,\s*", (entry["raw"].replace(".", "")))
+        working = Name.parse_full_name(remaining, working=empty)
         name_dict = {k: " ".join(v) for k, v in working.items()}
     else:
         name_dict = dict(Name(entry["raw"]))

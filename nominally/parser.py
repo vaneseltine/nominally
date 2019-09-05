@@ -23,6 +23,9 @@ def parse_name(s):
     return dict(Name(s))
 
 
+from copy import deepcopy
+
+
 class Name:
     """A human name, broken down into individual components."""
 
@@ -30,16 +33,15 @@ class Name:
 
     def __init__(self, raw=""):
         self.original = raw
-        self.__remaining = self.original.lower()
         self.__working = {k: [] for k in self.keys()}
 
-        self.__remaining, self.__working = self.pre_process(
-            self.__remaining, self.__working
+        pieces, self.__working = self.process_string_to_pieces(
+            self.original, self.__working
         )
-        self.__remaining, self.__working = self.parse_full_name(
-            self.__remaining, self.__working
-        )
+        self.__working = self.parse_full_name(pieces, self.__working)
         self.__working = self.post_process(self.__working)
+
+        self._final = deepcopy(self.__working)
 
         if self.unparsable:
             logger.info('Unparsable: "%s" ', self.original)
@@ -82,12 +84,14 @@ class Name:
         return cls._keys
 
     @classmethod
-    def pre_process(cls, remaining, working):
+    def process_string_to_pieces(cls, remaining, working):
         logger.debug("pre-pp", remaining, working)
+        remaining = remaining.lower()
         remaining, working = cls.parse_nicknames(remaining, working)
-        remaining, working = cls.thoroughly_clean(remaining, working)
-        logger.debug("post-pp", remaining, working)
-        return remaining, working
+        remaining = clean_input(remaining)
+        pieces = re.split(r"\s*,\s*", remaining)
+        logger.debug("post-pp", pieces, working)
+        return pieces, working
 
     @classmethod
     def post_process(cls, working):
@@ -119,11 +123,6 @@ class Name:
         return remaining, working
 
     @staticmethod
-    def thoroughly_clean(remaining, working):
-        remaining = clean_input(remaining)
-        return remaining, working
-
-    @staticmethod
     def make_single_name_last(working):
         """
         If there are only two parts and one is a title, assume it's a last name
@@ -134,13 +133,12 @@ class Name:
         return working
 
     @classmethod
-    def parse_full_name(cls, remaining, working):
+    def parse_full_name(cls, pieces, working):
         """The main parse method."""
 
-        # break up remaining into pieces by commas
-        logger.debug(f"remaining in  {repr(remaining)}")
+        # break up pieces into pieces by commas
+        logger.debug(f"pieces    in  {repr(pieces)}")
         logger.debug(f"working   in  {repr(working)}")
-        pieces = re.split(r"\s*,\s*", remaining)
 
         if len(pieces) == 1:
             working = cls.parse_v_no_commas(pieces, working)
@@ -160,10 +158,8 @@ class Name:
             rejoined = " ".join(working["suffix"])
             working["suffix"] = rejoined.replace(",", " ").split()
 
-        remaining = ""
-        logger.debug(f"remaining out {repr(remaining)}")
         logger.debug(f"working   out {repr(working)}")
-        return remaining, working
+        return working
 
     @classmethod
     def parse_v_suffix_comma(cls, parts, working):
@@ -341,27 +337,27 @@ class Name:
 
     @property
     def title(self):
-        return " ".join(self.__working["title"]) or ""
+        return " ".join(self._final["title"]) or ""
 
     @property
     def first(self):
-        return " ".join(self.__working["first"]) or ""
+        return " ".join(self._final["first"]) or ""
 
     @property
     def middle(self):
-        return " ".join(self.__working["middle"]) or ""
+        return " ".join(self._final["middle"]) or ""
 
     @property
     def last(self):
-        return " ".join(self.__working["last"]) or ""
+        return " ".join(self._final["last"]) or ""
 
     @property
     def suffix(self):
-        return " ".join(self.__working["suffix"]) or ""
+        return " ".join(self._final["suffix"]) or ""
 
     @property
     def nickname(self):
-        return " ".join(self.__working["nickname"]) or ""
+        return " ".join(self._final["nickname"]) or ""
 
     @property
     def unparsable(self):
