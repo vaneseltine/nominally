@@ -133,17 +133,7 @@ class TestNameVariations:
                     )
                 )
         for key in n.keys():
-            assert n[key] == nocomma[key]
-            assert getattr(n, key) == getattr(nocomma, key)
-            assert n[key] == lastnamecomma[key]
-            assert getattr(n, key) == getattr(lastnamecomma, key)
+            assert n[key] == nocomma[key] == lastnamecomma[key]
             if n.suffix:
                 assert n[key] == suffixcomma[key]
-                assert getattr(n, key) == getattr(suffixcomma, key)
 
-
-if __name__ == "__main__":
-    import sys
-
-    # Pass through any/all arguments to pytest
-    pytest.main(sys.argv)

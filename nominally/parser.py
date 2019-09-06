@@ -41,12 +41,12 @@ class Name:
         pieces, working = self.pre_process(self.original)
         logger.debug(f"1p {repr(pieces)}")
         logger.debug(f"1w {repr(working)}")
-        logger.warning("extract_suffixes")
-        pieces, working["suffix"] = self.extract_suffixes(pieces)
-        logger.debug(f"2p {repr(pieces)}")
-        logger.debug(f"2w {repr(working)}")
         logger.warning("extract_title")
         pieces, working["title"] = self.extract_title(pieces)
+        logger.debug(f"2p {repr(pieces)}")
+        logger.debug(f"2w {repr(working)}")
+        logger.warning("extract_suffixes")
+        pieces, working["suffix"] = self.extract_suffixes(pieces)
         logger.debug(f"3p {repr(pieces)}")
         logger.debug(f"3w {repr(working)}")
 
@@ -81,7 +81,6 @@ class Name:
 
         if guesses:
 
-            grab_last = "FML" in guesses
             parse_key, final_pieces_to_parse = next(iter(guesses.items()))
             combined_bits = cls.parse_pieces(final_pieces_to_parse)
             if combined_bits and parse_key == "FML":
@@ -267,6 +266,10 @@ class Name:
     @classmethod
     def keys(cls) -> T.Tuple[str, ...]:
         return cls._keys
+
+    def values(self):
+        # TODO integrate better as dict
+        return tuple(self[k] for k in self.keys())
 
     @staticmethod
     def extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:

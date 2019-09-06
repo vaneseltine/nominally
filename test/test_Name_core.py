@@ -1,6 +1,6 @@
 import pytest
 
-from nominally import Name
+from nominally import Name, parse_name
 
 from .conftest import make_ids, dict_entry_test
 
@@ -34,7 +34,8 @@ class TestCoreFunctionality:
         dict_entry_test(Name, entry)
 
     def test_string_output(self):
-        n = Name('de la Véña, Dr. Jüan "Paco", Jr.')
+        raw = 'de la Véña, Dr. Jüan "Paco", Jr.'
+        n = Name(raw)
         assert str(n) == 'dr juan "paco" de la vena jr'
 
     def test_repr_output(self):
@@ -45,8 +46,29 @@ class TestCoreFunctionality:
             "'suffix': 'jr', 'nickname': 'paco'})"
         )
 
-    def test_blank(self):
-        n = Name("")
+    def test_dict_output(self):
+        raw = 'de la Véña, Dr. Jüan "Paco", Jr.'
+        n = Name(raw)
+        dn = dict(n)
+        assert [k for k in n.keys()] == [k for k in dn.keys()]
+        assert [v for v in n.values()] == [k for k in dn.values()]
+
+    def test_parse_name_output(self):
+        raw = 'de la Véña, Dr. Jüan "Paco", Jr.'
+        n = Name(raw)
+        pn = parse_name(str(n))
+        assert [k for k in n.keys()] == [k for k in pn.keys()]
+        assert [v for v in n.values()] == [k for k in pn.values()]
+
+    @pytest.mark.xfail(reason="TODO: Name(Name('Rincewind'))")
+    def test_name_to_name(self):
+        name1 = Name(raw)
+        name2 = Name(name1)
+        assert name1 == name2
+
+    @pytest.mark.parametrize("raw", ["", ",", "_"])
+    def test_unparsable_inputs(self, raw):
+        n = Name(raw)
         assert n.unparsable
         assert "unparsable" in repr(n).lower()
 

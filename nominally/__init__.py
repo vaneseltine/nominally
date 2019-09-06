@@ -1,6 +1,6 @@
 import sys
 import typing as T
-from nominally.parser import Name
+from nominally.parser import Name, parse_name
 
 
 def parse(raw_name: T.Optional[str] = None) -> int:
