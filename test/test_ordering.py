@@ -1,6 +1,6 @@
 import pytest
 
-from nominally.parser import Name, pieces_to_words
+from nominally.parser import Name, logger, pieces_to_words
 
 from .conftest import load_bank, make_ids
 
@@ -65,14 +65,6 @@ def test_suffix_extraction_has_correct_suffixes(entry):
 
 
 @pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
-def test_suffix_extraction_returns_appropriate_types(entry):
-    # TODO -- add typing instead
-    scrubbed, _ = Name.pre_process(entry["raw"])
-    pieces, _ = Name.extract_suffixes(scrubbed)
-    assert all(isinstance(x, str) for x in pieces)
-
-
-@pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
 def test_suffix_extraction_did_not_mistrack_words(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
     pieces, suffixes = Name.extract_suffixes(scrubbed)
@@ -82,21 +74,38 @@ def test_suffix_extraction_did_not_mistrack_words(entry):
 @pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
 def test_suffix_extraction_maintained_first_last_order(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
-    pieces, _ = Name.extract_suffixes(scrubbed)
-    ugly_in = str(scrubbed).replace("'", " ")
-    ugly_out = str(pieces).replace("'", " ")
-    for marker in (" junior ", " j ", " h c "):
-        if marker in ugly_out:
-            order_in = ugly_in.index(marker) > ugly_in.index("berger")
-            order_out = ugly_out.index(marker) > ugly_out.index("berger")
-            assert order_in == order_out
+    pre_pieces = scrubbed.copy()
+    post_pieces, _ = Name.extract_suffixes(scrubbed)
+    verify_approximate_ordering_of_leftovers(pre_pieces, post_pieces)
 
 
 @pytest.mark.parametrize(
     "entry", load_bank("title_ordering") + load_bank("ordering"), ids=make_ids
 )
-@pytest.mark.xfail(reason="TODO")
-def test_title(entry):
+def test_title_extracts(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
     _, title = Name.extract_title(scrubbed)
     assert set(title) == set(entry.get("title", "").split())
+
+
+@pytest.mark.parametrize(
+    "entry", load_bank("title_ordering") + load_bank("ordering"), ids=make_ids
+)
+def test_title_ordering(entry):
+    scrubbed, _ = Name.pre_process(entry["raw"])
+    pre_pieces = scrubbed.copy()
+    post_pieces, _ = Name.extract_title(scrubbed)
+    verify_approximate_ordering_of_leftovers(pre_pieces, post_pieces)
+
+
+def verify_approximate_ordering_of_leftovers(pre, post):
+    ugly_in = str(pre).replace("'", " ")
+    ugly_out = str(post).replace("'", " ")
+    for marker in (" junior ", " j ", " h c "):
+        if marker in ugly_out:
+            assert marker in ugly_in
+            order_in = ugly_in.index(marker) > ugly_in.index("berger")
+            order_out = ugly_out.index(marker) > ugly_out.index("berger")
+            logger.warning(f"pre:  {ugly_in}")
+            logger.warning(f"post: {ugly_out}")
+            assert order_in == order_out

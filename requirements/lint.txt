@@ -4,4 +4,5 @@ flake8-black==0.1.0
 flake8-comprehensions==2.1.0
 flake8-eradicate==0.2.0
 flake8-isort==2.3
+mypy==0.720
 pylint==2.3.1

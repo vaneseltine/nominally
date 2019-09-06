@@ -1,5 +1,6 @@
 import logging
 import re
+import typing as T
 
 from unidecode import unidecode_expect_ascii
 
@@ -18,12 +19,19 @@ if LOGS_ON:
 else:
     logger.addHandler(logging.NullHandler())
 
+Pieces = T.List[str]
+PiecesDict = T.Dict[str, Pieces]
 
-def parse_name(s):
-    return dict(Name(s))
+
+def flatter(clusters: T.List[Pieces]) -> Pieces:
+    return [" ".join(x) for x in clusters]
 
 
-def flatten(foo):
+def parse_name(s: str) -> PiecesDict:
+    return dict(Name(s))  # type: ignore
+
+
+def flatten(foo: T.Any) -> T.Any:
     """Take any set of nests in an iterator and reduce it into one generator.
 
     'Nests' include any iterable except strings.
@@ -52,11 +60,10 @@ class Name:
 
     _keys = ("title", "first", "middle", "last", "suffix", "nickname")
 
-    def __init__(self, raw=""):
+    def __init__(self, raw: str = "") -> None:
         self.original = raw
-        working = {k: [] for k in self.keys()}
 
-        pieces, working = self.pre_process(self.original, working)
+        pieces, working = self.pre_process(self.original)
         working = self.parse_full_name(pieces, working)
         working = self.post_process(working)
 
@@ -66,7 +73,9 @@ class Name:
             logger.info('Unparsable: "%s" ', self.original)
 
     @classmethod
-    def pre_process(cls, s, working=None):
+    def pre_process(
+        cls, s: str, working: T.Optional[PiecesDict] = None
+    ) -> T.Tuple[Pieces, PiecesDict]:
         if working is None:
             working = {k: [] for k in cls.keys()}
         s = s.lower()
@@ -75,16 +84,18 @@ class Name:
         return cls.string_to_pieces(s), working
 
     @staticmethod
-    def string_to_pieces(remaining):
+    def string_to_pieces(remaining: str) -> Pieces:
         return re.split(r"\s*,\s*", remaining)
 
     @classmethod
-    def post_process(cls, working):
+    def post_process(cls, working: PiecesDict) -> PiecesDict:
         working = cls.make_single_name_last(working)
         return working
 
     @staticmethod
-    def parse_nicknames(remaining, working):
+    def parse_nicknames(
+        remaining: str, working: PiecesDict
+    ) -> T.Tuple[str, PiecesDict]:
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -108,7 +119,7 @@ class Name:
         return remaining, working
 
     @staticmethod
-    def make_single_name_last(working):
+    def make_single_name_last(working: PiecesDict) -> PiecesDict:
         """
         If there are only two parts and one is a title, assume it's a last name
         instead of a first name. e.g. Mr. Johnson.
@@ -118,21 +129,23 @@ class Name:
         return working
 
     @classmethod
-    def new_working(cls):
+    def new_working(cls) -> PiecesDict:
         return {k: [] for k in cls.keys()}
 
     @classmethod
-    def parse_full_name(cls, pieces, working=None):
+    def parse_full_name(
+        cls, pieces: Pieces, working: T.Optional[PiecesDict] = None
+    ) -> PiecesDict:
         """The main parse method."""
 
-        working = working or cls.new_working()
+        _working: PiecesDict = working or cls.new_working()
 
         # break up pieces into pieces by commas
         logger.debug(f"pieces    in  {repr(pieces)}")
-        logger.debug(f"working   in  {repr(working)}")
+        logger.debug(f"working   in  {repr(_working)}")
 
         if len(pieces) == 1:
-            working = cls.parse_v_no_commas(pieces, working)
+            _working = cls.parse_v_no_commas(pieces, _working)
 
         else:
             # if all the end pieces are suffixes and there is more than one piece
@@ -140,20 +153,20 @@ class Name:
             # only, and allows potential first names to be in suffixes, e.g.
             # "Johnson, Bart"
             if is_only_suffixes(pieces[1].split()) and len(pieces[0].split()) > 1:
-                working = cls.parse_v_suffix_comma(pieces, working)
+                _working = cls.parse_v_suffix_comma(pieces, _working)
             else:
-                working = cls.parse_v_lastname_comma(pieces, working)
+                _working = cls.parse_v_lastname_comma(pieces, _working)
 
         # TODO suffixes are not all fully pieced out above
-        if working["suffix"]:
-            rejoined = " ".join(working["suffix"])
-            working["suffix"] = rejoined.replace(",", " ").split()
+        if _working["suffix"]:
+            rejoined = " ".join(_working["suffix"])
+            _working["suffix"] = rejoined.replace(",", " ").split()
 
-        logger.debug(f"working   out {repr(working)}")
-        return working
+        logger.debug(f"_working   out {repr(_working)}")
+        return _working
 
     @classmethod
-    def parse_v_suffix_comma(cls, parts, working=None):
+    def parse_v_suffix_comma(cls, parts, working=None) -> PiecesDict:
         """
         suffix comma:
         title first middle last [suffix], suffix [suffix] [, suffix]
@@ -169,7 +182,7 @@ class Name:
             try:
                 nxt = pieces[i + 1]
             except IndexError:
-                nxt = None
+                nxt = None  # type: ignore
 
             if is_title(piece) and (nxt or len(pieces) == 1) and not working["first"]:
                 working["title"].append(piece)
@@ -189,7 +202,7 @@ class Name:
         return working
 
     @classmethod
-    def parse_v_lastname_comma(cls, parts, working=None):
+    def parse_v_lastname_comma(cls, parts, working=None) -> PiecesDict:
         """
         lastname comma:
         last [suffix], title first middles[,] suffix [,suffix]
@@ -216,7 +229,7 @@ class Name:
             try:
                 nxt = pieces[i + 1]
             except IndexError:
-                nxt = None
+                nxt = None  # type: ignore
 
             if is_title(piece) and (nxt or len(pieces) == 1) and not working["first"]:
                 working["title"].append(piece)
@@ -234,7 +247,7 @@ class Name:
         return working
 
     @classmethod
-    def parse_v_no_commas(cls, parts, working=None):
+    def parse_v_no_commas(cls, parts, working=None) -> PiecesDict:
         """
         no commas, title first middle middle middle last suffix
                   part[0]
@@ -249,7 +262,7 @@ class Name:
             try:
                 nxt = pieces[i + 1]
             except IndexError:
-                nxt = None
+                nxt = None  # type: ignore
 
             # title must have a next piece, unless it's just a title
             if is_title(piece) and (nxt or p_len == 1) and not working["first"]:
@@ -280,7 +293,7 @@ class Name:
         return working
 
     @classmethod
-    def parse_pieces(cls, parts):
+    def parse_pieces(cls, parts) -> Pieces:
         """
         Split group of pieces down to individual words and
             - join on conjuctions if appropriate
@@ -292,19 +305,16 @@ class Name:
         return pieces
 
     @staticmethod
-    def break_down_to_words(parts):
-        words = []
-        for part in parts:
-            for word in part.split():
-                words.append(word)
-        return words
+    def break_down_to_words(parts: Pieces) -> T.List[str]:
+        return [word for part in parts for word in part.split()]
 
+    # item for row in matrix for item in row]
     @staticmethod
-    def combine_conjunctions(words):
+    def combine_conjunctions(words: Pieces) -> Pieces:
         if len(words) < 4:
             return words
 
-        result = []
+        result: Pieces = []
         queued = words.copy()
         while queued:
             word = queued.pop(-1)
@@ -315,16 +325,16 @@ class Name:
         return result
 
     @staticmethod
-    def combine_prefixes(words):
+    def combine_prefixes(words: Pieces) -> Pieces:
         if len(words) < 3:
             return words
 
-        result = []
+        result: Pieces = []
         queued = words.copy()
         while queued:
             word = queued.pop(-1)
             if is_prefix(word) and result:
-                accumulating = []
+                accumulating: Pieces = []
                 while result:
                     next_most_recent = result[0]
                     next_word = next_most_recent.split()[0]
@@ -338,48 +348,48 @@ class Name:
         return result
 
     @property
-    def title(self):
+    def title(self) -> str:
         return " ".join(self._final["title"]) or ""
 
     @property
-    def first(self):
+    def first(self) -> str:
         return " ".join(self._final["first"]) or ""
 
     @property
-    def middle(self):
+    def middle(self) -> str:
         return " ".join(self._final["middle"]) or ""
 
     @property
-    def last(self):
+    def last(self) -> str:
         return " ".join(self._final["last"]) or ""
 
     @property
-    def suffix(self):
+    def suffix(self) -> str:
         return " ".join(self._final["suffix"]) or ""
 
     @property
-    def nickname(self):
+    def nickname(self) -> str:
         return " ".join(self._final["nickname"]) or ""
 
     @property
-    def unparsable(self):
+    def unparsable(self) -> bool:
         return len(self) == 0
 
-    def __len__(self):
-        return len([v for v in dict(self).values() if v])
+    def __len__(self) -> int:
+        return len([v for v in dict(self).values() if v])  # type: ignore
 
-    def __eq__(self, other):
+    def __eq__(self, other: T.Any) -> bool:
         if self.unparsable:
             return False
         return str(self) == str(other)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> T.Any:
         if key not in self.keys():
-            true_key = self.keys()[key]
+            true_key = self.keys()[key]  # type: ignore
             return self[true_key]
         return getattr(self, key)
 
-    def __str__(self):
+    def __str__(self) -> str:
         string_parts = [
             self.title,
             self.first,
@@ -391,44 +401,58 @@ class Name:
         joined = " ".join(string_parts)
         return re.sub(r"\s+", " ", joined).strip()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.unparsable:
             text = "Unparsable"
         else:
-            text = str(dict(self))
+            text = str(dict(self))  # type: ignore
         return f"{self.__class__.__name__}({text})"
 
     @classmethod
-    def keys(cls):
+    def keys(cls) -> T.Tuple[str, ...]:
         return cls._keys
 
     @staticmethod
-    def extract_title(pieces):
-        return pieces, ["dr"]
+    def extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
+        logger.warning(pieces)
+        output: Pieces = []
+        title: Pieces = []
+        while pieces:
+            next_cluster = pieces.pop(0).split()
+            first_word, *remainder = next_cluster
+            if is_title(first_word):
+                logger.warning(first_word)
+                logger.warning(remainder)
+                de_prefixed_cluster = " ".join(remainder)
+                output = output + [de_prefixed_cluster] + pieces
+                return output, [first_word]
+
+            output.append(" ".join(next_cluster))
+        return output, title
 
     @staticmethod
-    def extract_suffixes(pieces):
-        outgoing = []
-        suffixes = []
+    def extract_suffixes(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
+        outgoing: Pieces = []
+        suffixes: Pieces = []
         min_words = 2
 
         word_clusters = [piece.split() for piece in pieces]
 
         while word_clusters:
 
-            if count_words(flatten(word_clusters + outgoing)) <= min_words:
-                rejoined = [" ".join(x) for x in word_clusters]
-                rejoined.extend(outgoing)
-                return rejoined, suffixes
+            rejoined_clusters = flatter(word_clusters)
+            if count_words(rejoined_clusters + outgoing) <= min_words:
+                rejoined_clusters.extend(outgoing)
+                return rejoined_clusters, suffixes
 
             words = word_clusters.pop()
 
             min_words_remaining = 0 if is_only_suffixes(words) else 1
             while count_words(words) > min_words_remaining:
 
-                if count_words(flatten(word_clusters + words + outgoing)) <= min_words:
-                    word_clusters.append(words)
-                    outgoing.extend(" ".join(x) for x in word_clusters)
+                rejoined_clusters = flatter(word_clusters) + words
+                if count_words(rejoined_clusters + outgoing) <= min_words:
+                    outgoing.extend(rejoined_clusters)
                     return outgoing, suffixes
 
                 if not is_suffix(words[-1]):
@@ -442,45 +466,45 @@ class Name:
         return outgoing, suffixes
 
 
-def pieces_to_words(pieces):
+def pieces_to_words(pieces: T.Sequence[str]) -> T.Sequence[str]:
     return " ".join(pieces).split()
 
 
-def count_words(pieces):
+def count_words(pieces: T.Sequence[T.Any]) -> int:
     return len(pieces_to_words(pieces))
 
 
-def is_title(value):
+def is_title(value: str) -> bool:
     return value in config.TITLES
 
 
-def is_conjunction(piece):
+def is_conjunction(piece: str) -> bool:
     return piece.lower() in config.CONJUNCTIONS and not is_an_initial(piece)
 
 
-def is_prefix(piece):
+def is_prefix(piece: str) -> bool:
     return piece in config.PREFIXES
 
 
-def is_roman_numeral(value):
+def is_roman_numeral(value: str) -> bool:
     return bool(config.RE_ROMAN_NUMERAL.match(value))
 
 
-def is_only_suffixes(thing):
+def is_only_suffixes(thing: T.Union[str, T.Sequence[str]]) -> bool:
     if isinstance(thing, str):
         thing = thing.split()
     return all(is_suffix(x) for x in thing)
 
 
-def is_suffix(piece):
+def is_suffix(piece: str) -> bool:
     return piece in (config.SUFFIXES) and not is_an_initial(piece)
 
 
-def is_an_initial(value):
+def is_an_initial(value: str) -> bool:
     return bool(config.RE_INITIAL.match(value))
 
 
-def clean_input(s):
+def clean_input(s: str) -> str:
     # Note: nicknames have already been removed
     s = unidecode_expect_ascii(s).lower()
     s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
