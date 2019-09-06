@@ -3,9 +3,10 @@ import sys
 from nominally.parser import Name
 
 
-def parse():
-    sys.argv.pop(0)
-    raw_name = " ".join(sys.argv)
+def parse(raw_name=None):
+    if sys.argv:
+        sys.argv.pop(0)
+    raw_name = raw_name or " ".join(sys.argv)
     if not raw_name:
         print("Usage: nominally Mr. Eric Praline")
         return 1

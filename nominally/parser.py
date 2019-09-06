@@ -10,49 +10,17 @@ LOGS_ON = True
 
 logger = logging.getLogger()
 if LOGS_ON:
-    logger.setLevel(logging.WARNING)
-    MESSAGE_FORMAT = "{levelname:<8s} {funcName:<24s} {lineno:<4} {message}"
+    logger.setLevel(logging.DEBUG)
+    MESSAGE_FORMAT = "{levelname:<8s} {funcName:<16s} {lineno:<4} {message}"
     stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
     stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
-    stream_handler.setLevel(logging.WARNING)
+    stream_handler.setLevel(logging.DEBUG)
     logger.addHandler(stream_handler)
 else:
     logger.addHandler(logging.NullHandler())
 
 Pieces = T.List[str]
 PiecesDict = T.Dict[str, Pieces]
-
-
-def flatter(clusters: T.List[Pieces]) -> Pieces:
-    return [" ".join(x) for x in clusters]
-
-
-def parse_name(s: str) -> PiecesDict:
-    return dict(Name(s))  # type: ignore
-
-
-def flatten(foo: T.Any) -> T.Any:
-    """Take any set of nests in an iterator and reduce it into one generator.
-
-    'Nests' include any iterable except strings.
-
-    :param foo:
-
-    .. note::
-
-        :py:func:`flatten` was authored
-        by `Amber Yust <https://stackoverflow.com/users/148870/amber>`_
-        at https://stackoverflow.com/a/5286571. This function is not claimed
-        under the laforge license.
-
-    """
-    # pylint: disable=invalid-name,blacklisted-name
-    for x in foo:
-        if hasattr(x, "__iter__") and not isinstance(x, str):
-            for y in flatten(x):
-                yield y
-        else:
-            yield x
 
 
 class Name:
@@ -65,10 +33,30 @@ class Name:
 
         pieces, working = self.pre_process(self.original)
         working = self.parse_full_name(pieces, working)
-        working = self.post_process(working)
+        self._final = self.post_process(working)
+        logger.debug(f"Final: {repr(self._final)}")
 
-        self._final = working
-
+        pieces, working = self.pre_process(self.original)
+        logger.debug(f"1 {repr(pieces)}")
+        logger.debug(f"1 {repr(working)}")
+        pieces, working["suffix"] = self.extract_suffixes(pieces)
+        logger.debug(f"2 {repr(pieces)}")
+        logger.debug(f"2 {repr(working)}")
+        pieces, working["title"] = self.extract_title(pieces)
+        logger.debug(f"3 {repr(pieces)}")
+        logger.debug(f"3 {repr(working)}")
+        if len(pieces) == 1:
+            logger.debug("#TODO: prefix, conj, and pull out last and first")
+            logger.info(pieces)
+        elif len(pieces) == 2:
+            logger.debug("#TODO: pull out last, then prefix/conj first and mid")
+            logger.info(pieces)
+        else:
+            logger.critical(pieces)
+            raise RuntimeError(f"{repr(pieces)}: more parts than anticipated")
+            exit()
+        self._NEW_final = self.post_process(working)
+        logger.debug(f"New final: {repr(self._NEW_final)}")
         if self.unparsable:
             logger.info('Unparsable: "%s" ', self.original)
 
@@ -103,9 +91,6 @@ class Name:
         Single quotes cannot span white space characters and must border
         white space to allow for quotes in names like O'Connor and Kawai'ae'a.
         Double quotes and parenthesis can span white space.
-
-        Loops through 3 :py:data:`~nominally.config.regexes.REGEXES`;
-        `quoted_word`, `double_quotes` and `parenthesis`.
         """
 
         for pattern in (
@@ -136,7 +121,6 @@ class Name:
     def parse_full_name(
         cls, pieces: Pieces, working: T.Optional[PiecesDict] = None
     ) -> PiecesDict:
-        """The main parse method."""
 
         _working: PiecesDict = working or cls.new_working()
 
@@ -157,7 +141,7 @@ class Name:
             else:
                 _working = cls.parse_v_lastname_comma(pieces, _working)
 
-        # TODO suffixes are not all fully pieced out above
+        #  suffixes are not all fully pieced out above
         if _working["suffix"]:
             rejoined = " ".join(_working["suffix"])
             _working["suffix"] = rejoined.replace(",", " ").split()
@@ -305,7 +289,7 @@ class Name:
         return pieces
 
     @staticmethod
-    def break_down_to_words(parts: Pieces) -> T.List[str]:
+    def break_down_to_words(parts: Pieces) -> Pieces:
         return [word for part in parts for word in part.split()]
 
     # item for row in matrix for item in row]
@@ -414,18 +398,18 @@ class Name:
 
     @staticmethod
     def extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
-        logger.warning(pieces)
+        logger.debug(pieces)
         output: Pieces = []
         title: Pieces = []
         while pieces:
             next_cluster = pieces.pop(0).split()
-            first_word, *remainder = next_cluster
-            if is_title(first_word):
-                logger.warning(first_word)
-                logger.warning(remainder)
-                de_prefixed_cluster = " ".join(remainder)
-                output = output + [de_prefixed_cluster] + pieces
-                return output, [first_word]
+
+            if next_cluster:
+                first_word, *remainder = next_cluster
+                if is_title(first_word):
+                    de_prefixed_cluster = " ".join(remainder)
+                    output = output + [de_prefixed_cluster] + pieces
+                    return output, [first_word]
 
             output.append(" ".join(next_cluster))
         return output, title
@@ -514,3 +498,11 @@ def clean_input(s: str) -> str:
     s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
     s = s.strip("- ")  # drop leading/trailing hyphens and spaces
     return s
+
+
+def flatter(clusters: T.List[Pieces]) -> Pieces:
+    return [" ".join(x) for x in clusters]
+
+
+def parse_name(s: str) -> PiecesDict:
+    return dict(Name(s))  # type: ignore
