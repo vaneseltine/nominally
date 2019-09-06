@@ -26,6 +26,10 @@ def make_ids(entry):
     return entry.get("id") or entry.get("raw")
 
 
+def pieces_to_words(pieces):
+    return " ".join(pieces).split()
+
+
 def verify_approximate_ordering_of_leftovers(pre, post):
     ugly_in = str(pre).replace("'", " ")
     ugly_out = str(post).replace("'", " ")

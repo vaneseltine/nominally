@@ -18,31 +18,11 @@ class TestShortNames:
     def test_json_first_name(self, entry):
         dict_entry_test(Name, entry)
 
-    @pytest.mark.xfail(reason="#TODO Decide: throw away as mononym? 'Ms. von Uberwald'")
-    def test_first_name_is_prefix_if_three_parts(self):
-        n = Name("Ms. von Uberwald")
-        assert n.last == "von uberwald"
-
 
 class TestNameConjunction:
     @pytest.mark.parametrize("entry", load_bank("conjunction"), ids=make_ids)
     def test_json_conjunction(self, entry):
         dict_entry_test(Name, entry)
-
-    @pytest.mark.xfail(reason="Support this vs. removing periods for M.B.A., Ph.D.")
-    def test_two_initials_conflict_with_conjunction(self):
-        n = Name("J.R.R. Tolkien")
-        assert n.first == "j"
-        assert n.middle == "r r"
-        assert n.last == "tolkien"
-
-    @pytest.mark.xfail
-    def test_four_name_parts_with_suffix_that_could_be_initial_lowercase_no_p(self):
-        n = Name("larry james edward johnson v")
-        assert n.first == "larry"
-        assert n.middle == "james edward"
-        assert n.last == "johnson"
-        assert n.suffix == "v"
 
 
 class TestNickname:
@@ -83,7 +63,6 @@ class TestTitle:
         dict_entry_test(Name, entry)
 
 
-# @pytest.mark.xfail(reason="TODO")
 class TestNameVariations:
     """Test automated variations of raw names in the 'brute_force' bank.
 

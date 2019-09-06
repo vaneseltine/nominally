@@ -15,13 +15,6 @@ def test_prefix_combining(incoming, outgoing):
     assert Name.combine_prefixes(incoming) == outgoing
 
 
-@pytest.mark.xfail(reason="Removing Della from list")
-def test_prefix_combining_della(incoming, outgoing):
-    incoming = ["oni", "della", "soul"]
-    outgoing = ["oni", "della soul"]
-    assert Name.combine_prefixes(incoming) == outgoing
-
-
 @pytest.mark.parametrize(
     "static",
     (

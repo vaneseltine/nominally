@@ -341,5 +341,32 @@
         "raw": "goatberger, junior",
         "first": "junior",
         "last": "goatberger"
+    },
+    {
+        "raw": "goatberger, phd., junior h. c.",
+        "first": "junior",
+        "middle": "h c",
+        "last": "goatberger",
+        "suffix": "phd"
+    },
+    {
+        "raw": "goatberger, ii., j. h. c.",
+        "first": "j",
+        "middle": "h c",
+        "last": "goatberger",
+        "suffix": "ii"
+    },
+    {
+        "raw": "goatberger, junior, j. h. c.",
+        "first": "j",
+        "middle": "h c",
+        "last": "goatberger",
+        "suffix": "junior"
+    },
+    {
+        "raw": "goatberger, junior, j.",
+        "first": "j",
+        "last": "goatberger",
+        "suffix": "junior"
     }
 ]

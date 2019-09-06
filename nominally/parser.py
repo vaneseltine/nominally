@@ -8,18 +8,19 @@ from nominally import config
 
 LOGS_ON = True
 
-logger = logging.getLogger()
-if LOGS_ON:
-    logger.setLevel(logging.DEBUG)
-    MESSAGE_FORMAT = "{levelname:<8s} {funcName:<16s} {lineno:<4} {message}"
-    stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
-    stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
-    stream_handler.setLevel(logging.DEBUG)
-    logger.addHandler(stream_handler)
-else:
-    logger.addHandler(logging.NullHandler())
+logger = logging.getLogger("nominally")
+# if LOGS_ON:
+#     logger.setLevel(logging.DEBUG)
+#     MESSAGE_FORMAT = "{levelname:<8s} {funcName:<16s} {lineno:<4} {message}"
+#     stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
+#     stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
+#     stream_handler.setLevel(logging.DEBUG)
+#     logger.addHandler(stream_handler)
+# else:
+#     logger.addHandler(logging.NullHandler())
 
 Pieces = T.List[str]
+PiecesList = T.List[Pieces]
 PiecesDict = T.Dict[str, Pieces]
 
 
@@ -31,56 +32,42 @@ class Name:
     def __init__(self, raw: str = "") -> None:
         self.original = raw
 
-        # pieces, working = self.pre_process(self.original)
-        # working = self.parse_full_name(pieces, working)
-        # self._OLD_final = self.post_process(working)
-        # logger.debug(f"OLD final: {repr(self._OLD_final)}")
-
-        logger.debug(f"0o {repr(self.original)}")
-        logger.warning("pre_process")
+        logger.debug(repr(raw))
         pieces, working = self.pre_process(self.original)
-        logger.debug(f"1p {repr(pieces)}")
-        logger.debug(f"1w {repr(working)}")
-        logger.warning("extract_title")
+        logger.debug(pieces)
+        logger.debug(working)
         pieces, working["title"] = self.extract_title(pieces)
-        logger.debug(f"2p {repr(pieces)}")
-        logger.debug(f"2w {repr(working)}")
-        logger.warning("extract_suffixes")
+        logger.debug(pieces)
+        logger.debug(working)
         pieces, working["suffix"] = self.extract_suffixes(pieces)
-        logger.debug(f"3p {repr(pieces)}")
-        logger.debug(f"3w {repr(working)}")
+        logger.debug(pieces)
+        logger.debug(working)
+        working["first"], working["middle"], working["last"] = self.parse_fml(pieces)
+        logger.debug(working)
+        self._final = working
 
-        working["first"], working["middle"], working["last"] = self.new_mainline(pieces)
-        logger.debug(f"4 {repr(working)}")
-
-        # working.update(first_middle_last)
-        self._final = self.post_process(working)
-        logger.debug(f"New final: {repr(self._final)}")
         if self.unparsable:
             logger.info('Unparsable: "%s" ', self.original)
 
-    @classmethod
-    def new_mainline(cls, pieces: Pieces) -> T.Generator[T.List[str], None, None]:
-        # T.Tuple[Pieces, Pieces, Pieces]:
-        building: PiecesDict = {"F": [], "M": [], "L": []}
+    def report(self) -> T.Dict[str, T.Any]:
+        return {
+            "raw": self.original,
+            "parsed": str(self),
+            "list": list(self),  # type: ignore
+            **dict(self),  # type: ignore
+        }
 
-        logger.warning(f"building {building}")
+    @classmethod
+    def parse_fml(cls, pieces: Pieces) -> T.Tuple[Pieces, ...]:
+        FML_keys = ("F", "M", "L")
 
         guesses: PiecesDict = cls.guess_from_commas(pieces)
 
-        logger.warning(f"guesses {guesses}")
-
-        direct_guesses = {k: guesses.pop(k) for k in ("F", "M", "L") if k in guesses}
-
-        logger.warning(f"direct_guesses {direct_guesses}")
-
+        building: PiecesDict = {k: [] for k in FML_keys}
+        direct_guesses = {k: guesses.pop(k) for k in FML_keys if k in guesses}
         building.update(direct_guesses)
 
-        logger.warning(f"building {building}")
-        logger.warning(f"guesses {guesses}")
-
         if guesses:
-
             parse_key, final_pieces_to_parse = next(iter(guesses.items()))
             combined_bits = cls.parse_pieces(final_pieces_to_parse)
             if combined_bits and parse_key == "FML":
@@ -88,46 +75,51 @@ class Name:
             if combined_bits:
                 guesses["F"] = [combined_bits.pop(0)]
             guesses["M"] = combined_bits
-
             building.update(guesses)
 
-            logger.warning(f"building {building}")
-
-        final_output = (building.get(x, []) for x in ["F", "M", "L"])
+        final_output = tuple(building.get(x, []) for x in FML_keys)
         return final_output
 
     @classmethod
     def guess_from_commas(cls, pieces: Pieces) -> PiecesDict:
+        if not pieces:
+            return {}
         if len(pieces) == 1:
             return {"FML": [pieces[0]]}
         if len(pieces) == 2:
             return {"FM": [pieces[1]], "L": [pieces[0]]}
         logger.warning(f"{repr(pieces)}: more parts than anticipated")
-        return {"L": [pieces[0]], "F": [pieces[1]], "M": pieces[2:]}
+        return {"F": [pieces[1]], "M": pieces[2:], "L": [pieces[0]]}
 
     @classmethod
-    def pre_process(
-        cls, s: str, working: T.Optional[PiecesDict] = None
-    ) -> T.Tuple[Pieces, PiecesDict]:
-        if working is None:
-            working = {k: [] for k in cls.keys()}
+    def pre_process(cls, s: str) -> T.Tuple[Pieces, PiecesDict]:
+        logger.debug(repr(s))
+        working: PiecesDict = {k: [] for k in cls.keys()}
         s = s.lower()
-        s, working = cls.parse_nicknames(s, working)
-        s = clean_input(s)
-        return cls.string_to_pieces(s), working
+        s, working = cls._parse_nicknames(s, working)
+        s = cls.clean_input(s)
+        logger.debug(repr(s))
+        pieces = cls.string_to_pieces(s) if s else []
+        return pieces, working
+
+    @staticmethod
+    def clean_input(s: str) -> str:
+        # Note: nicknames have already been removed
+        s = unidecode_expect_ascii(s).lower()
+        s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
+        s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
+        s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
+        s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all but - ' ,
+        s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
+        s = s.strip("- ")  # drop leading/trailing hyphens and spaces
+        return s
 
     @staticmethod
     def string_to_pieces(remaining: str) -> Pieces:
-        return re.split(r"\s*,\s*", remaining)
-
-    @classmethod
-    def post_process(cls, working: PiecesDict) -> PiecesDict:
-        return working
+        return [x for x in re.split(r"\s*,\s*", remaining) if x]
 
     @staticmethod
-    def parse_nicknames(
-        remaining: str, working: PiecesDict
-    ) -> T.Tuple[str, PiecesDict]:
+    def _parse_nicknames(s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -142,65 +134,10 @@ class Name:
             config.RE_DOUBLE_QUOTES,
             config.RE_PARENTHESIS,
         ):
-            if pattern.search(remaining):
-                working["nickname"] += [x for x in pattern.findall(remaining)]
-                remaining = pattern.sub("", remaining)
-        return remaining, working
-
-    @classmethod
-    def parse_pieces(cls, parts: Pieces) -> Pieces:
-        """
-        Split list of pieces down to individual words and
-            - join on conjuctions if appropriate
-            - add prefixes to last names if appropriate
-        """
-        words = cls.break_down_to_words(parts)
-        pieces = cls.combine_conjunctions(words)
-        pieces = cls.combine_prefixes(pieces)
-        return pieces
-
-    @staticmethod
-    def break_down_to_words(parts: Pieces) -> Pieces:
-        return [word for part in parts for word in part.split()]
-
-    # item for row in matrix for item in row]
-    @staticmethod
-    def combine_conjunctions(words: Pieces) -> Pieces:
-        if len(words) < 4:
-            return words
-
-        result: Pieces = []
-        queued = words.copy()
-        while queued:
-            word = queued.pop(-1)
-            if is_conjunction(word) and result and queued:
-                clause = [queued.pop(-1), word, result.pop(0)]
-                word = " ".join(clause)
-            result.insert(0, word)
-        return result
-
-    @staticmethod
-    def combine_prefixes(words: Pieces) -> Pieces:
-        if len(words) < 3:
-            return words
-
-        result: Pieces = []
-        queued = words.copy()
-        while queued:
-            word = queued.pop(-1)
-            if is_prefix(word) and result:
-                accumulating: Pieces = []
-                while result:
-                    next_most_recent = result[0]
-                    next_word = next_most_recent.split()[0]
-                    if is_suffix(next_word):
-                        break
-                    if accumulating and is_prefix(next_word):
-                        break
-                    accumulating.append(result.pop(0))
-                word = " ".join([word, *accumulating])
-            result.insert(0, word)
-        return result
+            if pattern.search(s):
+                working["nickname"] += [x for x in pattern.findall(s)]
+                s = pattern.sub("", s)
+        return s, working
 
     @property
     def title(self) -> str:
@@ -267,82 +204,112 @@ class Name:
     def keys(cls) -> T.Tuple[str, ...]:
         return cls._keys
 
-    def values(self):
+    def values(self) -> T.Tuple[str, ...]:
         # TODO integrate better as dict
         return tuple(self[k] for k in self.keys())
 
     @staticmethod
     def extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
-        logger.debug(pieces)
         outgoing: Pieces = []
         while pieces:
             next_cluster = pieces.pop(0).split()
 
-            if next_cluster:
-                first_word, *remainder = next_cluster
-                if is_title(first_word):
-                    de_prefixed_cluster = " ".join(remainder)
-                    outgoing = outgoing + [de_prefixed_cluster] + pieces
-                    return outgoing, [first_word]
+            first_word, *remainder = next_cluster
+            if is_title(first_word):
+                de_prefixed_cluster = " ".join(remainder)
+                outgoing = outgoing + [de_prefixed_cluster] + pieces
+                return outgoing, [first_word]
 
             outgoing.append(" ".join(next_cluster))
         return outgoing, []
 
     @staticmethod
+    # def extract_suffixes(pieces: Pieces) -> T.Tuple[PiecesList, Pieces]:
     def extract_suffixes(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
 
-        logger.debug("extract_suffixes")
-        logger.debug(f"pieces   {repr(pieces)}")
+        incoming: PiecesList = [piece.split() for piece in pieces]
 
-        outgoing: Pieces = []
-        suffixes: Pieces = []
-        # logger.debug(f"outgoing {repr(outgoing)}")
-        # logger.debug(f"suffixes {repr(suffixes)}")
+        out_pl: PiecesList = []
+        out_suffixes: Pieces = []
+        MIN_NAMES = 2
 
-        min_words = 2
-
-        word_clusters = [piece.split() for piece in pieces]
-
-        while word_clusters:
-
-            rejoined_clusters = flatter(word_clusters)
-            if count_words(rejoined_clusters + outgoing) <= min_words:
-                rejoined_clusters.extend(outgoing)
-                logger.debug("1")
-                return rejoined_clusters, suffixes
-
-            words = word_clusters.pop()
-
-            min_words_remaining = 0 if is_only_suffixes(words) else 1
-            while count_words(words) > min_words_remaining:
-                rejoined_clusters = flatter(word_clusters) + words
-                logger.debug(f"rejoined_clusters {rejoined_clusters}")
-                logger.debug(f"outgoing {outgoing}")
-                if count_words(rejoined_clusters + outgoing) <= min_words:
-                    outgoing.extend(rejoined_clusters)
-                    outgoing = [" ".join(outgoing)]
-                    logger.debug(f"outgoing OUT {outgoing}")
-                    logger.debug("2")
-                    return outgoing, suffixes
-
-                if not is_suffix(words[-1]):
+        while incoming:
+            handling = incoming.pop()
+            while handling:
+                banking: Pieces = []
+                if (
+                    sum(len(x) for x in (handling, banking))
+                    + sum(count_words(pl) for pl in (incoming, out_pl))
+                    <= MIN_NAMES
+                ):
+                    banking = handling + banking
                     break
-                suffixes.insert(0, words.pop())
+                word = handling.pop()
+                if is_suffix(word):
+                    out_suffixes.insert(0, word)
+                else:
+                    banking = handling + [word] + banking
+                    break
+            if banking:
+                out_pl.insert(0, banking)
 
-            if words:
-                outgoing.append(" ".join(words))
+        return ([" ".join(x) for x in out_pl], out_suffixes)
 
-        outgoing.reverse()
-        logger.debug("3")
-        return outgoing, suffixes
+    @classmethod
+    def parse_pieces(cls, pieces: Pieces) -> Pieces:
+        """
+        Split list of pieces down to individual words and
+            - join on conjuctions if appropriate
+            - add prefixes to last names if appropriate
+        """
+        out_pieces = cls.break_down_to_words(pieces)
+        out_pieces = cls.combine_conjunctions(out_pieces)
+        out_pieces = cls.combine_prefixes(out_pieces)
+        return out_pieces
+
+    @staticmethod
+    def break_down_to_words(parts: Pieces) -> Pieces:
+        return [word for part in parts for word in part.split()]
+
+    @staticmethod
+    def combine_conjunctions(words: Pieces) -> Pieces:
+        if len(words) < 4:
+            return words
+
+        result: Pieces = []
+        queued = words.copy()
+        while queued:
+            word = queued.pop(-1)
+            if is_conjunction(word) and result and queued:
+                clause = [queued.pop(-1), word, result.pop(0)]
+                word = " ".join(clause)
+            result.insert(0, word)
+        return result
+
+    @staticmethod
+    def combine_prefixes(words: Pieces) -> Pieces:
+        if len(words) < 3:
+            return words
+
+        result: Pieces = []
+        queued = words.copy()
+        while queued:
+            word = queued.pop(-1)
+            if is_prefix(word) and result:
+                accumulating: Pieces = []
+                while result:
+                    next_most_recent = result[0]
+                    next_word = next_most_recent.split()[0]
+                    if accumulating and is_prefix(next_word):
+                        break
+                    accumulating.append(result.pop(0))
+                word = " ".join([word, *accumulating])
+            result.insert(0, word)
+        return result
 
 
-def pieces_to_words(pieces: T.Sequence[str]) -> T.Sequence[str]:
-    return " ".join(pieces).split()
-
-
-def count_words(pieces: T.Sequence[T.Any]) -> int:
-    return len(pieces_to_words(pieces))
+def count_words(piecelist: T.Sequence[T.Any]) -> int:
+    return sum(len(x) for x in piecelist)
 
 
 def is_title(value: str) -> bool:
@@ -357,32 +324,12 @@ def is_prefix(piece: str) -> bool:
     return piece in config.PREFIXES
 
 
-def is_only_suffixes(thing: T.Sequence[str]) -> bool:
-    return all(is_suffix(x) for x in thing)
-
-
 def is_suffix(piece: str) -> bool:
     return piece in (config.SUFFIXES) and not is_an_initial(piece)
 
 
 def is_an_initial(value: str) -> bool:
     return bool(config.RE_INITIAL.match(value))
-
-
-def clean_input(s: str) -> str:
-    # Note: nicknames have already been removed
-    s = unidecode_expect_ascii(s).lower()
-    s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
-    s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
-    s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
-    s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all but - ' ,
-    s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
-    s = s.strip("- ")  # drop leading/trailing hyphens and spaces
-    return s
-
-
-def flatter(clusters: T.List[Pieces]) -> Pieces:
-    return [" ".join(x) for x in clusters]
 
 
 def parse_name(s: str) -> PiecesDict:

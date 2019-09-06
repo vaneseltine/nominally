@@ -1,8 +1,13 @@
 import pytest
 
-from nominally.parser import Name, logger, pieces_to_words
+from nominally.parser import Name, logger
 
-from .conftest import load_bank, make_ids, verify_approximate_ordering_of_leftovers
+from .conftest import (
+    load_bank,
+    make_ids,
+    verify_approximate_ordering_of_leftovers,
+    pieces_to_words,
+)
 
 
 @pytest.mark.parametrize(
