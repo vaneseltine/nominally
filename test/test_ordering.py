@@ -1,5 +1,3 @@
-import re
-
 import pytest
 
 from nominally.parser import Name, pieces_to_words
@@ -62,7 +60,7 @@ def test_ordering_end_to_end(entry):
 @pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
 def test_suffix_extraction_has_correct_suffixes(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
-    pieces, suffixes = Name.extract_suffixes(scrubbed)
+    _, suffixes = Name.extract_suffixes(scrubbed)
     assert set(suffixes) == set(entry.get("suffix", "").split())
 
 
@@ -70,7 +68,7 @@ def test_suffix_extraction_has_correct_suffixes(entry):
 def test_suffix_extraction_returns_appropriate_types(entry):
     # TODO -- add typing instead
     scrubbed, _ = Name.pre_process(entry["raw"])
-    pieces, suffixes = Name.extract_suffixes(scrubbed)
+    pieces, _ = Name.extract_suffixes(scrubbed)
     assert all(isinstance(x, str) for x in pieces)
 
 
@@ -84,7 +82,7 @@ def test_suffix_extraction_did_not_mistrack_words(entry):
 @pytest.mark.parametrize("entry", load_bank("ordering") + BROKEN, ids=make_ids)
 def test_suffix_extraction_maintained_first_last_order(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
-    pieces, suffixes = Name.extract_suffixes(scrubbed)
+    pieces, _ = Name.extract_suffixes(scrubbed)
     ugly_in = str(scrubbed).replace("'", " ")
     ugly_out = str(pieces).replace("'", " ")
     for marker in (" junior ", " j ", " h c "):
@@ -100,5 +98,5 @@ def test_suffix_extraction_maintained_first_last_order(entry):
 @pytest.mark.xfail(reason="TODO")
 def test_title(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
-    pieces, title = Name.extract_title(scrubbed)
+    _, title = Name.extract_title(scrubbed)
     assert set(title) == set(entry.get("title", "").split())

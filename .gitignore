@@ -3,7 +3,7 @@ __*/
 .*/
 __test*
 
-# But keep various CI-related folders
+# But keep various CI-related items
 !.circleci/
 !.builds/
 
@@ -26,6 +26,7 @@ var/
 *.code-workspace
 *.coverage
 .coverage.*
+.coveralls*
 *.egg
 *.egg-info
 *.env

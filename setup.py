@@ -2,7 +2,7 @@ from pathlib import Path
 
 import setuptools
 
-REQUIREMENTS = Path("./requirements.txt")
+REQUIREMENTS = Path("./requirements/common.txt")
 
 setuptools.setup(
     packages=setuptools.find_packages(),

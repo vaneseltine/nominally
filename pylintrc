@@ -63,13 +63,15 @@ confidence=
 
 disable=bad-continuation,               # handled by black
         line-too-long,                  # handled by black
-        unresolved-import,              # not a real problem
-        pointless-string-statement,     # license strings
-        too-few-public-methods,         # disagree
-        too-many-public-methods,        # disagree
-        too-many-arguments,             # disagree
-        too-many-instance-attributes,   # disagree
-        missing-kwoa,                   # pylint confused by factory
+        import-error,                   # not a real problem
+        fixme,                          # covered elsewhere
+      #   unresolved-import,              # not a real problem
+      #   pointless-string-statement,     # license strings
+      #   too-few-public-methods,         # disagree
+      #   too-many-public-methods,        # disagree
+      #   too-many-arguments,             # disagree
+      #   too-many-instance-attributes,   # disagree
+      #   missing-kwoa,                   # pylint confused by factory
         logging-fstring-interpolation,  # plz
         missing-docstring,              # yes yes
         empty-docstring                 # yes yes yes
@@ -84,28 +86,21 @@ enable=c-extension-no-member
 
 [REPORTS]
 
-# Python expression which should return a note less than 10 (10 is the highest
-# note). You have access to the variables errors warning, statement which
-# respectively contain the number of errors / warnings messages and the total
-# number of statements analyzed. This is used by the global evaluation report
-# (RP0004).
+# Python expression used by the global evaluation report (RP0004).
 evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
 
 # Template used to display messages. This is a python new-style format string
 # used to format the message information. See doc for all details.
 #msg-template=
 
-# Set the output format. Available formats are text, parseable, colorized, json
-# and msvs (visual studio). You can also give a reporter class, e.g.
-# mypackage.mymodule.MyReporterClass.
+# Set the output format. Available: text, parseable, colorized, json, msvs
 output-format=colorized
 
-# Tells whether to display a full report or only the messages.
+# Display a full report or only the messages.
 reports=no
 
 # Activate the evaluation score.
 score=yes
-
 
 [REFACTORING]
 
@@ -215,7 +210,7 @@ indent-string='    '
 max-line-length=90
 
 # Maximum number of lines in a module.
-max-module-lines=1500
+max-module-lines=1000
 
 [MISCELLANEOUS]
 

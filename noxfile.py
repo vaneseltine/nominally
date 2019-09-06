@@ -23,9 +23,9 @@ def clean_dir(s):
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
 def test_version(session):
-    session.install("-r", "requirements-dev.txt")
+    session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
-    session.run("coverage", "run", "--parallel-mode", "-m", "pytest", "-rxXs")
+    session.run("coverage", "run", "--parallel-mode", "-m", "pytest")  # , "-rxXs")
 
 
 @nox.session(reuse_venv=True)
@@ -45,29 +45,50 @@ def coverage(session):
 
 @nox.session(reuse_venv=True)
 def coveralls(session):
-    if not os.getenv("COVERALLS_REPO_TOKEN"):
+    run_travis = os.getenv("COVERALLS_REPO_TOKEN")
+    if not run_travis:  # and not Path("./.coveralls.yml").exists():
         return
-    session.install("coverage", "coveralls")
+    session.install("PyYAML", "coverage", "coveralls")
     session.run("coveralls")
 
 
 @nox.session(reuse_venv=True)
 def lint_flake8(session):
-    session.install("-r", "requirements-dev.txt")
+    session.install("-r", "requirements/lint.txt")
     session.run("python", "-m", "flake8", "./nominally", "--show-source")
 
 
+LINT_DIRS = ["nominally", "test"]
+PYLINTS = [["nominally"], ["test", "-d", "no-self-use", "-d", "too-few-public-methods"]]
+
+
 @nox.session(reuse_venv=True)
-def lint_pylint(session):
-    session.install("-r", "requirements-dev.txt")
-    session.run("pylint", "./nominally")  # , "-d", "import-error")
-    session.run("pylint", "./test", "-d", "no-self-use")
+@nox.parametrize("args", PYLINTS, ids=LINT_DIRS)
+def lint_pylint(session, args):
+    session.install("-r", "requirements/lint.txt")
+    session.run("pylint", "--score=no", *args)
 
 
 @nox.session(reuse_venv=True)
 def lint_black(session):
     session.install("-U", "black")
     session.run("python", "-m", "black", "-t", "py36", "--diff", ".")
+
+
+@nox.session(reuse_venv=True)
+def lint_todos(session):
+    for subpath in LINT_DIRS:
+        for pyfile in (p for p in Path(subpath).glob("**/*.py") if "/_" not in str(p)):
+            session.run(
+                "grep",
+                "-n",
+                "-o",
+                "#.*TODO.*$",
+                "--color=auto",
+                str(pyfile.absolute()),
+                external=True,
+                success_codes=(0, 1),
+            )
 
 
 if __name__ == "__main__":
