@@ -11,11 +11,9 @@ def parse(raw_name: T.Optional[str] = None) -> int:
         print("Usage: nominally Mr. Eric Praline")
         return 1
     name = Name(raw_name)
-    output = {"raw": raw_name, "parsed": str(name)}
+    output = {"raw": raw_name, "parsed": str(name), "list": list(name)}
     output.update(dict(name))  # type: ignore
     prettier_print(output)
-    print("list:", list(name))  # type: ignore
-    # prettier_print(name._OLD_final)
     return 0
 
 
