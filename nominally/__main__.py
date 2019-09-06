@@ -1,3 +1,3 @@
-from nominally import parse
+from nominally import cli_parse
 
-parse()
+cli_parse()

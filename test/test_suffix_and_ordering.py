@@ -10,6 +10,20 @@ from .conftest import (
 )
 
 
+def test_too_many_name_parts_post_suffix():
+    name = Name("johnson, bergholt, stuttley")
+    assert name.first == "bergholt"
+    assert name.middle == "stuttley"
+    assert name.last == "johnson"
+
+
+def test_way_too_many_name_parts_post_suffix():
+    name = Name("johnson, bergholt, stuttley, joonyor")
+    assert name.first == "bergholt"
+    assert name.middle == "stuttley joonyor"
+    assert name.last == "johnson"
+
+
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_meta_no_pre_process_side_effects_these_names(entry):
     _, working = Name.pre_process(entry["raw"])

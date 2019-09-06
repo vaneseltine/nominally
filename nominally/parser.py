@@ -9,15 +9,18 @@ from nominally import config
 LOGS_ON = True
 
 logger = logging.getLogger("nominally")
-# if LOGS_ON:
-#     logger.setLevel(logging.DEBUG)
-#     MESSAGE_FORMAT = "{levelname:<8s} {funcName:<16s} {lineno:<4} {message}"
-#     stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
-#     stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
-#     stream_handler.setLevel(logging.DEBUG)
-#     logger.addHandler(stream_handler)
-# else:
-#     logger.addHandler(logging.NullHandler())
+
+"""
+if LOGS_ON:
+    logger.setLevel(logging.DEBUG)
+    MESSAGE_FORMAT = "{levelname:<8s} {funcName:<16s} {lineno:<4} {message}"
+    stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
+    stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
+    stream_handler.setLevel(logging.DEBUG)
+    logger.addHandler(stream_handler)
+else:
+    logger.addHandler(logging.NullHandler())
+"""
 
 Pieces = T.List[str]
 PiecesList = T.List[Pieces]
@@ -330,7 +333,3 @@ def is_suffix(piece: str) -> bool:
 
 def is_an_initial(value: str) -> bool:
     return bool(config.RE_INITIAL.match(value))
-
-
-def parse_name(s: str) -> PiecesDict:
-    return dict(Name(s))  # type: ignore

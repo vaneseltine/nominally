@@ -1,6 +1,7 @@
 import pytest
 
 from nominally import Name
+from .conftest import dict_entry_test
 
 
 @pytest.mark.xfail(raises=AssertionError, reason="TBI")
@@ -41,10 +42,13 @@ def test_allow_initials_written_properly():
     assert n.last == "tolkien"
 
 
-@pytest.mark.xfail(raises=AssertionError)
-def test_do_not_take_initial_slash_suffix_as_last_name_with_good_names_later():
-    n = Name("larry james edward johnson v")
-    assert n.first == "larry"
-    assert n.middle == "james edward"
-    assert n.last == "johnson"
-    assert n.suffix == "v"
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "v, samuel j", "first": "samuel", "middle": "j", "last": "v"},
+        {"raw": "samuel j v", "first": "samuel", "middle": "j", "last": "v"},
+    ],
+)
+@pytest.mark.xfail(raises=AssertionError, reason="TBD")
+def test_distinguish_suffixes_suitably_distinguishable_from_initials(entry):
+    dict_entry_test(Name, entry)

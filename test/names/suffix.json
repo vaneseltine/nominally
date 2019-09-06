@@ -1,21 +1,30 @@
 [
     {
-        "id": "test_roman_numeral_initials_one",
-        "raw": "larry v i",
-        "first": "larry",
-        "middle": "v",
-        "last": "i"
-    },
-    {
-        "id": "test_roman_numeral_initials_two",
-        "raw": "larry i v",
-        "first": "larry",
-        "middle": "i",
+        "raw": "samuel v",
+        "first": "samuel",
         "last": "v"
     },
     {
+        "raw": "mr. samuel v",
+        "title": "mr",
+        "first": "samuel",
+        "last": "v"
+    },
+    {
+        "raw": "samuel vimes v",
+        "first": "samuel",
+        "last": "vimes",
+        "suffix": "v"
+    },
+    {
+        "raw": "samuel 'sam' vimes v",
+        "first": "samuel",
+        "last": "vimes",
+        "suffix": "v",
+        "nickname": "sam"
+    },
+    {
         "id": "test_two_suffixes",
-        "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
         "raw": "kenneth clarke md phd",
         "first": "kenneth",
         "last": "clarke",
@@ -93,34 +102,28 @@
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_with_suffix",
-        "raw": "jack ma jr",
+        "raw": "jack vi jr",
         "first": "jack",
-        "last": "ma",
+        "last": "vi",
         "suffix": "jr"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_with_suffix_comma",
-        "raw": "ma iii, jack jr",
+        "raw": "vi iii, jack jr",
         "first": "jack",
-        "last": "ma",
+        "last": "vi",
         "suffix": "iii jr"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name",
-        "raw": "jack ma",
+        "raw": "jack vi",
         "first": "jack",
-        "last": "ma"
+        "last": "vi"
     },
     {
         "id": "test_potential_suffix_that_is_also_last_name_comma",
-        "raw": "ma, jack",
+        "raw": "vi, jack",
         "first": "jack",
-        "last": "ma"
-    },
-    {
-        "id": "test_potential_suffix_that_is_also_first_name_comma",
-        "raw": "johnson, bart",
-        "first": "bart",
-        "last": "johnson"
+        "last": "vi"
     }
 ]

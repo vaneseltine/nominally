@@ -51,6 +51,20 @@ def test_dict_output():
     assert [v for v in n.values()] == [k for k in dn.values()]
 
 
+def test_report_output():
+    n = Name('de la Véña, Dr. Jüan "Paco", Jr.')
+    report = n.report()
+
+    for k in n.keys():
+        assert n[k] == report[k]
+    assert "list" in report.keys()
+    assert isinstance(report["list"], list)
+    assert "raw" in report.keys()
+    assert isinstance(report["raw"], str)
+    assert "parsed" in report.keys()
+    assert isinstance(report["parsed"], str)
+
+
 def test_parse_name_output():
     raw = 'de la Véña, Dr. Jüan "Paco", Jr.'
     n = Name(raw)

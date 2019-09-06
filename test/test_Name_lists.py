@@ -115,4 +115,3 @@ class TestNameVariations:
             assert n[key] == nocomma[key] == lastnamecomma[key]
             if n.suffix:
                 assert n[key] == suffixcomma[key]
-

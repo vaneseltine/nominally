@@ -14,8 +14,7 @@ CONJUNCTIONS = {"y"}
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
-# SUFFIX_OR_NAME = set()
-SUFFIX_OR_NAME = {"junior"}
+SUFFIX_OR_NAME = {"junior", "v", "vi", "ix", "x"}
 
 # Cannot include things that could also be middle or last names
 SUFFIX_NOT_NAME = {
