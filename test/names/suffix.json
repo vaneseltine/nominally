@@ -1,5 +1,19 @@
 [
     {
+        "id": "test_roman_numeral_initials_one",
+        "raw": "larry v i",
+        "first": "larry",
+        "middle": "v",
+        "last": "i"
+    },
+    {
+        "id": "test_roman_numeral_initials_two",
+        "raw": "larry i v",
+        "first": "larry",
+        "middle": "i",
+        "last": "v"
+    },
+    {
         "id": "test_two_suffixes",
         "_note": "this adds a comma when the original format did not have one. not ideal but at least its in the right bucket.",
         "raw": "kenneth clarke md phd",

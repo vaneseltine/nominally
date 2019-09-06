@@ -1,100 +1,38 @@
 [
     {
+        "id": "test_y_middle_initial",
+        "raw": "doug y piranha",
+        "first": "doug",
+        "middle": "y",
+        "last": "piranha"
+    },
+    {
         "id": "test_last_name_with_conjunction",
         "raw": "jose aznar y lopez",
         "first": "jose",
         "last": "aznar y lopez"
     },
     {
-        "id": "test_uppercase_middle_initial_conflict_with_conjunction_upper_means_initial",
-        "raw": "john e smith",
-        "first": "john",
-        "middle": "e",
-        "last": "smith"
-    },
-    {
-        "id": "test_lowercase_middle_initial_with_period_conflict_with_conjunction",
-        "raw": "john e. smith",
-        "first": "john",
-        "middle": "e",
-        "last": "smith"
-    },
-    {
-        "id": "test_lowercase_first_initial_conflict_with_conjunction",
-        "raw": "e j smith",
-        "first": "e",
+        "id": "test_first_initial_conflict_with_conjunction",
+        "raw": "y j smith",
+        "first": "y",
         "middle": "j",
         "last": "smith"
     },
     {
-        "id": "test_lowercase_middle_initial_conflict_with_conjunction",
-        "raw": "john e smith",
+        "id": "test_middle_initial_and_suffix_conflict_with_conjunction",
+        "raw": "john y smith, iii",
         "first": "john",
-        "middle": "e",
-        "last": "smith"
-    },
-    {
-        "id": "test_lowercase_middle_initial_and_suffix_conflict_with_conjunction",
-        "raw": "john e smith, iii",
-        "first": "john",
-        "middle": "e",
+        "middle": "y",
         "last": "smith",
         "suffix": "iii"
     },
     {
-        "id": "test_lowercase_middle_initial_and_nocomma_suffix_conflict_with_conjun",
-        "raw": "john e smith iii",
+        "id": "test_middle_initial_comma_lastname_and_suffix_conflict_with_conjun",
+        "raw": "smith, john y, iii, jr",
         "first": "john",
-        "middle": "e",
-        "last": "smith",
-        "suffix": "iii"
-    },
-    {
-        "id": "test_lowercase_middle_initial_comma_lastname_and_suffix_conflict_with_conjun",
-        "raw": "smith, john e, iii, jr",
-        "first": "john",
-        "middle": "e",
+        "middle": "y",
         "last": "smith",
         "suffix": "iii jr"
-    },
-    {
-        "id": "test_roman_numeral_initials_one",
-        "raw": "larry v i",
-        "first": "larry",
-        "middle": "v",
-        "last": "i"
-    },
-    {
-        "id": "test_roman_numeral_initials_two",
-        "raw": "larry i v",
-        "first": "larry",
-        "middle": "i",
-        "last": "v"
-    },
-    {
-        "id": "test127",
-        "raw": "buca di beppo",
-        "first": "buca",
-        "last": "di beppo"
-    },
-    {
-        "id": "test_le_as_last_name",
-        "raw": "yin le",
-        "first": "yin",
-        "last": "le"
-    },
-    {
-        "id": "test_le_as_last_name_with_middle_initial",
-        "raw": "yin a le",
-        "first": "yin",
-        "middle": "a",
-        "last": "le"
-    },
-    {
-        "id": "test_y_middle_initial",
-        "raw": "doug y piranha",
-        "first": "doug",
-        "middle": "y",
-        "last": "piranha"
     }
 ]

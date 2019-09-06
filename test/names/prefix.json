@@ -1,7 +1,19 @@
 [
     {
+        "id": "test_le_as_last_name",
+        "raw": "yin le",
+        "first": "yin",
+        "last": "le"
+    },
+    {
+        "id": "test_le_as_last_name_with_middle_initial",
+        "raw": "yin a le",
+        "first": "yin",
+        "middle": "a",
+        "last": "le"
+    },
+    {
         "id": "test_comma_two_part_last_name_with_suffix_in_first_part",
-        "_note": "i'm kinda surprised this works, not really sure if this is a realistic place for a suffix to be.",
         "raw": "von bergen wessels md, pennie",
         "first": "pennie",
         "last": "von bergen wessels",

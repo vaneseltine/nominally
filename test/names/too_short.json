@@ -7,9 +7,9 @@
         "last": "nguyen"
     },
     {
-        "id": "test_first_name",
+        "id": "test_last_name",
         "raw": "andrew",
-        "first": "andrew"
+        "last": "andrew"
     },
     {
         "id": "test_assume_title_and_one_other_name_is_last_name",

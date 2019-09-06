@@ -31,34 +31,80 @@ class Name:
     def __init__(self, raw: str = "") -> None:
         self.original = raw
 
-        pieces, working = self.pre_process(self.original)
-        working = self.parse_full_name(pieces, working)
-        self._final = self.post_process(working)
-        logger.debug(f"Final: {repr(self._final)}")
+        # pieces, working = self.pre_process(self.original)
+        # working = self.parse_full_name(pieces, working)
+        # self._OLD_final = self.post_process(working)
+        # logger.debug(f"OLD final: {repr(self._OLD_final)}")
 
+        logger.debug(f"0o {repr(self.original)}")
+        logger.warning("pre_process")
         pieces, working = self.pre_process(self.original)
-        logger.debug(f"1 {repr(pieces)}")
-        logger.debug(f"1 {repr(working)}")
+        logger.debug(f"1p {repr(pieces)}")
+        logger.debug(f"1w {repr(working)}")
+        logger.warning("extract_suffixes")
         pieces, working["suffix"] = self.extract_suffixes(pieces)
-        logger.debug(f"2 {repr(pieces)}")
-        logger.debug(f"2 {repr(working)}")
+        logger.debug(f"2p {repr(pieces)}")
+        logger.debug(f"2w {repr(working)}")
+        logger.warning("extract_title")
         pieces, working["title"] = self.extract_title(pieces)
-        logger.debug(f"3 {repr(pieces)}")
-        logger.debug(f"3 {repr(working)}")
-        if len(pieces) == 1:
-            logger.debug("#TODO: prefix, conj, and pull out last and first")
-            logger.info(pieces)
-        elif len(pieces) == 2:
-            logger.debug("#TODO: pull out last, then prefix/conj first and mid")
-            logger.info(pieces)
-        else:
-            logger.critical(pieces)
-            raise RuntimeError(f"{repr(pieces)}: more parts than anticipated")
-            exit()
-        self._NEW_final = self.post_process(working)
-        logger.debug(f"New final: {repr(self._NEW_final)}")
+        logger.debug(f"3p {repr(pieces)}")
+        logger.debug(f"3w {repr(working)}")
+
+        working["first"], working["middle"], working["last"] = self.new_mainline(pieces)
+        logger.debug(f"4 {repr(working)}")
+
+        # working.update(first_middle_last)
+        self._final = self.post_process(working)
+        logger.debug(f"New final: {repr(self._final)}")
         if self.unparsable:
             logger.info('Unparsable: "%s" ', self.original)
+
+    @classmethod
+    def new_mainline(cls, pieces: Pieces) -> T.Generator[T.List[str], None, None]:
+        # T.Tuple[Pieces, Pieces, Pieces]:
+        building: PiecesDict = {"F": [], "M": [], "L": []}
+
+        logger.warning(f"building {building}")
+
+        guesses: PiecesDict = cls.guess_from_commas(pieces)
+
+        logger.warning(f"guesses {guesses}")
+
+        direct_guesses = {k: guesses.pop(k) for k in ("F", "M", "L") if k in guesses}
+
+        logger.warning(f"direct_guesses {direct_guesses}")
+
+        building.update(direct_guesses)
+
+        logger.warning(f"building {building}")
+        logger.warning(f"guesses {guesses}")
+
+        if guesses:
+
+            grab_last = "FML" in guesses
+            parse_key, final_pieces_to_parse = next(iter(guesses.items()))
+            combined_bits = cls.parse_pieces(final_pieces_to_parse)
+            if combined_bits and parse_key == "FML":
+                guesses["L"] = [combined_bits.pop(-1)]
+            if combined_bits:
+                guesses["F"] = [combined_bits.pop(0)]
+            guesses["M"] = combined_bits
+
+            building.update(guesses)
+
+            logger.warning(f"building {building}")
+
+        final_output = (building.get(x, []) for x in ["F", "M", "L"])
+        return final_output
+
+    @classmethod
+    def guess_from_commas(cls, pieces: Pieces) -> PiecesDict:
+        if len(pieces) == 1:
+            return {"FML": [pieces[0]]}
+        if len(pieces) == 2:
+            return {"FM": [pieces[1]], "L": [pieces[0]]}
+        logger.warning(f"{repr(pieces)}: more parts than anticipated")
+        return {"L": [pieces[0]], "F": [pieces[1]], "M": pieces[2:]}
 
     @classmethod
     def pre_process(
@@ -77,7 +123,6 @@ class Name:
 
     @classmethod
     def post_process(cls, working: PiecesDict) -> PiecesDict:
-        working = cls.make_single_name_last(working)
         return working
 
     @staticmethod
@@ -103,183 +148,10 @@ class Name:
                 remaining = pattern.sub("", remaining)
         return remaining, working
 
-    @staticmethod
-    def make_single_name_last(working: PiecesDict) -> PiecesDict:
-        """
-        If there are only two parts and one is a title, assume it's a last name
-        instead of a first name. e.g. Mr. Johnson.
-        """
-        if working["title"] and len([x for x in working.values() if x]) == 2:
-            working["first"], working["last"] = (working["last"], working["first"])
-        return working
-
     @classmethod
-    def new_working(cls) -> PiecesDict:
-        return {k: [] for k in cls.keys()}
-
-    @classmethod
-    def parse_full_name(
-        cls, pieces: Pieces, working: T.Optional[PiecesDict] = None
-    ) -> PiecesDict:
-
-        _working: PiecesDict = working or cls.new_working()
-
-        # break up pieces into pieces by commas
-        logger.debug(f"pieces    in  {repr(pieces)}")
-        logger.debug(f"working   in  {repr(_working)}")
-
-        if len(pieces) == 1:
-            _working = cls.parse_v_no_commas(pieces, _working)
-
-        else:
-            # if all the end pieces are suffixes and there is more than one piece
-            # in the first part. (Suffixes will never appear after last names
-            # only, and allows potential first names to be in suffixes, e.g.
-            # "Johnson, Bart"
-            if is_only_suffixes(pieces[1].split()) and len(pieces[0].split()) > 1:
-                _working = cls.parse_v_suffix_comma(pieces, _working)
-            else:
-                _working = cls.parse_v_lastname_comma(pieces, _working)
-
-        #  suffixes are not all fully pieced out above
-        if _working["suffix"]:
-            rejoined = " ".join(_working["suffix"])
-            _working["suffix"] = rejoined.replace(",", " ").split()
-
-        logger.debug(f"_working   out {repr(_working)}")
-        return _working
-
-    @classmethod
-    def parse_v_suffix_comma(cls, parts, working=None) -> PiecesDict:
+    def parse_pieces(cls, parts: Pieces) -> Pieces:
         """
-        suffix comma:
-        title first middle last [suffix], suffix [suffix] [, suffix]
-                       parts0,          parts1..
-        """
-        working = working or cls.new_working()
-
-        working["suffix"] += parts[1:]
-        pieces = cls.parse_pieces(parts[0].split())
-        logger.debug(f"parts     in  {repr(parts)}")
-        logger.debug(f"working   in  {repr(working)}")
-        for i, piece in enumerate(pieces):
-            try:
-                nxt = pieces[i + 1]
-            except IndexError:
-                nxt = None  # type: ignore
-
-            if is_title(piece) and (nxt or len(pieces) == 1) and not working["first"]:
-                working["title"].append(piece)
-                continue
-            if not working["first"]:
-                working["first"].append(piece)
-                continue
-            if is_only_suffixes(pieces[i + 1 :]):
-                working["last"].append(piece)
-                working["suffix"] = pieces[i + 1 :] + working["suffix"]
-                break
-            if not nxt:
-                working["last"].append(piece)
-                continue
-            working["middle"].append(piece)
-        logger.debug(f"working   out {repr(working)}")
-        return working
-
-    @classmethod
-    def parse_v_lastname_comma(cls, parts, working=None) -> PiecesDict:
-        """
-        lastname comma:
-        last [suffix], title first middles[,] suffix [,suffix]
-            parts0      parts1,              parts2..
-        """
-        working = working or cls.new_working()
-
-        pieces = cls.parse_pieces(parts[1].split())
-
-        logger.debug(f"parts     in  {repr(parts)}")
-        logger.debug(f"working   in  {repr(working)}")
-
-        # lastname part may have suffixes in it
-        lastname_pieces = cls.parse_pieces(parts[0].split())
-        for piece in lastname_pieces:
-            # the first one is always a last name, even if it looks like
-            # a suffix
-            if is_suffix(piece) and working["last"]:
-                working["suffix"].append(piece)
-            else:
-                working["last"].append(piece)
-
-        for i, piece in enumerate(pieces):
-            try:
-                nxt = pieces[i + 1]
-            except IndexError:
-                nxt = None  # type: ignore
-
-            if is_title(piece) and (nxt or len(pieces) == 1) and not working["first"]:
-                working["title"].append(piece)
-                continue
-            if not working["first"]:
-                working["first"].append(piece)
-                continue
-            if is_suffix(piece):
-                working["suffix"].append(piece)
-                continue
-            working["middle"].append(piece)
-        if len(parts) > 2:
-            working["suffix"] += parts[2:]
-        logger.debug(f"working   out {repr(working)}")
-        return working
-
-    @classmethod
-    def parse_v_no_commas(cls, parts, working=None) -> PiecesDict:
-        """
-        no commas, title first middle middle middle last suffix
-                  part[0]
-        """
-        working = working or cls.new_working()
-
-        pieces = cls.parse_pieces(parts)
-        logger.debug(f"parts     in {repr(parts)}")
-        logger.debug(f"working   in {repr(working)}")
-        p_len = len(pieces)
-        for i, piece in enumerate(pieces):
-            try:
-                nxt = pieces[i + 1]
-            except IndexError:
-                nxt = None  # type: ignore
-
-            # title must have a next piece, unless it's just a title
-            if is_title(piece) and (nxt or p_len == 1) and not working["first"]:
-                working["title"].append(piece)
-                continue
-            if not working["first"]:
-                if p_len == 1 and working["nickname"]:
-                    working["last"].append(piece)
-                    continue
-                working["first"].append(piece)
-                continue
-            if is_only_suffixes(pieces[i + 1 :]) or (
-                # if the next piece is the last piece and a roman
-                # numeral but this piece is not an initial
-                is_roman_numeral(nxt)
-                and i == p_len - 2
-                and not is_an_initial(piece)
-            ):
-                working["last"].append(piece)
-                working["suffix"] += pieces[i + 1 :]
-                break
-            if not nxt:
-                working["last"].append(piece)
-                continue
-
-            working["middle"].append(piece)
-        logger.debug(f"working   out {repr(working)}")
-        return working
-
-    @classmethod
-    def parse_pieces(cls, parts) -> Pieces:
-        """
-        Split group of pieces down to individual words and
+        Split list of pieces down to individual words and
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
@@ -399,8 +271,7 @@ class Name:
     @staticmethod
     def extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
         logger.debug(pieces)
-        output: Pieces = []
-        title: Pieces = []
+        outgoing: Pieces = []
         while pieces:
             next_cluster = pieces.pop(0).split()
 
@@ -408,16 +279,23 @@ class Name:
                 first_word, *remainder = next_cluster
                 if is_title(first_word):
                     de_prefixed_cluster = " ".join(remainder)
-                    output = output + [de_prefixed_cluster] + pieces
-                    return output, [first_word]
+                    outgoing = outgoing + [de_prefixed_cluster] + pieces
+                    return outgoing, [first_word]
 
-            output.append(" ".join(next_cluster))
-        return output, title
+            outgoing.append(" ".join(next_cluster))
+        return outgoing, []
 
     @staticmethod
     def extract_suffixes(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
+
+        logger.debug("extract_suffixes")
+        logger.debug(f"pieces   {repr(pieces)}")
+
         outgoing: Pieces = []
         suffixes: Pieces = []
+        # logger.debug(f"outgoing {repr(outgoing)}")
+        # logger.debug(f"suffixes {repr(suffixes)}")
+
         min_words = 2
 
         word_clusters = [piece.split() for piece in pieces]
@@ -427,26 +305,32 @@ class Name:
             rejoined_clusters = flatter(word_clusters)
             if count_words(rejoined_clusters + outgoing) <= min_words:
                 rejoined_clusters.extend(outgoing)
+                logger.debug("1")
                 return rejoined_clusters, suffixes
 
             words = word_clusters.pop()
 
             min_words_remaining = 0 if is_only_suffixes(words) else 1
             while count_words(words) > min_words_remaining:
-
                 rejoined_clusters = flatter(word_clusters) + words
+                logger.debug(f"rejoined_clusters {rejoined_clusters}")
+                logger.debug(f"outgoing {outgoing}")
                 if count_words(rejoined_clusters + outgoing) <= min_words:
                     outgoing.extend(rejoined_clusters)
+                    outgoing = [" ".join(outgoing)]
+                    logger.debug(f"outgoing OUT {outgoing}")
+                    logger.debug("2")
                     return outgoing, suffixes
 
                 if not is_suffix(words[-1]):
                     break
-                suffixes.append(words.pop())
+                suffixes.insert(0, words.pop())
 
             if words:
                 outgoing.append(" ".join(words))
 
         outgoing.reverse()
+        logger.debug("3")
         return outgoing, suffixes
 
 
@@ -470,13 +354,7 @@ def is_prefix(piece: str) -> bool:
     return piece in config.PREFIXES
 
 
-def is_roman_numeral(value: str) -> bool:
-    return bool(config.RE_ROMAN_NUMERAL.match(value))
-
-
-def is_only_suffixes(thing: T.Union[str, T.Sequence[str]]) -> bool:
-    if isinstance(thing, str):
-        thing = thing.split()
+def is_only_suffixes(thing: T.Sequence[str]) -> bool:
     return all(is_suffix(x) for x in thing)
 
 

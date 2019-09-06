@@ -4,7 +4,6 @@ RE_INITIAL = re.compile(r"^(\w\.|[A-Z])?$")
 RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)")
 RE_DOUBLE_QUOTES = re.compile(r'"(.*?)"')
 RE_PARENTHESIS = re.compile(r"\((.*?)\)")
-RE_ROMAN_NUMERAL = re.compile(r"^(ii|iii|iv|vi|vii|viii|ix)$", re.I)
 
 # Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".
 # "of" and "the" are also include to facilitate joining multiple titles,
@@ -15,36 +14,43 @@ CONJUNCTIONS = {"y"}
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
+# SUFFIX_OR_NAME = set()
 SUFFIX_OR_NAME = {"junior"}
 
 # Cannot include things that could also be middle or last names
 SUFFIX_NOT_NAME = {
+    "jd",
+    "md",
+    "phd",
     "sr",
     "jr",
     "2",
     "2nd",
+    "ii",
     "3",
     "3rd",
+    "iii",
     "4",
     "4th",
+    "iv",
     "5",
     "5th",
+    # "v",
     "6",
     "6th",
+    # "vi",
     "7",
     "7th",
+    "vii",
     "8",
     "8th",
+    "viii",
     "9",
     "9th",
+    # "ix",
     "10",
     "10th",
-    "ii",
-    "iii",
-    "iv",
-    "jd",
-    "md",
-    "phd",
+    # "x",
 }
 
 SUFFIXES = SUFFIX_OR_NAME ^ SUFFIX_NOT_NAME
@@ -68,7 +74,7 @@ PREFIXES = {
     "dei",
     "del",
     "dela",
-    "della",
+    # "della",
     "delle",
     "delli",
     "dello",
