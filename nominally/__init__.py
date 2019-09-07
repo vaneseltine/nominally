@@ -16,7 +16,7 @@ def cli_parse(raw_name: T.Optional[str] = None) -> int:
     raw_name = raw_name or " ".join(sys.argv)
     if not raw_name:
         print("Usage: nominally Mr. Eric Praline")
-        return 1
+        return 64
     name = Name(raw_name)
     prettier_print(name.report())
     return 0

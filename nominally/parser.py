@@ -6,21 +6,7 @@ from unidecode import unidecode_expect_ascii  # type: ignore
 
 from nominally import config
 
-LOGS_ON = True
-
 logger = logging.getLogger("nominally")
-
-"""
-if LOGS_ON:
-    logger.setLevel(logging.DEBUG)
-    MESSAGE_FORMAT = "{levelname:<8s} {funcName:<16s} {lineno:<4} {message}"
-    stream_handler = logging.StreamHandler()  # pylint:disable=invalid-name
-    stream_handler.setFormatter(logging.Formatter(MESSAGE_FORMAT, style="{"))
-    stream_handler.setLevel(logging.DEBUG)
-    logger.addHandler(stream_handler)
-else:
-    logger.addHandler(logging.NullHandler())
-"""
 
 Pieces = T.List[str]
 PiecesList = T.List[Pieces]
@@ -107,7 +93,7 @@ class Name:
 
     @staticmethod
     def clean_input(s: str) -> str:
-        # Note: nicknames have already been removed
+        """Clean string; anticipating that nicknames have been removed"""
         s = unidecode_expect_ascii(s).lower()
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
         s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
@@ -141,6 +127,106 @@ class Name:
                 working["nickname"] += [x for x in pattern.findall(s)]
                 s = pattern.sub("", s)
         return s, working
+
+    @staticmethod
+    def _extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
+        outgoing: Pieces = []
+        while pieces:
+            next_cluster = pieces.pop(0).split()
+
+            first_word, *remainder = next_cluster
+            if is_title(first_word):
+                de_prefixed_cluster = " ".join(remainder)
+                outgoing = outgoing + [de_prefixed_cluster] + pieces
+                return outgoing, [first_word]
+
+            outgoing.append(" ".join(next_cluster))
+        return outgoing, []
+
+    @staticmethod
+    # def _extract_suffixes(pieces: Pieces) -> T.Tuple[PiecesList, Pieces]:
+    def _extract_suffixes(
+        pieces: Pieces, min_names: int = 2
+    ) -> T.Tuple[Pieces, Pieces]:
+
+        incoming: PiecesList = [piece.split() for piece in pieces]
+
+        out_pl: PiecesList = []
+        out_suffixes: Pieces = []
+
+        while incoming:
+            handling = incoming.pop()
+            while handling:
+                banking: Pieces = []
+                if (
+                    sum(len(x) for x in (handling, banking))
+                    + sum(count_words(pl) for pl in (incoming, out_pl))
+                    <= min_names
+                ):
+                    banking = handling + banking
+                    break
+                word = handling.pop()
+                if is_suffix(word):
+                    out_suffixes.insert(0, word)
+                else:
+                    banking = handling + [word] + banking
+                    break
+            if banking:
+                out_pl.insert(0, banking)
+
+        return ([" ".join(x) for x in out_pl], out_suffixes)
+
+    @classmethod
+    def parse_pieces(cls, pieces: Pieces) -> Pieces:
+        """
+        Split list of pieces down to individual words and
+            - join on conjuctions if appropriate
+            - add prefixes to last names if appropriate
+        """
+        out_pieces = cls._break_down_to_words(pieces)
+        out_pieces = cls._combine_conjunctions(out_pieces)
+        out_pieces = cls._combine_prefixes(out_pieces)
+        return out_pieces
+
+    @staticmethod
+    def _break_down_to_words(parts: Pieces) -> Pieces:
+        return [word for part in parts for word in part.split()]
+
+    @staticmethod
+    def _combine_conjunctions(words: Pieces) -> Pieces:
+        if len(words) < 4:
+            return words
+
+        result: Pieces = []
+        queued = words.copy()
+        while queued:
+            word = queued.pop(-1)
+            if is_conjunction(word) and result and queued:
+                clause = [queued.pop(-1), word, result.pop(0)]
+                word = " ".join(clause)
+            result.insert(0, word)
+        return result
+
+    @staticmethod
+    def _combine_prefixes(words: Pieces) -> Pieces:
+        if len(words) < 3:
+            return words
+
+        result: Pieces = []
+        queued = words.copy()
+        while queued:
+            word = queued.pop(-1)
+            if is_prefix(word) and result:
+                accumulating: Pieces = []
+                while result:
+                    next_most_recent = result[0]
+                    next_word = next_most_recent.split()[0]
+                    if accumulating and is_prefix(next_word):
+                        break
+                    accumulating.append(result.pop(0))
+                word = " ".join([word, *accumulating])
+            result.insert(0, word)
+        return result
 
     @property
     def title(self) -> str:
@@ -208,108 +294,8 @@ class Name:
         return cls._keys
 
     def values(self) -> T.Tuple[str, ...]:
-        # TODO integrate better as dict
+        # TODO improve dict duck typing
         return tuple(self[k] for k in self.keys())
-
-    @staticmethod
-    def _extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
-        outgoing: Pieces = []
-        while pieces:
-            next_cluster = pieces.pop(0).split()
-
-            first_word, *remainder = next_cluster
-            if is_title(first_word):
-                de_prefixed_cluster = " ".join(remainder)
-                outgoing = outgoing + [de_prefixed_cluster] + pieces
-                return outgoing, [first_word]
-
-            outgoing.append(" ".join(next_cluster))
-        return outgoing, []
-
-    @staticmethod
-    # def _extract_suffixes(pieces: Pieces) -> T.Tuple[PiecesList, Pieces]:
-    def _extract_suffixes(
-        pieces: Pieces, min_names: int = 2
-    ) -> T.Tuple[Pieces, Pieces]:
-
-        incoming: PiecesList = [piece.split() for piece in pieces]
-
-        out_pl: PiecesList = []
-        out_suffixes: Pieces = []
-
-        while incoming:
-            handling = incoming.pop()
-            while handling:
-                banking: Pieces = []
-                if (
-                    sum(len(x) for x in (handling, banking))
-                    + sum(count_words(pl) for pl in (incoming, out_pl))
-                    <= min_names
-                ):
-                    banking = handling + banking
-                    break
-                word = handling.pop()
-                if is_suffix(word):
-                    out_suffixes.insert(0, word)
-                else:
-                    banking = handling + [word] + banking
-                    break
-            if banking:
-                out_pl.insert(0, banking)
-
-        return ([" ".join(x) for x in out_pl], out_suffixes)
-
-    @classmethod
-    def parse_pieces(cls, pieces: Pieces) -> Pieces:
-        """
-        Split list of pieces down to individual words and
-            - join on conjuctions if appropriate
-            - add prefixes to last names if appropriate
-        """
-        out_pieces = cls.break_down_to_words(pieces)
-        out_pieces = cls.combine_conjunctions(out_pieces)
-        out_pieces = cls.combine_prefixes(out_pieces)
-        return out_pieces
-
-    @staticmethod
-    def break_down_to_words(parts: Pieces) -> Pieces:
-        return [word for part in parts for word in part.split()]
-
-    @staticmethod
-    def combine_conjunctions(words: Pieces) -> Pieces:
-        if len(words) < 4:
-            return words
-
-        result: Pieces = []
-        queued = words.copy()
-        while queued:
-            word = queued.pop(-1)
-            if is_conjunction(word) and result and queued:
-                clause = [queued.pop(-1), word, result.pop(0)]
-                word = " ".join(clause)
-            result.insert(0, word)
-        return result
-
-    @staticmethod
-    def combine_prefixes(words: Pieces) -> Pieces:
-        if len(words) < 3:
-            return words
-
-        result: Pieces = []
-        queued = words.copy()
-        while queued:
-            word = queued.pop(-1)
-            if is_prefix(word) and result:
-                accumulating: Pieces = []
-                while result:
-                    next_most_recent = result[0]
-                    next_word = next_most_recent.split()[0]
-                    if accumulating and is_prefix(next_word):
-                        break
-                    accumulating.append(result.pop(0))
-                word = " ".join([word, *accumulating])
-            result.insert(0, word)
-        return result
 
 
 def count_words(piecelist: T.Sequence[T.Any]) -> int:

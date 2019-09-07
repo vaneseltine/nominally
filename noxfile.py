@@ -12,8 +12,6 @@ nox.options.reuse_existing_virtualenvs = False
 # --no-stop-on-first-error on CLI to override
 nox.options.stop_on_first_error = False
 
-SUPPORTED_PYTHONS = ("python3.6", "python3.7", "python3.8")
-
 
 def clean_dir(s):
     folder = Path(s)
@@ -21,7 +19,7 @@ def clean_dir(s):
         rmtree(folder, ignore_errors=True)
 
 
-@nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
+@nox.session(python=("python3.6", "python3.7", "python3.8"), reuse_venv=False)
 def test_version(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
@@ -94,6 +92,14 @@ def lint_black(session):
 def lint_typing(session):
     session.install("-U", "mypy")
     session.run("python", "-m", "mypy", "--strict", LINT_DIRS[0])
+
+
+@nox.session(reuse_venv=True)
+def run_cli(session):
+    session.install("-U", "-e", ".")
+    session.run("python", "-m", "nominally", "Bob", silent=True)
+    session.run("nominally", "Bob", silent=True)
+    session.run("nominally", silent=True, success_codes=[64])
 
 
 @nox.session(reuse_venv=True)

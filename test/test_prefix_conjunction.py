@@ -12,7 +12,7 @@ from nominally.parser import Name
     ),
 )
 def test_prefix_combining(incoming, outgoing):
-    assert Name.combine_prefixes(incoming) == outgoing
+    assert Name._combine_prefixes(incoming) == outgoing
 
 
 @pytest.mark.parametrize(
@@ -26,7 +26,7 @@ def test_prefix_combining(incoming, outgoing):
     ),
 )
 def test_prefix_avoid(static):
-    assert Name.combine_prefixes(static) == static
+    assert Name._combine_prefixes(static) == static
 
 
 @pytest.mark.parametrize(
@@ -37,7 +37,7 @@ def test_prefix_avoid(static):
     ),
 )
 def test_conjunction_combine(incoming, outgoing):
-    assert Name.combine_conjunctions(incoming) == outgoing
+    assert Name._combine_conjunctions(incoming) == outgoing
 
 
 @pytest.mark.parametrize(
@@ -51,4 +51,4 @@ def test_conjunction_combine(incoming, outgoing):
     ),
 )
 def test_conjunction_avoid(static):
-    assert Name.combine_conjunctions(static) == static
+    assert Name._combine_conjunctions(static) == static

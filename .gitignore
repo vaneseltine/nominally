@@ -2,6 +2,7 @@
 __*/
 .*/
 __test*
+.*#
 
 # But keep various CI-related items
 !.circleci/

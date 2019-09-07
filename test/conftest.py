@@ -15,7 +15,6 @@ def dict_entry_test(testclass, entry):
 
 
 def load_bank(category):
-    # TODO: glob
     test_bank_file = (TEST_DATA_DIRECTORY / category).with_suffix(".json")
     test_bank = json.loads(test_bank_file.read_text(encoding="utf8"))
     logger.debug(f"{category:>15}: {len(test_bank):>3} from {test_bank_file}")
