@@ -3,7 +3,7 @@ import typing as T
 from nominally.parser import Name
 
 
-def parse_name(s: str, details=False) -> T.Dict[str, T.Any]:
+def parse_name(s: str, details: bool = False) -> T.Dict[str, T.Any]:
     name = Name(s)
     if details:
         return name.report()

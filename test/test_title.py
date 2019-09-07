@@ -1,13 +1,8 @@
 import pytest
 
-from nominally.parser import Name, logger
+from nominally.parser import Name
 
-from .conftest import (
-    load_bank,
-    make_ids,
-    verify_approximate_ordering_of_leftovers,
-    pieces_to_words,
-)
+from .conftest import load_bank, make_ids, verify_approximate_ordering_of_leftovers
 
 
 @pytest.mark.parametrize(
@@ -15,7 +10,7 @@ from .conftest import (
 )
 def test_title_extracts(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
-    _, title = Name.extract_title(scrubbed)
+    _, title = Name._extract_title(scrubbed)
     assert set(title) == set(entry.get("title", "").split())
 
 
@@ -25,7 +20,7 @@ def test_title_extracts(entry):
 def test_title_ordering(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
     pre_pieces = scrubbed.copy()
-    post_pieces, _ = Name.extract_title(scrubbed)
+    post_pieces, _ = Name._extract_title(scrubbed)
     if "berg" in entry["raw"]:
         verify_approximate_ordering_of_leftovers(pre_pieces, post_pieces)
 
@@ -39,7 +34,7 @@ def test_title_ordering(entry):
     ],
 )
 def test_no_split(raw, post_suffix, post_title):
-    pieces, _ = Name.extract_suffixes([raw])
+    pieces, _ = Name._extract_suffixes([raw])
     assert pieces == [post_suffix]
-    pieces, _ = Name.extract_title(pieces)
+    pieces, _ = Name._extract_title(pieces)
     assert pieces == [post_title]

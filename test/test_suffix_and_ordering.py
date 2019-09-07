@@ -1,12 +1,12 @@
 import pytest
 
-from nominally.parser import Name, logger
+from nominally.parser import Name
 
 from .conftest import (
     load_bank,
     make_ids,
-    verify_approximate_ordering_of_leftovers,
     pieces_to_words,
+    verify_approximate_ordering_of_leftovers,
 )
 
 
@@ -39,14 +39,14 @@ def test_ordering_end_to_end(entry):
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_suffix_extraction_has_correct_suffixes(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
-    _, suffixes = Name.extract_suffixes(scrubbed)
+    _, suffixes = Name._extract_suffixes(scrubbed)
     assert set(suffixes) == set(entry.get("suffix", "").split())
 
 
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_suffix_extraction_did_not_mistrack_words(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
-    pieces, suffixes = Name.extract_suffixes(scrubbed)
+    pieces, suffixes = Name._extract_suffixes(scrubbed)
     assert set(pieces_to_words(scrubbed)) == set(pieces_to_words(pieces + suffixes))
 
 
@@ -54,6 +54,5 @@ def test_suffix_extraction_did_not_mistrack_words(entry):
 def test_suffix_extraction_maintained_first_last_order(entry):
     scrubbed, _ = Name.pre_process(entry["raw"])
     pre_pieces = scrubbed.copy()
-    post_pieces, _ = Name.extract_suffixes(scrubbed)
+    post_pieces, _ = Name._extract_suffixes(scrubbed)
     verify_approximate_ordering_of_leftovers(pre_pieces, post_pieces)
-

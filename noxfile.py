@@ -59,7 +59,22 @@ def lint_flake8(session):
 
 
 LINT_DIRS = ["nominally", "test"]
-PYLINTS = [["nominally"], ["test", "-d", "no-self-use", "-d", "too-few-public-methods"]]
+PYLINTS = [
+    ["nominally"],
+    [
+        "test",
+        "-d",
+        "invalid-name",
+        "-d",
+        "no-self-use",
+        "-d",
+        "protected-access",
+        "-d",
+        "too-few-public-methods",
+        "-d",
+        "unused-import",
+    ],
+]
 
 
 @nox.session(reuse_venv=True)
@@ -76,9 +91,9 @@ def lint_black(session):
 
 
 @nox.session(reuse_venv=True)
-def lint_types(session):
+def lint_typing(session):
     session.install("-U", "mypy")
-    session.run("python", "-m", "mypy", LINT_DIRS[0])
+    session.run("python", "-m", "mypy", "--strict", LINT_DIRS[0])
 
 
 @nox.session(reuse_venv=True)

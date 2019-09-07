@@ -2,7 +2,7 @@ import logging
 import re
 import typing as T
 
-from unidecode import unidecode_expect_ascii
+from unidecode import unidecode_expect_ascii  # type: ignore
 
 from nominally import config
 
@@ -39,13 +39,13 @@ class Name:
         pieces, working = self.pre_process(self.original)
         logger.debug(pieces)
         logger.debug(working)
-        pieces, working["title"] = self.extract_title(pieces)
+        pieces, working["title"] = self._extract_title(pieces)
         logger.debug(pieces)
         logger.debug(working)
-        pieces, working["suffix"] = self.extract_suffixes(pieces)
+        pieces, working["suffix"] = self._extract_suffixes(pieces)
         logger.debug(pieces)
         logger.debug(working)
-        working["first"], working["middle"], working["last"] = self.parse_fml(pieces)
+        working["first"], working["middle"], working["last"] = self._parse_fml(pieces)
         logger.debug(working)
         self._final = working
 
@@ -61,13 +61,13 @@ class Name:
         }
 
     @classmethod
-    def parse_fml(cls, pieces: Pieces) -> T.Tuple[Pieces, ...]:
-        FML_keys = ("F", "M", "L")
+    def _parse_fml(cls, pieces: Pieces) -> T.Tuple[Pieces, ...]:
+        fml_keys = ("F", "M", "L")
 
         guesses: PiecesDict = cls.guess_from_commas(pieces)
 
-        building: PiecesDict = {k: [] for k in FML_keys}
-        direct_guesses = {k: guesses.pop(k) for k in FML_keys if k in guesses}
+        building: PiecesDict = {k: [] for k in fml_keys}
+        direct_guesses = {k: guesses.pop(k) for k in fml_keys if k in guesses}
         building.update(direct_guesses)
 
         if guesses:
@@ -80,7 +80,7 @@ class Name:
             guesses["M"] = combined_bits
             building.update(guesses)
 
-        final_output = tuple(building.get(x, []) for x in FML_keys)
+        final_output = tuple(building.get(x, []) for x in fml_keys)
         return final_output
 
     @classmethod
@@ -212,7 +212,7 @@ class Name:
         return tuple(self[k] for k in self.keys())
 
     @staticmethod
-    def extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
+    def _extract_title(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
         outgoing: Pieces = []
         while pieces:
             next_cluster = pieces.pop(0).split()
@@ -227,14 +227,15 @@ class Name:
         return outgoing, []
 
     @staticmethod
-    # def extract_suffixes(pieces: Pieces) -> T.Tuple[PiecesList, Pieces]:
-    def extract_suffixes(pieces: Pieces) -> T.Tuple[Pieces, Pieces]:
+    # def _extract_suffixes(pieces: Pieces) -> T.Tuple[PiecesList, Pieces]:
+    def _extract_suffixes(
+        pieces: Pieces, min_names: int = 2
+    ) -> T.Tuple[Pieces, Pieces]:
 
         incoming: PiecesList = [piece.split() for piece in pieces]
 
         out_pl: PiecesList = []
         out_suffixes: Pieces = []
-        MIN_NAMES = 2
 
         while incoming:
             handling = incoming.pop()
@@ -243,7 +244,7 @@ class Name:
                 if (
                     sum(len(x) for x in (handling, banking))
                     + sum(count_words(pl) for pl in (incoming, out_pl))
-                    <= MIN_NAMES
+                    <= min_names
                 ):
                     banking = handling + banking
                     break
