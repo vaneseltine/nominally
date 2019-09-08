@@ -83,15 +83,15 @@ def lint_pylint(session, args):
 
 
 @nox.session(reuse_venv=True)
-def lint_black(session):
-    session.install("-U", "black")
-    session.run("python", "-m", "black", "-t", "py36", ".")
-
-
-@nox.session(reuse_venv=True)
 def lint_typing(session):
     session.install("-U", "mypy")
     session.run("python", "-m", "mypy", "--strict", LINT_DIRS[0])
+
+
+@nox.session(reuse_venv=True)
+def lint_black(session):
+    session.install("-U", "black")
+    session.run("python", "-m", "black", "-t", "py36", "--diff", ".")
 
 
 @nox.session(reuse_venv=True)

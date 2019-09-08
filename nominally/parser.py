@@ -294,7 +294,6 @@ class Name:
         return cls._keys
 
     def values(self) -> T.Tuple[str, ...]:
-        # TODO improve dict duck typing
         return tuple(self[k] for k in self.keys())
 
 

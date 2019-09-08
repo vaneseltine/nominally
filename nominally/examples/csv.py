@@ -5,7 +5,7 @@ from pprint import pprint
 
 from nominally import parse_name
 
-CSV_IN = Path(__file__).parent / "./names.csv"
+CSV_IN = Path(__file__).resolve().parent / "./names.csv"
 CSV_OUT = CSV_IN.parent / f"{CSV_IN.stem}_parsed.csv"
 NAME_FIELD = "fullname"
 
