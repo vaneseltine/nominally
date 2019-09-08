@@ -99,7 +99,7 @@ def run_cli(session):
     session.install("-U", "-e", ".")
     session.run("python", "-m", "nominally", "Bob", silent=True)
     session.run("nominally", "Bob", silent=True)
-    session.run("nominally", silent=True, success_codes=[64])
+    session.run("nominally", silent=True)
 
 
 @nox.session(reuse_venv=True)
