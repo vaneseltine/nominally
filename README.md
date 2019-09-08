@@ -1,4 +1,4 @@
-<h2>nominally is an opinionated name parser for record linkage.</h2>
+<h2>nominally: a maximum-strength name parser for record linkage.</h2>
 
 [![License: AGPL 3.0](https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet)](https://www.gnu.org/licenses/agpl-3.0)
 [![Python: 3.6+](https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square)](https://pypi.python.org/pypi/nominally)
