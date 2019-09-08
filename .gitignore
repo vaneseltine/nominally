@@ -7,6 +7,7 @@ __test*
 # But keep various CI-related items
 !.circleci/
 !.builds/
+!.github/
 
 # Standardish directories
 _build/
@@ -27,6 +28,7 @@ var/
 *.code-workspace
 *.coverage
 .coverage.*
+coverage.xml
 .coveralls*
 *.egg
 *.egg-info
