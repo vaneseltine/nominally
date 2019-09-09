@@ -29,7 +29,7 @@ jobs:
             apt-get install -qy python3-pip python3-venv
             apt-get install -qy python3.6 python3.6-dev python3.6-venv
             apt-get install -qy python3.8 python3.8-dev python3.8-venv python3.8-distutils
-
+      - run:
           name: Prepare Python environment
           command: |
             python3 -m venv .venv
