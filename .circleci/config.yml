@@ -55,8 +55,8 @@ jobs:
             . .venv/bin/activate
             pip --version
             pip freeze
-            nox -k 'test' -l
-            nox -k 'test' --no-stop-on-first-error
+            nox -l
+            nox
 workflows:
   version: 2
   multitest:
