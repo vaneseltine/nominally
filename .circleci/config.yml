@@ -3,7 +3,7 @@ workflows:
   test_and_deploy:
     jobs:
       - test
-          filters:  # required since `deploy` has tag filters AND requires `build`
+          filters:
             tags:
               only: /.*/
       - deploy:
