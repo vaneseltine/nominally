@@ -24,12 +24,7 @@ def test_version(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
     session.run("coverage", "run", "--parallel-mode", "-m", "pytest")  # , "-rxXs")
-
-
-@nox.session(reuse_venv=True)
-def coverage(session):
     clean_dir("./build/coverage")
-    session.install("coverage")
     if len(list(Path(".").glob(".coverage*"))) > 1:
         # Combine multiple coverage files if they exist
         try:

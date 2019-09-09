@@ -65,6 +65,7 @@ jobs:
           command: |
             python3 -m venv .venv
             . .venv/bin/activate
+            python test/version_consistency.py
             python -m pip install -r requirements/deploy.txt
             python -m pip install -e .
             python setup.py sdist bdist_wheel
