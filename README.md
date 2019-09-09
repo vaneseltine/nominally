@@ -15,8 +15,8 @@ does *not* support:
 
 - Mutability
 - Easy customization of lists of name parts
-- Parsing multiple names from a single field
-- Most titles, profession names, etc.
+- Parsing multiple names from mingled fields
+- Most titles, profession names, and other name prefixes
 - Mononyms; i.e., input names expected to output only a single field
 - Encoding other than UTF-8
 - Input from byte strings
