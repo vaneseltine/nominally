@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install Python
-      uses: actions/setup-python@v1
+      uses: actions/se tup-python@v1
       with:
         python-version: '3.7'
     - name: Install dependencies
