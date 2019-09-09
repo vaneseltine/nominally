@@ -13,25 +13,27 @@ nox.options.reuse_existing_virtualenvs = False
 nox.options.stop_on_first_error = False
 
 
-def clean_dir(s):
+def make_clean(s):
     folder = Path(s)
     if folder.exists():
         rmtree(folder, ignore_errors=True)
+    else:
+        folder.parent.mkdir(exist_ok=True)
 
 
 @nox.session(python=("python3.6", "python3.7", "python3.8"), reuse_venv=False)
 def test_version(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
-    session.run("coverage", "run", "--parallel-mode", "-m", "pytest")  # , "-rxXs")
+    session.run("coverage", "run", "-m", "pytest")
 
 
 @nox.session(reuse_venv=True)
 def coverage(session):
-    clean_dir("./build/coverage")
+    make_clean("./build/coverage")
     session.install("coverage")
     if len(list(Path(".").glob(".coverage*"))) > 1:
-        # Combine multiple coverage files if they exist
+        print("Combining multiple coverage files...")
         try:
             Path(".coverage").unlink()
         except FileNotFoundError:
@@ -43,8 +45,8 @@ def coverage(session):
 
 @nox.session(reuse_venv=True)
 def coveralls(session):
-    run_travis = os.getenv("COVERALLS_REPO_TOKEN")
-    if not run_travis:  # and not Path("./.coveralls.yml").exists():
+    CI_run = os.getenv("COVERALLS_REPO_TOKEN")
+    if not CI_run:  # and not Path("./.coveralls.yml").exists():
         return
     session.install("PyYAML", "coverage", "coveralls")
     session.run("coveralls")
@@ -124,11 +126,6 @@ def todos(session):
             external=True,
             success_codes=(0, 1),
         )
-
-
-@nox.session(reuse_venv=True)
-def ensure_consistent_versions(session):
-    session.run("python", "./test/version_consistency.py")
 
 
 if __name__ == "__main__":

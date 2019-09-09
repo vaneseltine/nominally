@@ -15,12 +15,12 @@ workflows:
 jobs:
   test:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.6
     steps:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20190909b
+            - dependencies-20190909c
       - run:
           name: Prepare Python environment
           command: |
@@ -34,7 +34,7 @@ jobs:
             - ".venv"
             - ".nox"
             - "~/.cache/pip"
-          key: dependencies-20190909b
+          key: dependencies-20190909c
       - run:
           name: Install into updated environment
           command: |
@@ -47,11 +47,11 @@ jobs:
             . .venv/bin/activate
             python -m pip --version
             python -m pip freeze
-            nox -k "not ensure and not cover" -l
-            nox -k "not ensure and not cover"
+            nox -k "not ensure" -l
+            nox -k "not ensure"
   deploy:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.6
     steps:
       - checkout
       - run:
