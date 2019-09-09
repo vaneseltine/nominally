@@ -4,7 +4,7 @@ import sys
 import typing as T
 from nominally.parser import Name
 
-__version__ = "0.9.3dev0"
+__version__ = "0.9.3dev1"
 
 
 def parse_name(s: str, details: bool = False) -> T.Dict[str, T.Any]:
