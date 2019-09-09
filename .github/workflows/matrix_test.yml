@@ -26,9 +26,3 @@ jobs:
       run: |
         pip install -r requirements/test.txt
         coverage run -m pytest -rXxs
-    - name: Publish package
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_TOKEN }}
