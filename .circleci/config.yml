@@ -2,7 +2,7 @@ version: 2.1
 workflows:
   test_and_deploy:
     jobs:
-      - test
+      - test:
           filters:
             tags:
               only: /.*/
