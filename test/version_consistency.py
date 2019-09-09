@@ -17,8 +17,7 @@ def main():
 
         pprint(versions)
         raise AssertionError(f"Version problem: f{versions}")
-    else:
-        print(f"Version: {the_version.pop()}")
+    print(f"Version: {the_version.pop()}")
 
 
 def get_tagged():
