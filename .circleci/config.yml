@@ -1,0 +1,64 @@
+# https://circleci.com/docs/2.0/language-python/
+version: 2
+jobs:
+  ubuntu:
+    docker:
+      - image: ubuntu:18.04
+    parallelism: 2
+    steps:
+      - checkout
+      - run:
+          name: Install minimum for restore_cache
+          command: |
+            apt-get update
+            apt-get install -qy ca-certificates
+      - restore_cache:
+          keys:
+            - dependencies-20190909
+      - run:
+          name: Prepare Linux environment
+          command: |
+            apt-get install -qy curl git gnupg2 software-properties-common
+      - run:
+          name: Install Pythons
+          command: |
+            cat /etc/os-release
+            apt-add-repository ppa:deadsnakes/ppa -y
+            apt-get update
+            apt-get install -qy python3.7 python3.7-dev python3.7-venv python3.7-distutils
+            apt-get install -qy python3-pip python3-venv
+            apt-get install -qy python3.6 python3.6-dev python3.6-venv
+            apt-get install -qy python3.8 python3.8-dev python3.8-venv python3.8-distutils
+
+          name: Prepare Python environment
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install -q -U pip
+            pip install -q -r requirements/dev.txt
+            pip --version
+      - save_cache:
+          paths:
+            - ./.venv
+            - ./.nox
+            - ~/.cache/pip
+          key: dependencies-20190909
+      - run:
+          name: Install into updated environment
+          command: |
+            . .venv/bin/activate
+            pip --version
+            pip install -e .
+      - run:
+          name: Nox
+          command: |
+            . .venv/bin/activate
+            pip --version
+            pip freeze
+            nox -k 'test' -l
+            nox -k 'test' --no-stop-on-first-error
+workflows:
+  version: 2
+  multitest:
+    jobs:
+      - ubuntu
