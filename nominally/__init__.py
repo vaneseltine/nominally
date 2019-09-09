@@ -1,4 +1,4 @@
-"""nominally: An opinionated name parser for record linkage."""
+"""nominally: A maximum-strength name parser for record linkage."""
 
 import sys
 import typing as T

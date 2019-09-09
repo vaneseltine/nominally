@@ -103,7 +103,7 @@ def run_cli(session):
 
 
 @nox.session(reuse_venv=True)
-def lint_todos(session):
+def todos(session):
     for subpath in LINT_DIRS:
         for pyfile in (p for p in Path(subpath).glob("**/*.py") if "/_" not in str(p)):
             session.run(
@@ -116,6 +116,11 @@ def lint_todos(session):
                 external=True,
                 success_codes=(0, 1),
             )
+
+
+@nox.session(reuse_venv=True)
+def ensure_consistent_versions(session):
+    session.run("python", "./test/version_consistency.py")
 
 
 if __name__ == "__main__":
