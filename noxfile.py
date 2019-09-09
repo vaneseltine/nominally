@@ -91,7 +91,7 @@ def lint_typing(session):
 @nox.session(reuse_venv=True)
 def lint_black(session):
     session.install("-U", "black")
-    session.run("python", "-m", "black", "-t", "py36", "--diff", ".")
+    session.run(*"python -m black -t py36 --check .".split(), silent=True)
 
 
 @nox.session(reuse_venv=True)
@@ -103,19 +103,27 @@ def run_cli(session):
 
 
 @nox.session(reuse_venv=True)
+@nox.parametrize("example", list(Path("./nominally/examples/").glob("*.py")))
+def run_examples(session, example):
+    session.install("-U", "-e", ".")
+    session.run("python", str(example), silent=True)
+
+
+@nox.session(reuse_venv=True)
 def todos(session):
+    TODO_GREPPER = r"TODO.*"
     for subpath in LINT_DIRS:
-        for pyfile in (p for p in Path(subpath).glob("**/*.py") if "/_" not in str(p)):
-            session.run(
-                "grep",
-                "-n",
-                "-o",
-                "#.*TODO.*$",
-                "--color=auto",
-                str(pyfile.absolute()),
-                external=True,
-                success_codes=(0, 1),
-            )
+        session.run(
+            "grep",
+            "-ire",
+            TODO_GREPPER,
+            "-n",
+            "-o",
+            "--color=auto",
+            str(Path(subpath).absolute()),
+            external=True,
+            success_codes=(0, 1),
+        )
 
 
 @nox.session(reuse_venv=True)

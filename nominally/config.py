@@ -5,6 +5,7 @@ RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)")
 RE_DOUBLE_QUOTES = re.compile(r'"(.*?)"')
 RE_PARENTHESIS = re.compile(r"\((.*?)\)")
 
+
 # Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".
 # "of" and "the" are also include to facilitate joining multiple titles,
 # e.g. "President of the United States".
