@@ -2,7 +2,7 @@ import re
 import subprocess
 from pathlib import Path
 
-VERSION_PATTERN = r"(\d+\.\d+\.\d+)"
+VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
 
 def main():
@@ -11,11 +11,14 @@ def main():
         "__init__": get_module(),
         "setup.cfg": get_setup_cfg(),
     }
-    if len(set(versions.values())) != 1:
+    the_version = set(versions.values())
+    if len(the_version) != 1:
         from pprint import pprint
 
         pprint(versions)
         raise AssertionError(f"Version problem: f{versions}")
+    else:
+        print(f"Version: {the_version.pop()}")
 
 
 def get_tagged():

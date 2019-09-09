@@ -1,9 +1,7 @@
 -r common.txt
 -r lint.txt
 -r test.txt
+-r deploy.txt
 # Test running
 nox==2019.5.30
 coveralls==1.8.1
-# Distribution
-twine==1.13.0
-wheel==0.33.4

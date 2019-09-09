@@ -1,64 +1,76 @@
 # https://circleci.com/docs/2.0/language-python/
-version: 2
+version: 2.1
+workflows:
+  test_and_deploy:
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^[0-9]+(\.[0-9]+)*/
+            branches:
+              only:
+                - master
 jobs:
-  ubuntu:
+  test:
     docker:
-      - image: ubuntu:18.04
-    parallelism: 2
+      - image: circleci/python:3.7
+    # parallelism: 2
     steps:
       - checkout
-      - run:
-          name: Install minimum for restore_cache
-          command: |
-            apt-get update
-            apt-get install -qy ca-certificates
       - restore_cache:
           keys:
-            - dependencies-20190909
-      - run:
-          name: Prepare Linux environment
-          command: |
-            apt-get install -qy curl git gnupg2 software-properties-common
-      - run:
-          name: Install Pythons
-          command: |
-            cat /etc/os-release
-            apt-add-repository ppa:deadsnakes/ppa -y
-            apt-get update
-            apt-get install -qy python3.7 python3.7-dev python3.7-venv python3.7-distutils
-            apt-get install -qy python3-pip python3-venv
-            apt-get install -qy python3.6 python3.6-dev python3.6-venv
-            apt-get install -qy python3.8 python3.8-dev python3.8-venv python3.8-distutils
+            - dependencies-20190909b
       - run:
           name: Prepare Python environment
           command: |
             python3 -m venv .venv
             . .venv/bin/activate
-            pip install -q -U pip
-            pip install -q -r requirements/dev.txt
-            pip --version
+            python -m pip install -q -U pip
+            python -m pip install -q -r requirements/dev.txt
+            python -m pip --version
       - save_cache:
           paths:
-            - ./.venv
-            - ./.nox
-            - ~/.cache/pip
-          key: dependencies-20190909
+            - ".venv"
+            - ".nox"
+            - "~/.cache/pip"
+          key: dependencies-20190909b
       - run:
           name: Install into updated environment
           command: |
             . .venv/bin/activate
-            pip --version
-            pip install -e .
+            python -m pip --version
+            python -m pip install -e .
       - run:
           name: Nox
           command: |
             . .venv/bin/activate
-            pip --version
-            pip freeze
+            python -m pip --version
+            python -m pip freeze
             nox -l
             nox
-workflows:
-  version: 2
-  multitest:
-    jobs:
-      - ubuntu
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Build packages
+          command: |
+            python3 -m venv .venv
+            . .venv/bin/activate
+            python -m pip install -r requirements/deploy.txt
+            python -m pip install -e .
+            python setup.py sdist bdist_wheel
+      - run:
+          name: Create .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = __token__" >> ~/.pypirc
+            echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
+          name: Upload to pypi
+          command: |
+            . .venv/bin/activate
+            twine upload dist/*
