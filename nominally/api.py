@@ -7,7 +7,7 @@ def parse_name(s: str, details: bool = False) -> T.Dict[str, T.Any]:
     name = Name(s)
     if details:
         return name.report()
-    return dict(name)  # type: ignore
+    return dict(name)
 
 
 def report(raw_name: str) -> int:

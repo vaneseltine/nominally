@@ -44,7 +44,7 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 'peaches'
 >>> n.last
 'bartkowicz'
->>> n.original
+>>> n.raw
 'DR. PEACHES BARTKOWICZ'
 >>> n.report()
 {'raw': 'DR. PEACHES BARTKOWICZ', 'parsed': 'dr peaches bartkowicz', 'list': ['dr', 'peaches', '', 'bartkowicz', '', ''], 'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}

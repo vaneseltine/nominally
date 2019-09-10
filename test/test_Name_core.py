@@ -126,7 +126,7 @@ def test_comparison_case_insensitive():
 
 def test_as_list():
     n = Name("Doe-Ray, Dr. John (Doctor Doo) P., Jr")
-    assert list(n) == ["dr", "john", "p", "doe-ray", "jr", "doctor doo"]
+    assert list(n.values()) == ["dr", "john", "p", "doe-ray", "jr", "doctor doo"]
 
 
 def test_getitem():

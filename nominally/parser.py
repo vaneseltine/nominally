@@ -1,6 +1,7 @@
 import logging
 import re
 import typing as T
+from collections import abc
 
 from unidecode import unidecode_expect_ascii  # type: ignore
 
@@ -12,17 +13,22 @@ Pieces = T.List[str]
 PiecesList = T.List[Pieces]
 PiecesDict = T.Dict[str, Pieces]
 
+if T.TYPE_CHECKING:
+    MappingBase = T.Mapping[str, str]
+else:
+    MappingBase = abc.Mapping
 
-class Name:
+
+class Name(MappingBase):
     """A human name, broken down into individual components."""
 
     _keys = ("title", "first", "middle", "last", "suffix", "nickname")
 
     def __init__(self, raw: str = "") -> None:
-        self.original = raw
+        self._raw = raw
 
         logger.debug(repr(raw))
-        pieces, working = self.pre_process(self.original)
+        pieces, working = self.pre_process(self._raw)
         logger.debug(pieces)
         logger.debug(working)
         pieces, working["title"] = self._extract_title(pieces)
@@ -36,15 +42,19 @@ class Name:
         self._final = working
 
         if self.unparsable:
-            logger.info('Unparsable: "%s" ', self.original)
+            logger.info('Unparsable: "%s" ', self._raw)
 
     def report(self) -> T.Dict[str, T.Any]:
         return {
-            "raw": self.original,
+            "raw": self.raw,
             "parsed": str(self),
-            "list": list(self),  # type: ignore
-            **dict(self),  # type: ignore
+            "list": list(self.values()),
+            **dict(self),
         }
+
+    @property
+    def raw(self) -> str:
+        return self._raw
 
     @classmethod
     def _parse_fml(cls, pieces: Pieces) -> T.Tuple[Pieces, ...]:
@@ -83,7 +93,7 @@ class Name:
     @classmethod
     def pre_process(cls, s: str) -> T.Tuple[Pieces, PiecesDict]:
         logger.debug(repr(s))
-        working: PiecesDict = {k: [] for k in cls.keys()}
+        working: PiecesDict = {k: [] for k in cls._keys}
         s = s.lower()
         s, working = cls._parse_nicknames(s, working)
         s = cls.clean_input(s)
@@ -257,7 +267,7 @@ class Name:
         return len(self) == 0
 
     def __len__(self) -> int:
-        return len([v for v in dict(self).values() if v])  # type: ignore
+        return len([v for v in dict(self).values() if v])
 
     def __eq__(self, other: T.Any) -> bool:
         if self.unparsable:
@@ -265,10 +275,11 @@ class Name:
         return str(self) == str(other)
 
     def __getitem__(self, key: str) -> T.Any:
-        if key not in self.keys():
-            true_key = self.keys()[key]  # type: ignore
-            return self[true_key]
         return getattr(self, key)
+
+    @classmethod
+    def __iter__(cls) -> T.Iterator[str]:
+        return iter(cls._keys)
 
     def __str__(self) -> str:
         string_parts = [
@@ -286,15 +297,8 @@ class Name:
         if self.unparsable:
             text = "Unparsable"
         else:
-            text = str(dict(self))  # type: ignore
+            text = str(dict(self))
         return f"{self.__class__.__name__}({text})"
-
-    @classmethod
-    def keys(cls) -> T.Tuple[str, ...]:
-        return cls._keys
-
-    def values(self) -> T.Tuple[str, ...]:
-        return tuple(self[k] for k in self.keys())
 
 
 def count_words(piecelist: T.Sequence[T.Any]) -> int:
