@@ -37,10 +37,10 @@ Or separate into individual parts; complete string; lists; dicts...
 Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''})
 >>> str(n)
 'dr peaches bartkowicz'
->>> list(n)
-['dr', 'peaches', '', 'bartkowicz', '', '']
 >>> dict(n)
 {'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}
+>>> list(n.values())
+['dr', 'peaches', '', 'bartkowicz', '', '']
 >>> n.first
 'peaches'
 >>> n.last
