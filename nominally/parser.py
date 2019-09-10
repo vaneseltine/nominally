@@ -41,7 +41,7 @@ class Name(MappingBase):
         logger.debug(working)
         self._final = working
 
-        if self.unparsable:
+        if not self.parsable:
             logger.info('Unparsable: "%s" ', self._raw)
 
     def report(self) -> T.Dict[str, T.Any]:
@@ -263,16 +263,16 @@ class Name(MappingBase):
         return " ".join(self._final["nickname"]) or ""
 
     @property
-    def unparsable(self) -> bool:
-        return len(self) == 0
+    def parsable(self) -> bool:
+        return len(self) > 0
 
     def __len__(self) -> int:
         return len([v for v in dict(self).values() if v])
 
     def __eq__(self, other: T.Any) -> bool:
-        if self.unparsable:
-            return False
-        return str(self) == str(other)
+        if not (hasattr(other, "keys") and hasattr(other, "values")):
+            return NotImplemented
+        return dict(self) == dict(other) and self.parsable
 
     def __getitem__(self, key: str) -> T.Any:
         return getattr(self, key)
@@ -294,10 +294,10 @@ class Name(MappingBase):
         return re.sub(r"\s+", " ", joined).strip()
 
     def __repr__(self) -> str:
-        if self.unparsable:
-            text = "Unparsable"
-        else:
+        if self.parsable:
             text = str(dict(self))
+        else:
+            text = "Unparsable"
         return f"{self.__class__.__name__}({text})"
 
 
