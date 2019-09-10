@@ -5,14 +5,14 @@
 [![CircleCI](https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square)](https://circleci.com/gh/vaneseltine/nominally)
 [![GitHub last commit](https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square)](https://github.com/vaneseltine/nominally)
 
-<h2>nominally: a maximum-strength name parser for record linkage.</h2>
+<h2>nominally: a maximum-strength name parser for record linkage</h2>
 
 ### 🖥️ Examples
 
 Run a quick name at the command line:
 ```
   $ nominally "Jimmy Blankinsop"
-        raw: Jimmy Blankinsop
+         raw: Jimmy Blankinsop
       parsed: jimmy blankinsop
         list: ['', 'jimmy', '', 'blankinsop', '', '']
       title:
