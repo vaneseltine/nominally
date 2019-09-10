@@ -71,7 +71,7 @@ def deploy(session):
 
     if not changed_since_pypi():
         print("PyPI is up to date.")
-        return
+        session.skip()
     print("Current version is more recent than PyPI.")
     make_clean_dir("./dist")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
