@@ -9,7 +9,7 @@ from .conftest import load_bank, make_ids, verify_approximate_ordering_of_leftov
     "entry", load_bank("title") + load_bank("ordering"), ids=make_ids
 )
 def test_title_extracts(entry):
-    scrubbed, _ = Name.pre_process(entry["raw"])
+    scrubbed, _ = Name._pre_process(entry["raw"])
     _, title = Name._extract_title(scrubbed)
     assert set(title) == set(entry.get("title", "").split())
 
@@ -18,7 +18,7 @@ def test_title_extracts(entry):
     "entry", load_bank("title") + load_bank("ordering"), ids=make_ids
 )
 def test_title_ordering(entry):
-    scrubbed, _ = Name.pre_process(entry["raw"])
+    scrubbed, _ = Name._pre_process(entry["raw"])
     pre_pieces = scrubbed.copy()
     post_pieces, _ = Name._extract_title(scrubbed)
     if "berg" in entry["raw"]:

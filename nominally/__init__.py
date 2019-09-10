@@ -12,27 +12,18 @@ __version__ = "0.9.4"
 def cli_parse(raw_name: T.Optional[str] = None) -> int:
     if sys.argv:
         sys.argv.pop(0)
-    if not sys.argv or sys.argv[0] in ("--help", "-h"):
+    if not raw_name and (not sys.argv or sys.argv[0] in ("--help", "-h", "help")):
         return usage()
-    if sys.argv[0] in ("--version", "-V"):
+    if sys.argv and sys.argv[0] in ("--version", "-V"):
         return version()
     return report(raw_name or " ".join(sys.argv))
 
 
 def usage() -> int:
-    print(
-        """CLI usage example:
-        > nominally "Mr. Eric (The Inspector) Praline"
-               raw: Mr. Eric (The Inspector) Praline
-            parsed: mr eric "the inspector" praline
-              list: ['mr', 'eric', '', 'praline', '', 'the inspector']
-             title: mr
-             first: eric
-            middle:
-              last: praline
-            suffix:
-          nickname: the inspector"""
-    )
+    print("nominally CLI example:", "-" * 80, sep="\n")
+    print('> nominally "Mr. Eric (The Inspector) Praline"')
+    cli_parse("Mr. Eric (The Inspector) Praline")
+    print("-" * 80)
     return 0
 
 

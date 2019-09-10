@@ -28,7 +28,7 @@ class Name(MappingBase):
         self._raw = raw
 
         logger.debug(repr(raw))
-        pieces, working = self.pre_process(self._raw)
+        pieces, working = self._pre_process(self._raw)
         logger.debug(pieces)
         logger.debug(working)
         pieces, working["title"] = self._extract_title(pieces)
@@ -41,26 +41,16 @@ class Name(MappingBase):
         logger.debug(working)
         self._final = working
 
+        self._len = len([x for x in working.values() if x])
+        self._unparsable = not self._len
         if not self.parsable:
             logger.info('Unparsable: "%s" ', self._raw)
-
-    def report(self) -> T.Dict[str, T.Any]:
-        return {
-            "raw": self.raw,
-            "parsed": str(self),
-            "list": list(self.values()),
-            **dict(self),
-        }
-
-    @property
-    def raw(self) -> str:
-        return self._raw
 
     @classmethod
     def _parse_fml(cls, pieces: Pieces) -> T.Tuple[Pieces, ...]:
         fml_keys = ("F", "M", "L")
 
-        guesses: PiecesDict = cls.guess_from_commas(pieces)
+        guesses: PiecesDict = cls._guess_from_commas(pieces)
 
         building: PiecesDict = {k: [] for k in fml_keys}
         direct_guesses = {k: guesses.pop(k) for k in fml_keys if k in guesses}
@@ -68,7 +58,7 @@ class Name(MappingBase):
 
         if guesses:
             parse_key, final_pieces_to_parse = next(iter(guesses.items()))
-            combined_bits = cls.parse_pieces(final_pieces_to_parse)
+            combined_bits = cls._parse_pieces(final_pieces_to_parse)
             if combined_bits and parse_key == "FML":
                 guesses["L"] = [combined_bits.pop(-1)]
             if combined_bits:
@@ -80,7 +70,7 @@ class Name(MappingBase):
         return final_output
 
     @classmethod
-    def guess_from_commas(cls, pieces: Pieces) -> PiecesDict:
+    def _guess_from_commas(cls, pieces: Pieces) -> PiecesDict:
         if not pieces:
             return {}
         if len(pieces) == 1:
@@ -91,18 +81,18 @@ class Name(MappingBase):
         return {"F": [pieces[1]], "M": pieces[2:], "L": [pieces[0]]}
 
     @classmethod
-    def pre_process(cls, s: str) -> T.Tuple[Pieces, PiecesDict]:
+    def _pre_process(cls, s: str) -> T.Tuple[Pieces, PiecesDict]:
         logger.debug(repr(s))
         working: PiecesDict = {k: [] for k in cls._keys}
         s = s.lower()
         s, working = cls._parse_nicknames(s, working)
-        s = cls.clean_input(s)
+        s = cls._clean_input(s)
         logger.debug(repr(s))
-        pieces = cls.string_to_pieces(s) if s else []
+        pieces = cls._string_to_pieces(s) if s else []
         return pieces, working
 
     @staticmethod
-    def clean_input(s: str) -> str:
+    def _clean_input(s: str) -> str:
         """Clean string; anticipating that nicknames have been removed"""
         s = unidecode_expect_ascii(s).lower()
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
@@ -114,7 +104,7 @@ class Name(MappingBase):
         return s
 
     @staticmethod
-    def string_to_pieces(remaining: str) -> Pieces:
+    def _string_to_pieces(remaining: str) -> Pieces:
         return [x for x in re.split(r"\s*,\s*", remaining) if x]
 
     @staticmethod
@@ -187,7 +177,7 @@ class Name(MappingBase):
         return ([" ".join(x) for x in out_pl], out_suffixes)
 
     @classmethod
-    def parse_pieces(cls, pieces: Pieces) -> Pieces:
+    def _parse_pieces(cls, pieces: Pieces) -> Pieces:
         """
         Split list of pieces down to individual words and
             - join on conjuctions if appropriate
@@ -238,48 +228,32 @@ class Name(MappingBase):
             result.insert(0, word)
         return result
 
-    @property
-    def title(self) -> str:
-        return " ".join(self._final["title"]) or ""
-
-    @property
-    def first(self) -> str:
-        return " ".join(self._final["first"]) or ""
-
-    @property
-    def middle(self) -> str:
-        return " ".join(self._final["middle"]) or ""
-
-    @property
-    def last(self) -> str:
-        return " ".join(self._final["last"]) or ""
-
-    @property
-    def suffix(self) -> str:
-        return " ".join(self._final["suffix"]) or ""
-
-    @property
-    def nickname(self) -> str:
-        return " ".join(self._final["nickname"]) or ""
-
-    @property
-    def parsable(self) -> bool:
-        return len(self) > 0
-
-    def __len__(self) -> int:
-        return len([v for v in dict(self).values() if v])
-
     def __eq__(self, other: T.Any) -> bool:
-        if not (hasattr(other, "keys") and hasattr(other, "values")):
+        try:
+            return dict(self) == dict(other) and self.parsable
+        except (ValueError, TypeError):
             return NotImplemented
-        return dict(self) == dict(other) and self.parsable
+
+    def __getattr__(self, name: str) -> T.Any:
+        if name in self._keys:
+            return " ".join(self._final[name]) or ""
+        return self.__getattribute__(name)
 
     def __getitem__(self, key: str) -> T.Any:
         return getattr(self, key)
 
-    @classmethod
-    def __iter__(cls) -> T.Iterator[str]:
-        return iter(cls._keys)
+    def __len__(self) -> int:
+        return self._len
+
+    def __iter__(self) -> T.Iterator[str]:
+        return iter(self._keys)
+
+    def __repr__(self) -> str:
+        if self.parsable:
+            text = str(dict(self))
+        else:
+            text = "Unparsable"
+        return f"{self.__class__.__name__}({text})"
 
     def __str__(self) -> str:
         string_parts = [
@@ -293,12 +267,23 @@ class Name(MappingBase):
         joined = " ".join(string_parts)
         return re.sub(r"\s+", " ", joined).strip()
 
-    def __repr__(self) -> str:
-        if self.parsable:
-            text = str(dict(self))
-        else:
-            text = "Unparsable"
-        return f"{self.__class__.__name__}({text})"
+    # API
+
+    @property
+    def parsable(self) -> bool:
+        return not self._unparsable
+
+    @property
+    def raw(self) -> str:
+        return self._raw
+
+    def report(self) -> T.Dict[str, T.Any]:
+        return {
+            "raw": self.raw,
+            "parsed": str(self),
+            "list": list(self.values()),
+            **dict(self),
+        }
 
 
 def count_words(piecelist: T.Sequence[T.Any]) -> int:
