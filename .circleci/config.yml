@@ -40,4 +40,3 @@ jobs:
             python -m pip --version
             python -m pip freeze
             nox --noxfile noxfile_circleci.py
-            nox

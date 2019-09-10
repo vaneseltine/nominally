@@ -4,7 +4,6 @@ from shutil import rmtree
 
 import nox
 
-
 nox.options.stop_on_first_error = False
 
 if not os.getenv("CI", "").lower():
