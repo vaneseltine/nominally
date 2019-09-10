@@ -67,12 +67,12 @@ def coverage_coveralls(session):
 @nox.session(reuse_venv=True)
 def deploy(session):
     session.install("-r", "requirements/deploy.txt")
-    print(Path(".").resolve())
     from version_check import changed_since_pypi
 
     if not changed_since_pypi():
         print("PyPI is up to date.")
         return
     print("Current version is more recent than PyPI.")
+    make_clean_dir("./dist")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
     session.run("twine", "upload", "dist/*")

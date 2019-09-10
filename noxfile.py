@@ -10,7 +10,7 @@ import nox
 # -r on CLI to override and reuse all instead
 nox.options.reuse_existing_virtualenvs = False
 # --no-stop-on-first-error on CLI to override
-nox.options.stop_on_first_error = False
+nox.options.stop_on_first_error = True
 
 CI = os.getenv("CIRCLECI", "").lower() == "true"
 
@@ -104,13 +104,7 @@ def test_coverage(session):
             pass
         session.run("coverage", "combine")
     session.run("coverage", "report")
-
-    coveralls_live = os.getenv("COVERALLS_REPO_TOKEN")
-    if not coveralls_live:
-        session.run("coverage", "html")
-        return
-    session.install("PyYAML", "coverage", "coveralls")
-    session.run("coveralls")
+    session.run("coverage", "html")
 
 
 @nox.session(reuse_venv=True)
@@ -128,17 +122,6 @@ def todos(session):
             external=True,
             success_codes=(0, 1),
         )
-
-
-@nox.session(reuse_venv=False)
-def deploy(session):
-    def check_deployable(CI):
-        if not CI:
-            return False
-        installed = 0
-
-    deployable = check_deployable(CI)
-    print(deployable)
 
 
 if __name__ == "__main__":
