@@ -185,3 +185,9 @@ def test_via_attribute():
     assert n.middle == "barnaby betrothed"
     assert n.suffix == "jr"
     assert n.nickname == "jimmy"
+
+
+def test_do_not_invent_attributes():
+    n = Name("Mr. James (Jimmy) Barnaby Betrothed Blankinsop, Jr.,")
+    with pytest.raises(AttributeError):
+        n.herring
