@@ -20,7 +20,19 @@ def cli_parse(raw_name: T.Optional[str] = None) -> int:
 
 
 def usage() -> int:
-    print("""Usage:\n  nominally "Mr. Eric (Inspector) Praline""")
+    print(
+        """CLI usage example:
+        > nominally "Mr. Eric (The Inspector) Praline"
+               raw: Mr. Eric (The Inspector) Praline
+            parsed: mr eric "the inspector" praline
+              list: ['mr', 'eric', '', 'praline', '', 'the inspector']
+             title: mr
+             first: eric
+            middle:
+              last: praline
+            suffix:
+          nickname: the inspector"""
+    )
     return 0
 
 
