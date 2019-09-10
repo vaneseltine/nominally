@@ -14,6 +14,7 @@ nox.options.stop_on_first_error = False
 
 CI = os.getenv("CIRCLECI", "").lower() == "true"
 
+
 LINT_DIRS = ["nominally", "test"]
 
 
@@ -127,6 +128,17 @@ def todos(session):
             external=True,
             success_codes=(0, 1),
         )
+
+
+@nox.session(reuse_venv=False)
+def deploy(session):
+    def check_deployable(CI):
+        if not CI:
+            return False
+        installed = 0
+
+    deployable = check_deployable(CI)
+    print(deployable)
 
 
 if __name__ == "__main__":

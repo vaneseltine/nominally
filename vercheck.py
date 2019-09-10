@@ -17,7 +17,17 @@ def main():
 
         pprint(versions)
         raise AssertionError(f"Version problem: f{versions}")
-    print(f"Version: {the_version.pop()}")
+    repo = the_version.pop()
+    pypi = get_pypi()
+    deployable = repo != pypi
+    print(f"Current version: {repo}")
+    print(f"PyPI latest:     {pypi}")
+    print(f"Deployable:      {deployable}")
+    return repo != pypi
+
+
+def changed_since_pypi():
+    return main()
 
 
 def get_tagged():
@@ -45,6 +55,14 @@ def read_n_grep(path, prefix, pattern=VERSION_PATTERN):
     if not result:
         return f"Failed to find version in {path}"
     return result.group(1)
+
+
+def get_pypi():
+    result = subprocess.check_output(
+        ["python", "-m", "pip", "search", "nominally"]
+    ).decode("utf-8")
+    matc = re.compile(r"^nominally \(" + VERSION_PATTERN).search(result)
+    return matc.group(1)
 
 
 if __name__ == "__main__":
