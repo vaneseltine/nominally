@@ -2,9 +2,9 @@
 
 [![License: AGPL 3.0](https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet)](https://www.gnu.org/licenses/agpl-3.0)
 [![Python: 3.6+](https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square)](https://pypi.python.org/pypi/nominally)
-![PyPI](https://img.shields.io/pypi/v/nominally?style=flat-square)
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/vaneseltine/nominally?style=flat-square)
-![CircleCI](https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square)
+[![PyPI](https://img.shields.io/pypi/v/nominally?style=flat-square)](https://pypi.python.org/pypi/nominally)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/vaneseltine/nominally?style=flat-square)](https://github.com/vaneseltine/nominally/releases)
+[![CircleCI](https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square)](https://circleci.com/gh/vaneseltine/nominally)
 [![GitHub last commit](https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square)](https://github.com/vaneseltine/nominally)
 
 ### 🎓 Origins
