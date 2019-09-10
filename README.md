@@ -7,53 +7,94 @@
 
 <h2>nominally: a maximum-strength name parser for record linkage.</h2>
 
-Sample the fruits of the command line:
+### 🖥️ Examples
+
+Run a quick name at the command line:
 ```
-$ nominally "Jimmy Blankinsop"
-       raw: Jimmy Blankinsop
-    parsed: jimmy blankinsop
-      list: ['', 'jimmy', '', 'blankinsop', '', '']
-     title:
-     first: jimmy
-    middle:
-      last: blankinsop
-    suffix:
-  nickname:
+  $ nominally "Jimmy Blankinsop"
+        raw: Jimmy Blankinsop
+      parsed: jimmy blankinsop
+        list: ['', 'jimmy', '', 'blankinsop', '', '']
+      title:
+      first: jimmy
+      middle:
+        last: blankinsop
+      suffix:
+    nickname:
 ```
-Get more serious inside the REPL:
+Pull out the major parts...
 ```
 >>> from nominally import parse_name
 >>> parse_name("Blankinsop, Jr., Mr. James 'Jimmy'")
 {'title': 'mr', 'first': 'james', 'middle': '', 'last': 'blankinsop', 'suffix': 'jr', 'nickname': 'jimmy'}
 ```
+Or separate into individual parts; complete string; lists; dicts...
+```
+>>> from nominally import Name
+>>> n = Name("DR. PEACHES BARTKOWICZ")
+>>> n
+Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''})
+>>> str(n)
+'dr peaches bartkowicz'
+>>> list(n)
+['dr', 'peaches', '', 'bartkowicz', '', '']
+>>> dict(n)
+{'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}
+>>> n.first
+'peaches'
+>>> n.last
+'bartkowicz'
+>>> n.original
+'DR. PEACHES BARTKOWICZ'
+>>> n.report()
+{'raw': 'DR. PEACHES BARTKOWICZ', 'parsed': 'dr peaches bartkowicz', 'list': ['dr', 'peaches', '', 'bartkowicz', '', ''], 'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}
+```
+Now a live example using Pandas:  https://colab.research.google.com/gist/vaneseltine/964fc9dec60e59410b91bbcaf1fe2d11/nom_pandas.ipynb
 
+Go from list...
 
-
-
+```
+# raw_names
+["Graham Arthur Chapman",
+ "cleese, john m",
+ "Gilliam, Terrence (Terry) Vance",
+ "Eric Idle",
+ 'Mr. Terence "Terry" Graham Parry Jones',
+ "M E Palin",
+ "Neil James Innes",
+ "carol cleveland",
+ "Adams, Douglas N"]
+```
+...to DataFrame in a couple simple notebook cells.
+```
+                                        0  title     first        middle       last  suffix  nickname
+0                   Graham Arthur Chapman           graham        arthur    chapman
+1                          cleese, john m             john             m     cleese
+2         Gilliam, Terrence (Terry) Vance         terrence         vance    gilliam             terry
+3                               Eric Idle             eric                     idle
+4  Mr. Terence "Terry" Graham Parry Jones     mr   terence  graham parry      jones             terry
+5                               M E Palin                m             e      palin
+7                         carol cleveland            carol                cleveland
+6                        Neil James Innes             neil         james      innes
+8                        Adams, Douglas N          douglas             n      adams
+```
 
 ### 🎓 Origins
 
-**nominally** draws on the work and test bank implemented in python-nameparser
-into a simpler, more opinionated form.
+**nominally** grew from—and greatly benefits from the test bank of—the
+[python-nameparser](https://github.com/derek73/python-nameparser) package.
+The key difference is that **nominally** focuses relatively narrowly on lists of decently well-formed single name fields.
+Therefore, **nominally** does *not* support:
 
-The key benefit is that **nominally** narrowly maximizes on parsing
-lists of decently well-formed single name fields. Therefore, **nominally**
-does *not* support:
-
-- Mutability
+- Mutability of Name
 - Easy customization of lists of name parts
 - Parsing multiple names from mingled fields
 - Most titles, profession names, and other name prefixes
-- Mononyms; i.e., input names expected to output only a single field
+- Mononyms: raw names expected to output only a single field
 - Encoding other than UTF-8
 - Input from byte strings
-- Python < 3.6
+- Python 3.5 or lower
 
-Whereas I gain:
-
-1. Easier maintainability (relative to keeping a closer fork).
-2. Improved testing suite (via pytest).
-3. Improved formatting (flake8, black across the board).
 
 ### 🧙‍ Author
 
