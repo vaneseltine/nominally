@@ -6,7 +6,7 @@ import nox
 
 nox.options.stop_on_first_error = False
 
-if not os.getenv("CI", "").lower():
+if not (os.getenv("CI", "").lower() == "true"):
     raise RuntimeError("Must be in CI to run this file.")
 
 
