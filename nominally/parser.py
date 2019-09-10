@@ -22,23 +22,23 @@ else:
 class Name(MappingBase):
     """A human name, broken down into individual components."""
 
-    _keys = ("title", "first", "middle", "last", "suffix", "nickname")
+    _keys = ["title", "first", "middle", "last", "suffix", "nickname"]
 
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
 
-        logger.debug(repr(raw))
+        print(repr(raw))
         pieces, working = self._pre_process(self._raw)
-        logger.debug(pieces)
-        logger.debug(working)
+        print(pieces)
+        print(working)
         pieces, working["title"] = self._extract_title(pieces)
-        logger.debug(pieces)
-        logger.debug(working)
+        print(pieces)
+        print(working)
         pieces, working["suffix"] = self._extract_suffixes(pieces)
-        logger.debug(pieces)
-        logger.debug(working)
+        print(pieces)
+        print(working)
         working["first"], working["middle"], working["last"] = self._parse_fml(pieces)
-        logger.debug(working)
+        print(working)
         self._final = working
 
         self._len = len([x for x in working.values() if x])
@@ -84,7 +84,7 @@ class Name(MappingBase):
     def _pre_process(cls, s: str) -> T.Tuple[Pieces, PiecesDict]:
         logger.debug(repr(s))
         working: PiecesDict = {k: [] for k in cls._keys}
-        s = s.lower()
+        s = str(s).lower()
         s, working = cls._parse_nicknames(s, working)
         s = cls._clean_input(s)
         logger.debug(repr(s))
@@ -98,7 +98,7 @@ class Name(MappingBase):
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
         s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
         s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
-        s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all but - ' ,
+        s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all excluding - ' ,
         s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
         s = s.strip("- ")  # drop leading/trailing hyphens and spaces
         return s
@@ -235,12 +235,16 @@ class Name(MappingBase):
             return NotImplemented
 
     def __getattr__(self, name: str) -> T.Any:
-        if name in self._keys:
-            return " ".join(self._final[name]) or ""
+        """
+        Provides attribute access to all of Name._keys (by way of __iter__() for the
+        keys and __getitem__() for the value).
+        """
+        if name in self.keys():
+            return self[name]
         return self.__getattribute__(name)
 
     def __getitem__(self, key: str) -> T.Any:
-        return getattr(self, key)
+        return " ".join(self._final[key]) or ""
 
     def __len__(self) -> int:
         return self._len

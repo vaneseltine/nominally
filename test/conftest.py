@@ -14,11 +14,15 @@ def dict_entry_test(testclass, entry):
     assert dict(n) == expected
 
 
-def load_bank(category):
-    test_bank_file = (TEST_DATA_DIRECTORY / category).with_suffix(".json")
-    test_bank = json.loads(test_bank_file.read_text(encoding="utf8"))
-    logger.debug(f"{category:>15}: {len(test_bank):>3} from {test_bank_file}")
-    return test_bank
+def load_bank(glob):
+    test_bank_files = list(TEST_DATA_DIRECTORY.glob(f"{glob}.json"))
+    print(test_bank_files)
+    total_bank = []
+    for path in test_bank_files:
+        test_bank = json.loads(path.read_text(encoding="utf8"))
+        logger.debug(f"{len(test_bank):>3} from {path}")
+        total_bank.extend(test_bank)
+    return total_bank
 
 
 def make_ids(entry):

@@ -34,16 +34,6 @@ def issue_5_leave_non_comma_placeholder_from_nicknames():
 
 
 @pytest.mark.xfail(
-    raises=AttributeError,
-    reason="Initiate new Name by passing an existing instance of Name",
-)
-def issue_6_name_to_name():
-    name1 = Name("Dr. Horace 'Ook' Worblehat")
-    name2 = Name(name1)
-    assert name1 == name2
-
-
-@pytest.mark.xfail(
     raises=AssertionError,
     reason="Add nuance to Ph.D. and other inital suffixes to support, e.g., J.R.R.",
 )
