@@ -12,10 +12,12 @@ nox.options.reuse_existing_virtualenvs = False
 # --no-stop-on-first-error on CLI to override
 nox.options.stop_on_first_error = False
 
+CI = os.getenv("CIRCLECI", "").lower() == "true"
+
 LINT_DIRS = ["nominally", "test"]
 
 
-def make_clean(s):
+def make_clean_dir(s):
     folder = Path(s)
     if folder.exists():
         rmtree(folder, ignore_errors=True)
@@ -91,7 +93,7 @@ def test_version(session):
 
 @nox.session(reuse_venv=True)
 def test_coverage(session):
-    make_clean("./build/coverage")
+    make_clean_dir("./build/coverage")
     session.install("coverage")
     if len(list(Path(".").glob(".coverage*"))) > 1:
         print("Combining multiple coverage files...")
@@ -102,8 +104,8 @@ def test_coverage(session):
         session.run("coverage", "combine")
     session.run("coverage", "report")
 
-    CI_run = os.getenv("COVERALLS_REPO_TOKEN")
-    if not CI_run:  # and not Path("./.coveralls.yml").exists():
+    coveralls_live = os.getenv("COVERALLS_REPO_TOKEN")
+    if not coveralls_live:
         session.run("coverage", "html")
         return
     session.install("PyYAML", "coverage", "coveralls")
@@ -111,7 +113,7 @@ def test_coverage(session):
 
 
 @nox.session(reuse_venv=True)
-def fyi_todos(session):
+def todos(session):
     TODO_GREPPER = r"TODO.*"
     for subpath in LINT_DIRS:
         session.run(

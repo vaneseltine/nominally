@@ -49,8 +49,8 @@ jobs:
             . .venv/bin/activate
             python -m pip --version
             python -m pip freeze
-            nox -k "not ensure" -l
-            nox -k "not ensure"
+            nox -k -l
+            nox -k
   deploy:
     docker:
       - image: circleci/python:3.6
