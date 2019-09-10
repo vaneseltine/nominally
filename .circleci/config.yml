@@ -12,7 +12,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20190909d
+            - dependencies-20190909e
       - run:
           name: Prepare Python environment
           command: |
@@ -26,7 +26,7 @@ jobs:
             - ".venv"
             - ".nox"
             - "~/.cache/pip"
-          key: dependencies-20190909d
+          key: dependencies-20190909e
       - run:
           name: Install into updated environment
           command: |

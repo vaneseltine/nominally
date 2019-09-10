@@ -4,7 +4,7 @@ from shutil import rmtree
 
 import nox
 
-import vercheck
+from vercheck import changed_since_pypi
 
 nox.options.stop_on_first_error = False
 
@@ -75,7 +75,7 @@ def coverage_coveralls(session):
 def deploy(session):
     session.cd("..")
     session.install("-r", "requirements/deploy.txt")
-    if not vercheck.changed_since_pypi():
+    if not changed_since_pypi():
         print("PyPI is up to date.")
         return
     print("Current version is more recent than PyPI.")

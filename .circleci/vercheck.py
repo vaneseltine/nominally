@@ -11,7 +11,7 @@ def main():
         "__init__": get_module(),
         "setup.cfg": get_setup_cfg(),
     }
-    the_version = set(versions.values())
+    the_version = set(x or "ERROR" for x in versions.values())
     if len(the_version) != 1:
         from pprint import pprint
 
@@ -27,7 +27,7 @@ def main():
 
 
 def changed_since_pypi():
-    return main()
+    return main() is True
 
 
 def get_tagged():
