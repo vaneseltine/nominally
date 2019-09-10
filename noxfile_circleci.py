@@ -4,7 +4,6 @@ from shutil import rmtree
 
 import nox
 
-from vercheck import changed_since_pypi
 
 nox.options.stop_on_first_error = False
 
@@ -22,7 +21,6 @@ def make_clean_dir(s):
 
 @nox.session(reuse_venv=True)
 def test_run_cli(session):
-    session.cd("..")
     session.install("-U", "-e", ".")
     session.run("python", "-m", "nominally", "Bob", silent=True)
     session.run("nominally", "Bob", silent=True)
@@ -32,14 +30,12 @@ def test_run_cli(session):
 @nox.session(reuse_venv=True)
 @nox.parametrize("exampl", list(Path("./nominally/examples/").glob("*.py")))
 def test_nominally_examples(session, exampl):
-    session.cd("..")
     session.install("-U", "-e", ".")
     session.run("python", str(exampl), silent=True)
 
 
 @nox.session(python=("python3.6", "python3.7", "python3.8"), reuse_venv=False)
 def test_version(session):
-    session.cd("..")
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
     session.run("coverage", "run", "-m", "pytest")
@@ -47,7 +43,6 @@ def test_version(session):
 
 @nox.session(reuse_venv=True)
 def coverage(session):
-    session.cd("..")
     make_clean_dir("./build/coverage")
     session.install("coverage")
     if len(list(Path(".").glob(".coverage*"))) > 1:
@@ -62,7 +57,6 @@ def coverage(session):
 
 @nox.session(reuse_venv=True)
 def coverage_coveralls(session):
-    session.cd("..")
     coveralls_live = os.getenv("COVERALLS_REPO_TOKEN")
     if not coveralls_live:
         session.run("coverage", "html")
@@ -73,9 +67,13 @@ def coverage_coveralls(session):
 
 @nox.session(reuse_venv=True)
 def deploy(session):
-    session.cd("..")
     session.install("-r", "requirements/deploy.txt")
+    print(Path(".").resolve())
+    from version_check import changed_since_pypi
+
     if not changed_since_pypi():
         print("PyPI is up to date.")
         return
     print("Current version is more recent than PyPI.")
+    session.run("python", "setup.py", "sdist", "bdist_wheel")
+    session.run("twine", "upload", "dist/*")
