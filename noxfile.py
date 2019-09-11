@@ -94,14 +94,14 @@ def run_clis(session):
 @nox.parametrize("example", EXAMPLES)
 def run_examples(session, example):
     session.install("-r", "requirements.txt")
-    session.install("-e", ".")
+    session.install(".")
     session.run("python", str(example), silent=True)
 
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
 def pytest(session):
     session.install("-r", "requirements/test.txt")
-    session.install("-e", ".")
+    session.install(".")
     cov_subcmd = "coverage run -m " if session.python == CORE_PYTHON else ""
     cmd = f"python -m {cov_subcmd}pytest".split()
     session.run(*cmd)

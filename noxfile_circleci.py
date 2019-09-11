@@ -15,7 +15,7 @@ if not (os.getenv("CI", "").lower() == "true"):
 @nox.session(reuse_venv=True)
 def test_run_cli(session):
     session.install("-r", "requirements.txt")
-    session.install("-e", ".")
+    session.install(".")
     session.run("python", "-m", "nominally", "Bob", silent=True)
     session.run("nominally", "Bob", silent=True)
     session.run("nominally", silent=True)
@@ -24,14 +24,15 @@ def test_run_cli(session):
 @nox.session(reuse_venv=True)
 @nox.parametrize("exampl", list(Path("./nominally/examples/").glob("*.py")))
 def test_nominally_examples(session, exampl):
-    session.install("-U", "-e", ".")
+    session.install("-r", "requirements.txt")
+    session.install(".")
     session.run("python", str(exampl), silent=True)
 
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
 def test_version(session):
     session.install("-r", "requirements/test.txt")
-    session.install("-e", ".")
+    session.install(".")
     session.run("python", "-m", "coverage", "run", "-m", "pytest")
     session.run("python", "-m", "coverage", "report")
 
