@@ -1,5 +1,17 @@
 [
     {
+        "id": "test_utf8",
+        "raw": "de la Véña, Jüan",
+        "first": "juan",
+        "last": "de la vena"
+    },
+    {
+        "id": "test_prefixed_names",
+        "raw": "vai la",
+        "first": "vai",
+        "last": "la"
+    },
+    {
         "raw": "john doe",
         "first": "john",
         "last": "doe"

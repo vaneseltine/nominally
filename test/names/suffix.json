@@ -24,104 +24,104 @@
         "nickname": "sam"
     },
     {
-        "id": "test_two_suffixes",
+        "id": "two_suffixes",
         "raw": "kenneth clarke md phd",
         "first": "kenneth",
         "last": "clarke",
         "suffix": "md phd"
     },
     {
-        "id": "test_three_suffixes",
+        "id": "three_suffixes",
         "raw": "kenneth clarke md md phd",
         "first": "kenneth",
         "last": "clarke",
         "suffix": "md md phd"
     },
     {
-        "id": "test_two_suffixes_lastname_comma_format",
+        "id": "two_suffixes_lastname_comma_format",
         "raw": "washington jr. md, franklin",
         "first": "franklin",
         "last": "washington",
         "suffix": "jr md"
     },
     {
-        "id": "test_suffix",
+        "id": "suffix",
         "raw": "joe franklin jr",
         "first": "joe",
         "last": "franklin",
         "suffix": "jr"
     },
     {
-        "id": "test_suffix_with_periods",
+        "id": "suffix_with_periods",
         "raw": "joe dentist ph.d.",
         "first": "joe",
         "last": "dentist",
         "suffix": "phd"
     },
     {
-        "id": "test_two_suffixes_suffix_comma_format",
+        "id": "two_suffixes_suffix_comma_format",
         "raw": "franklin washington, jr md",
         "first": "franklin",
         "last": "washington",
         "suffix": "jr md"
     },
     {
-        "id": "test_suffix_containing_periods",
+        "id": "suffix_containing_periods",
         "raw": "kenneth clarke m.d.",
         "first": "kenneth",
         "last": "clarke",
         "suffix": "md"
     },
     {
-        "id": "test_suffix_containing_periods_lastname_comma_format",
+        "id": "suffix_containing_periods_lastname_comma_format",
         "raw": "clarke, kenneth, m.d. ph.d.",
         "first": "kenneth",
         "last": "clarke",
         "suffix": "md phd"
     },
     {
-        "id": "test_suffix_containing_periods_suffix_comma_format",
+        "id": "suffix_containing_periods_suffix_comma_format",
         "raw": "kenneth clarke m.d., ph.d.",
         "first": "kenneth",
         "last": "clarke",
         "suffix": "md phd"
     },
     {
-        "id": "test_suffix_with_single_comma_format",
+        "id": "suffix_with_single_comma_format",
         "raw": "john doe jr., md",
         "first": "john",
         "last": "doe",
         "suffix": "jr md"
     },
     {
-        "id": "test_suffix_with_double_comma_format",
+        "id": "suffix_with_double_comma_format",
         "raw": "doe, john jr., md",
         "first": "john",
         "last": "doe",
         "suffix": "jr md"
     },
     {
-        "id": "test_potential_suffix_that_is_also_last_name_with_suffix",
+        "id": "potential_suffix_that_is_also_last_name_with_suffix",
         "raw": "jack vi jr",
         "first": "jack",
         "last": "vi",
         "suffix": "jr"
     },
     {
-        "id": "test_potential_suffix_that_is_also_last_name_with_suffix_comma",
+        "id": "potential_suffix_that_is_also_last_name_with_suffix_comma",
         "raw": "vi iii, jack jr",
         "first": "jack",
         "last": "vi",
         "suffix": "iii jr"
     },
     {
-        "id": "test_potential_suffix_that_is_also_last_name",
+        "id": "potential_suffix_that_is_also_last_name",
         "raw": "jack vi",
         "first": "jack",
         "last": "vi"
     },
     {
-        "id": "test_potential_suffix_that_is_also_last_name_comma",
+        "id": "potential_suffix_that_is_also_last_name_comma",
         "raw": "vi, jack",
         "first": "jack",
         "last": "vi"

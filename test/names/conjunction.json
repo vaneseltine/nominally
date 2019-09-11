@@ -1,26 +1,32 @@
 [
     {
-        "id": "test_y_middle_initial",
+        "id": "test_conjunction_names",
+        "raw": "johnny y",
+        "first": "johnny",
+        "last": "y"
+    },
+    {
+        "id": "y_middle_initial",
         "raw": "doug y piranha",
         "first": "doug",
         "middle": "y",
         "last": "piranha"
     },
     {
-        "id": "test_last_name_with_conjunction",
+        "id": "last_name_with_conjunction",
         "raw": "jose aznar y lopez",
         "first": "jose",
         "last": "aznar y lopez"
     },
     {
-        "id": "test_first_initial_conflict_with_conjunction",
+        "id": "first_initial_conflict_with_conjunction",
         "raw": "y j smith",
         "first": "y",
         "middle": "j",
         "last": "smith"
     },
     {
-        "id": "test_middle_initial_and_suffix_conflict_with_conjunction",
+        "id": "middle_initial_and_suffix_conflict_with_conjunction",
         "raw": "john y smith, iii",
         "first": "john",
         "middle": "y",
@@ -28,7 +34,7 @@
         "suffix": "iii"
     },
     {
-        "id": "test_middle_initial_comma_lastname_and_suffix_conflict_with_conjun",
+        "id": "middle_initial_comma_lastname_and_suffix_conflict_with_conjun",
         "raw": "smith, john y, iii, jr",
         "first": "john",
         "middle": "y",

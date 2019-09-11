@@ -153,11 +153,12 @@ class Name(MappingBase):
 
         out_pl: PiecesList = []
         out_suffixes: Pieces = []
+        banking: Pieces = []
 
         while incoming:
             handling = incoming.pop()
             while handling:
-                banking: Pieces = []
+                banking = []
                 if (
                     sum(len(x) for x in (handling, banking))
                     + sum(count_words(pl) for pl in (incoming, out_pl))

@@ -1,34 +1,34 @@
 [
     {
-        "id": "test_nickname_in_parenthesis",
+        "id": "nickname_in_parenthesis",
         "raw": "benjamin (ben) franklin",
         "first": "benjamin",
         "last": "franklin",
         "nickname": "ben"
     },
     {
-        "id": "test_two_word_nickname_in_parenthesis",
+        "id": "two_word_nickname_in_parenthesis",
         "raw": "benjamin (big ben) franklin",
         "first": "benjamin",
         "last": "franklin",
         "nickname": "big ben"
     },
     {
-        "id": "test_two_words_in_quotes",
+        "id": "two_words_in_quotes",
         "raw": "benjamin \"big ben\" franklin",
         "first": "benjamin",
         "last": "franklin",
         "nickname": "big ben"
     },
     {
-        "id": "test_nickname_in_parenthesis_with_comma",
+        "id": "nickname_in_parenthesis_with_comma",
         "raw": "franklin, benjamin (ben)",
         "first": "benjamin",
         "last": "franklin",
         "nickname": "ben"
     },
     {
-        "id": "test_nickname_in_parenthesis_with_comma_and_suffix",
+        "id": "nickname_in_parenthesis_with_comma_and_suffix",
         "raw": "franklin, benjamin (ben), jr.",
         "first": "benjamin",
         "last": "franklin",
@@ -36,74 +36,74 @@
         "nickname": "ben"
     },
     {
-        "id": "test_nickname_in_single_quotes",
+        "id": "nickname_in_single_quotes",
         "raw": "benjamin 'ben' franklin",
         "first": "benjamin",
         "last": "franklin",
         "nickname": "ben"
     },
     {
-        "id": "test_nickname_in_double_quotes",
+        "id": "nickname_in_double_quotes",
         "raw": "benjamin \"ben\" franklin",
         "first": "benjamin",
         "last": "franklin",
         "nickname": "ben"
     },
     {
-        "id": "test_single_quotes_on_first_name_not_treated_as_nickname",
+        "id": "single_quotes_on_first_name_not_treated_as_nickname",
         "raw": "brian andrew o'connor",
         "first": "brian",
         "middle": "andrew",
         "last": "o'connor"
     },
     {
-        "id": "test_single_quotes_on_both_name_not_treated_as_nickname",
+        "id": "single_quotes_on_both_name_not_treated_as_nickname",
         "raw": "la'tanya o'connor",
         "first": "la'tanya",
         "last": "o'connor"
     },
     {
-        "id": "test_single_quotes_on_end_of_last_name_not_treated_as_nickname",
+        "id": "single_quotes_on_end_of_last_name_not_treated_as_nickname",
         "raw": "mari' aube'",
         "first": "mari'",
         "last": "aube'"
     },
     {
-        "id": "test_okina_inside_name_not_treated_as_nickname",
+        "id": "okina_inside_name_not_treated_as_nickname",
         "raw": "harrieta keōpūolani nāhiʻenaʻena",
         "first": "harrieta",
         "middle": "keopuolani",
         "last": "nahi'ena'ena"
     },
     {
-        "id": "test_single_quotes_not_treated_as_nickname_hawaiian_example",
+        "id": "single_quotes_not_treated_as_nickname_hawaiian_example",
         "raw": "harietta keopuolani nahi'ena'ena",
         "first": "harietta",
         "middle": "keopuolani",
         "last": "nahi'ena'ena"
     },
     {
-        "id": "test_backticks_like_single_quotes",
+        "id": "backticks_like_single_quotes",
         "raw": "harietta keopuolani nahi`ena`ena",
         "first": "harietta",
         "middle": "keopuolani",
         "last": "nahi'ena'ena"
     },
     {
-        "id": "test_single_quotes_not_treated_as_nickname_kenyan_example",
+        "id": "single_quotes_not_treated_as_nickname_kenyan_example",
         "raw": "naomi wambui ng'ang'a",
         "first": "naomi",
         "middle": "wambui",
         "last": "ng'ang'a"
     },
     {
-        "id": "test_single_quotes_not_treated_as_nickname_samoan_example",
+        "id": "single_quotes_not_treated_as_nickname_samoan_example",
         "raw": "va'apu'u vitale",
         "first": "va'apu'u",
         "last": "vitale"
     },
     {
-        "id": "test_nickname_and_last_name",
+        "id": "nickname_and_last_name",
         "raw": "\"rick\" edmonds",
         "last": "edmonds",
         "nickname": "rick"

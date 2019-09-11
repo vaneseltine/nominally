@@ -1,31 +1,37 @@
 [
     {
-        "id": "test_first_name_is_not_prefix_if_only_two_parts",
+        "id": "first_name_is_not_prefix_if_only_two_parts",
         "_note": "when there are only two parts, don't join prefixes or conjunctions",
         "raw": "van nguyen",
         "first": "van",
         "last": "nguyen"
     },
     {
-        "id": "test_last_name",
+        "id": "last_name",
         "raw": "andrew",
         "last": "andrew"
     },
     {
-        "id": "test_assume_title_and_one_other_name_is_last_name",
+        "id": "assume_title_and_one_other_name_is_last_name",
         "raw": "dr andrews",
         "title": "dr",
         "last": "andrews"
     },
     {
-        "id": "test_suffix_in_lastname_part_of_lastname_comma_format",
+        "id": "do_not_choke_on_dr_andrews_odd_spacing",
+        "raw": "andrews, dr   ",
+        "title": "dr",
+        "last": "andrews"
+    },
+    {
+        "id": "suffix_in_lastname_part_of_lastname_comma_format",
         "raw": "smith jr., john",
         "last": "smith",
         "first": "john",
         "suffix": "jr"
     },
     {
-        "id": "test_first_name_is_not_prefix_if_only_two_parts_comma",
+        "id": "first_name_is_not_prefix_if_only_two_parts_comma",
         "raw": "nguyen, van",
         "first": "van",
         "last": "nguyen"

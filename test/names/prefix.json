@@ -1,107 +1,107 @@
 [
     {
-        "id": "test_le_as_last_name",
+        "id": "le_as_last_name",
         "raw": "yin le",
         "first": "yin",
         "last": "le"
     },
     {
-        "id": "test_le_as_last_name_with_middle_initial",
+        "id": "le_as_last_name_with_middle_initial",
         "raw": "yin a le",
         "first": "yin",
         "middle": "a",
         "last": "le"
     },
     {
-        "id": "test_comma_two_part_last_name_with_suffix_in_first_part",
+        "id": "comma_two_part_last_name_with_suffix_in_first_part",
         "raw": "von bergen wessels md, pennie",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "md"
     },
     {
-        "id": "test_prefix",
+        "id": "prefix",
         "raw": "juan del sur",
         "first": "juan",
         "last": "del sur"
     },
     {
-        "id": "test_prefix_with_period",
+        "id": "prefix_with_period",
         "raw": "jill st. john",
         "first": "jill",
         "last": "st john"
     },
     {
-        "id": "test_prefix_before_two_part_last_name",
+        "id": "prefix_before_two_part_last_name",
         "raw": "pennie von bergen wessels",
         "first": "pennie",
         "last": "von bergen wessels"
     },
     {
-        "id": "test_prefix_before_two_part_last_name_with_suffix",
+        "id": "prefix_before_two_part_last_name_with_suffix",
         "raw": "pennie von bergen wessels iii",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "iii"
     },
     {
-        "id": "test_prefix_before_two_part_last_name_with_acronym_suffix",
+        "id": "prefix_before_two_part_last_name_with_acronym_suffix",
         "raw": "pennie von bergen wessels m.d.",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "md"
     },
     {
-        "id": "test_two_part_last_name_with_suffix_comma",
+        "id": "two_part_last_name_with_suffix_comma",
         "raw": "pennie von bergen wessels, iii",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "iii"
     },
     {
-        "id": "test_two_part_last_name_with_suffix",
+        "id": "two_part_last_name_with_suffix",
         "raw": "von bergen wessels, pennie iii",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "iii"
     },
     {
-        "id": "test_last_name_two_part_last_name_with_two_suffixes",
+        "id": "last_name_two_part_last_name_with_two_suffixes",
         "raw": "von bergen wessels md, pennie iii",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "md iii"
     },
     {
-        "id": "test_comma_two_part_last_name_with_acronym_suffix",
+        "id": "comma_two_part_last_name_with_acronym_suffix",
         "raw": "von bergen wessels, pennie md",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "md"
     },
     {
-        "id": "test_title_two_part_last_name_with_suffix_in_first_part",
+        "id": "title_two_part_last_name_with_suffix_in_first_part",
         "raw": "pennie von bergen wessels md, iii",
         "first": "pennie",
         "last": "von bergen wessels",
         "suffix": "md iii"
     },
     {
-        "id": "test_portuguese_dos",
+        "id": "portuguese_dos",
         "raw": "rafael sousa dos anjos",
         "first": "rafael",
         "middle": "sousa",
         "last": "dos anjos"
     },
     {
-        "id": "test_portuguese_prefixes",
+        "id": "portuguese_prefixes",
         "raw": "joao da silva do amaral de souza",
         "first": "joao",
         "middle": "da silva do amaral",
         "last": "de souza"
     },
     {
-        "id": "test_three_conjunctions",
+        "id": "three_conjunctions",
         "raw": "dr. juan q. xavier de la dos vega iii",
         "first": "juan",
         "last": "de la dos vega",
@@ -110,7 +110,7 @@
         "suffix": "iii"
     },
     {
-        "id": "test_lastname_three_conjunctions",
+        "id": "lastname_three_conjunctions",
         "raw": "de la dos vega, dr. juan q. xavier iii",
         "first": "juan",
         "last": "de la dos vega",
@@ -119,7 +119,7 @@
         "suffix": "iii"
     },
     {
-        "id": "test_comma_three_conjunctions",
+        "id": "comma_three_conjunctions",
         "raw": "dr. juan q. xavier de la dos vega, iii",
         "first": "juan",
         "last": "de la dos vega",

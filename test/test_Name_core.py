@@ -2,7 +2,7 @@ import pytest
 
 from nominally import Name, parse_name
 
-from .conftest import make_ids, dict_entry_test
+from .conftest import dict_entry_test
 
 BLANKINSOPS = [
     "Blankinsop, Jr., Mr. James 'Jimmy'",
@@ -10,29 +10,6 @@ BLANKINSOPS = [
     "Mr. James (Jimmy) Blankinsop, Jr.,",
     "mr. james (jimmy) blankinsop jr.,",
 ]
-
-
-@pytest.mark.parametrize(
-    "entry",
-    [
-        {
-            "id": "test_utf8",
-            "raw": "de la Véña, Jüan",
-            "first": "juan",
-            "last": "de la vena",
-        },
-        {
-            "id": "test_conjunction_names",
-            "raw": "johnny y",
-            "first": "johnny",
-            "last": "y",
-        },
-        {"id": "test_prefixed_names", "raw": "vai la", "first": "vai", "last": "la"},
-    ],
-    ids=make_ids,
-)
-def test_basics(entry):
-    dict_entry_test(Name, entry)
 
 
 def test_string_output():

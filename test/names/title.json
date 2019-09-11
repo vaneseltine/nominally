@@ -1,6 +1,6 @@
 [
     {
-        "id": "test_last_name_is_also_prefix_no_comma",
+        "id": "last_name_is_also_prefix_no_comma",
         "raw": "dr. aladdin j abu jr.",
         "title": "dr",
         "first": "aladdin",
@@ -9,7 +9,7 @@
         "suffix": "jr"
     },
     {
-        "id": "test_last_name_is_also_prefix_comma",
+        "id": "last_name_is_also_prefix_comma",
         "raw": "dr. aladdin j abu, jr.",
         "title": "dr",
         "first": "aladdin",
@@ -18,26 +18,26 @@
         "suffix": "jr"
     },
     {
-        "id": "test_initials_also_suffix",
+        "id": "initials_also_suffix",
         "raw": "smith, j.r.",
         "first": "jr",
         "last": "smith"
     },
     {
-        "id": "test_della_as_first_name",
+        "id": "della_as_first_name",
         "raw": "della johnson",
         "first": "della",
         "last": "johnson"
     },
     {
-        "id": "test_della_as_first_name_with_middle_name",
+        "id": "della_as_first_name_with_middle_name",
         "raw": "della alex johnson",
         "first": "della",
         "middle": "alex",
         "last": "johnson"
     },
     {
-        "id": "test_della_as_middle_name",
+        "id": "della_as_middle_name",
         "raw": "alex della johnson",
         "first": "alex",
         "middle": "della",
