@@ -55,7 +55,7 @@ PYLINTS = [
 @nox.parametrize("args", PYLINTS, ids=LINT_DIRS.copy())
 def lint_pylint(session, args):
     session.install("-r", "requirements/lint.txt")
-    session.run("pylint", "--score=no", *args)
+    session.run("python", "-m", "pylint", "--score=no", *args)
 
 
 @nox.session(reuse_venv=True)
@@ -89,22 +89,22 @@ def test_run_examples(session, example):
 def test_version(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
-    session.run("coverage", "run", "-m", "pytest")
+    session.run("python", "-m", "coverage", "run", "-m", "pytest")
 
 
 @nox.session(reuse_venv=True)
 def test_coverage(session):
     make_clean_dir("./build/coverage")
-    session.install("coverage")
+    session.install("coverage==4.5.3")
     if len(list(Path(".").glob(".coverage*"))) > 1:
         print("Combining multiple coverage files...")
         try:
             Path(".coverage").unlink()
         except FileNotFoundError:
             pass
-        session.run("coverage", "combine")
-    session.run("coverage", "report")
-    session.run("coverage", "html")
+        session.run("python", "-m", "coverage", "combine")
+    session.run("python", "-m", "coverage", "report")
+    session.run("python", "-m", "coverage", "html")
 
 
 @nox.session(reuse_venv=True)

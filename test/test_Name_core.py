@@ -167,7 +167,7 @@ def test_via_attribute():
 def test_do_not_invent_attributes():
     n = Name("Mr. James (Jimmy) Barnaby Betrothed Blankinsop, Jr.,")
     with pytest.raises(AttributeError):
-        n.herring
+        assert n.herring
 
 
 def issue_6_name_to_name():
