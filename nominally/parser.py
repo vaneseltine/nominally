@@ -31,64 +31,42 @@ class Name(MappingBase):
         pieceslist, work = self._pre_process(self._raw)
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist, work["suffix"] = self._extract_suffixes(pieceslist)
-        pieceslist = self._remove_numbers(pieceslist)
-        work["first"], work["middle"], work["last"] = self._parse_fml(pieceslist)
+        comma_sep_pieceslist = self._remove_numbers(pieceslist)
+        print("work   ", work)
+        print("pl     ", comma_sep_pieceslist)
+        work.update(self._lfm_from_list(comma_sep_pieceslist))
         self._final = work
+        print("final  ", self._final)
 
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
             logger.info('Unparsable: "%s" ', self._raw)
 
     @classmethod
-    def _parse_fml(cls, pieceslist: PiecesList) -> PiecesList:
-        fml_keys = "FML"
+    def _lfm_from_list(cls, pieceslist: PiecesList) -> PiecesDict:
 
-        guesses: PiecesDict = cls._guess_from_commas(pieceslist)
-        building: PiecesDict = {k: [] for k in fml_keys}
-        direct_guesses = {k: guesses.pop(k) for k in fml_keys if k in guesses}
-        building.update(direct_guesses)
+        result: PiecesDict = {"first": [], "middle": [], "last": []}
 
-        if guesses:
-            print("just guesses")
-            parse_key, final_pieces_to_parse = next(iter(guesses.items()))
-            combined_bits = cls._parse_pieces(final_pieces_to_parse)
-            if combined_bits and parse_key == "FML":
-                print("FML")
-                print(combined_bits)
-                guesses["L"] = [combined_bits.pop(-1)]
-            if combined_bits:
-                guesses["F"] = [combined_bits.pop(0)]
-            if combined_bits:
-                guesses["M"] = combined_bits
-            building.update(guesses)
+        pieceslist = remove_falsey(pieceslist)
 
-        final_output = [building.get(x, []) for x in fml_keys]
-        return final_output
+        if not any(x for x in flatten(pieceslist)):
+            return result
 
-    @classmethod
-    def _guess_from_commas(cls, pieceslist: PiecesList) -> PiecesDict:
-        print("into _guess_from_commas", pieceslist)
-        if not pieceslist:
-            return {}
         if len(pieceslist) == 1:
-            return {"FML": pieceslist[0]}
-        if len(pieceslist) == 2:
-            return {"FM": pieceslist[1], "L": pieceslist[0]}
-        logger.warning(f"{repr(pieceslist)}: more parts than anticipated")
-        # need to join up Ms
-        result = {}
-        result["L"], result["F"], *middles = pieceslist
-        result["M"] = flatten(middles)
-        print("outo _guess_from_commas", result)
-        return result
+            pieceslist[0] = cls._parse_pieces(pieceslist[0])
+            result["last"] = [pieceslist[0].pop(-1)]
+        else:
+            result["last"] = pieceslist.pop(0)
 
-    @classmethod
-    def _lfm_from_list(cls, pieceslist: PiecesList, last_name_index) -> PiecesDict:
-        result = {}
-        if last_name_index is not None:
-            result["L"] = pieceslist.pop(last_name_index)
-        result["F"], *middles = pieceslist
-        result["M"] = flatten(middles)
+        pieceslist[0] = [x for x in pieceslist[0] if x]
+        pieceslist = [x for x in pieceslist if x]
+
+        if len(pieceslist) > 1:
+            result["first"] = pieceslist.pop(0)
+            result["middle"] = flatten(pieceslist)
+        elif pieceslist:
+            result["first"] = [pieceslist[0].pop(0)]
+            result["middle"] = flatten(pieceslist)
         return result
 
     @classmethod
@@ -197,9 +175,11 @@ class Name(MappingBase):
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
+        print("_parse_pieces inn", pieces)
         out_pieces = cls._break_down_to_words(pieces)
         out_pieces = cls._combine_conjunctions(out_pieces)
         out_pieces = cls._combine_prefixes(out_pieces)
+        print("_parse_pieces out", out_pieces)
         return out_pieces
 
     @staticmethod
@@ -328,3 +308,9 @@ def is_an_initial(value: str) -> bool:
 
 def flatten(nested_list):
     return [item for sublist in nested_list for item in sublist]
+
+
+def remove_falsey(seq):
+    if not isinstance(seq, list):
+        return seq
+    return [x for x in map(remove_falsey, seq) if x]

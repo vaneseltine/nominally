@@ -13,8 +13,6 @@ def correct_loose_ordering(pre, post):
             assert marker in ugly_in
             order_in = ugly_in.index(marker) > ugly_in.index("berger")
             order_out = ugly_out.index(marker) > ugly_out.index("berger")
-            print(f"pre:  {ugly_in}")
-            print(f"post: {ugly_out}")
             assert order_in == order_out
 
 
