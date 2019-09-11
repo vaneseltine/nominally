@@ -5,7 +5,7 @@ from pathlib import Path
 
 import nox
 
-from nox_uils import SUPPORTED_PYTHONS, make_clean_dir
+from nox_utils import SUPPORTED_PYTHONS, make_clean_dir
 
 nox.options.reuse_existing_virtualenvs = False
 nox.options.stop_on_first_error = False
