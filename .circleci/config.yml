@@ -12,7 +12,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20190910
+            - dependencies-20190910b
       - run:
           name: Prepare Python environment
           command: |
@@ -25,7 +25,7 @@ jobs:
           paths:
             - ".venv"
             - "~/.cache/pip"
-          key: dependencies-20190910
+          key: dependencies-20190910b
       - run:
           name: Install into updated environment
           command: |
@@ -38,5 +38,6 @@ jobs:
             . .venv/bin/activate
             python -m pip --version
             python -m pip freeze
+            rm noxfile.py
             nox --noxfile noxfile_circleci.py -l
             nox --noxfile noxfile_circleci.py

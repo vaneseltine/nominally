@@ -3,11 +3,12 @@
 import re
 import subprocess
 from pathlib import Path
+from shutil import rmtree
 
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
 
-def main():
+def version_check():
     versions = {"__version__": get_module(), "git tag": get_tagged()}
     the_version = {x or "ERROR" for x in versions.values()}
     if len(the_version) != 1:
@@ -26,7 +27,7 @@ def main():
 
 
 def changed_since_pypi():
-    return main() is True
+    return version_check() is True
 
 
 def get_tagged():
@@ -58,5 +59,22 @@ def get_pypi():
     return matc.group(1)
 
 
-if __name__ == "__main__":
-    main()
+def get_versions_from_classifiers(deploy_file):
+    versions = []
+    lines = Path(deploy_file).read_text().splitlines()
+    for line in lines:
+        hit = re.match(r".*Python :: ([0-9.]+)\W*$", line)
+        if hit:
+            versions.append(hit.group(1))
+    return versions
+
+
+SUPPORTED_PYTHONS = get_versions_from_classifiers("setup.cfg")
+
+
+def make_clean_dir(s):
+    folder = Path(s)
+    if folder.exists():
+        rmtree(folder, ignore_errors=True)
+    else:
+        folder.parent.mkdir(exist_ok=True)

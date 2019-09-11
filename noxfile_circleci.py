@@ -4,16 +4,16 @@ from pathlib import Path
 
 import nox
 
-from noxfile import SUPPORTED_PYTHONS
+from nox_utils import SUPPORTED_PYTHONS, changed_since_pypi
 
-nox.options.stop_on_first_error = False
+nox.options.stop_on_first_error = True  # Avoid premature deployment
 
 if not (os.getenv("CI", "").lower() == "true"):
-    warnings.warn("Must be in CI to run this file.")
+    warnings.warn("Should be in CI to run this file properly.")
 
 
 @nox.session(reuse_venv=True)
-def test_run_cli(session):
+def run_cli(session):
     session.install("-r", "requirements.txt")
     session.install(".")
     session.run("python", "-m", "nominally", "Bob", silent=True)
@@ -23,14 +23,14 @@ def test_run_cli(session):
 
 @nox.session(reuse_venv=True)
 @nox.parametrize("exampl", list(Path("./nominally/examples/").glob("*.py")))
-def test_nominally_examples(session, exampl):
+def run_examples(session, exampl):
     session.install("-r", "requirements.txt")
     session.install(".")
     session.run("python", str(exampl), silent=True)
 
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
-def test_version(session):
+def pytest(session):
     session.install("-r", "requirements/test.txt")
     session.install(".")
     session.run("python", "-m", "coverage", "run", "-m", "pytest")
@@ -49,7 +49,6 @@ def update_coveralls(session):
 @nox.session(reuse_venv=True)
 def deploy(session):
     session.install("-r", "requirements/deploy.txt")
-    from version_check import changed_since_pypi
 
     if not changed_since_pypi():
         print("PyPI is up to date.")

@@ -1,11 +1,11 @@
 """Invoke via `nox` or `python -m nox`"""
 
-import re
 import sys
 from pathlib import Path
-from shutil import rmtree
 
 import nox
+
+from nox_uils import SUPPORTED_PYTHONS, make_clean_dir
 
 nox.options.reuse_existing_virtualenvs = False
 nox.options.stop_on_first_error = False
@@ -18,27 +18,6 @@ PYLINT_ARGS = [
     "test -d invalid-name -d no-self-use -d protected-access -d too-few-public-methods",
 ]
 EXAMPLES = list(Path("./nominally/examples/").glob("*.py"))
-
-
-def get_versions_from_classifiers(deploy_file):
-    versions = []
-    lines = Path(deploy_file).read_text().splitlines()
-    for line in lines:
-        hit = re.match(r".*Python :: ([0-9.]+)\W*$", line)
-        if hit:
-            versions.append(hit.group(1))
-    return versions
-
-
-SUPPORTED_PYTHONS = get_versions_from_classifiers("setup.cfg")
-
-
-def make_clean_dir(s):
-    folder = Path(s)
-    if folder.exists():
-        rmtree(folder, ignore_errors=True)
-    else:
-        folder.parent.mkdir(exist_ok=True)
 
 
 @nox.session(reuse_venv=True)
