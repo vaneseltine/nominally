@@ -16,7 +16,6 @@ def dict_entry_test(testclass, entry):
 
 def load_bank(glob):
     test_bank_files = list(TEST_DATA_DIRECTORY.glob(f"{glob}.json"))
-    print(test_bank_files)
     total_bank = []
     for path in test_bank_files:
         test_bank = json.loads(path.read_text(encoding="utf8"))
