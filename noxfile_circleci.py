@@ -14,7 +14,8 @@ if not (os.getenv("CI", "").lower() == "true"):
 
 @nox.session(reuse_venv=True)
 def test_run_cli(session):
-    session.install("-U", "-e", ".")
+    session.install("-r", "requirements.txt")
+    session.install("-e", ".")
     session.run("python", "-m", "nominally", "Bob", silent=True)
     session.run("nominally", "Bob", silent=True)
     session.run("nominally", silent=True)

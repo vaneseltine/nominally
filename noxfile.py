@@ -12,6 +12,7 @@ nox.options.stop_on_first_error = False
 
 CORE_PYTHON = "3.6"
 LINT_DIRS = ["nominally", "test"]
+print(LINT_DIRS)
 PYLINT_ARGS = [
     "nominally",
     "test -d invalid-name -d no-self-use -d protected-access -d too-few-public-methods",
@@ -41,7 +42,7 @@ def make_clean_dir(s):
 
 
 @nox.session(reuse_venv=True)
-@nox.parametrize("lint_dir", LINT_DIRS)
+@nox.parametrize("lint_dir", LINT_DIRS.copy())
 def lint_flake8(session, lint_dir):
     session.install("-r", "requirements/lint.txt")
     cmd = f"python -m flake8 --show-source {lint_dir}/*.py".split()
@@ -92,7 +93,8 @@ def run_clis(session):
 @nox.session(reuse_venv=False)
 @nox.parametrize("example", EXAMPLES)
 def run_examples(session, example):
-    session.install("-U", "-e", ".")
+    session.install("-r", "requirements.txt")
+    session.install("-e", ".")
     session.run("python", str(example), silent=True)
 
 
@@ -118,7 +120,7 @@ def find_todos(session):
     for lint_dir in LINT_DIRS:
         path = str(Path(lint_dir).absolute())
         cmd = f"grep -ire 'TODO.*' -n -o --color=auto {path}".split()
-        session.run(*cmd, external=True)
+        session.run(*cmd, external=True, success_codes=[0, 1])
 
 
 if __name__ == "__main__":
