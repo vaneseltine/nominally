@@ -2,7 +2,7 @@ import pytest
 
 from nominally.parser import Name
 
-from .conftest import load_bank, make_ids, verify_approximate_ordering_of_leftovers
+from .conftest import load_bank, make_ids, verify_approximate_ordering
 
 
 @pytest.mark.parametrize(
@@ -22,7 +22,7 @@ def test_title_ordering(entry):
     pre_pieces = scrubbed.copy()
     post_pieces, _ = Name._extract_title(scrubbed)
     if "berg" in entry["raw"]:
-        verify_approximate_ordering_of_leftovers(pre_pieces, post_pieces)
+        verify_approximate_ordering(pre_pieces, post_pieces)
 
 
 @pytest.mark.parametrize(

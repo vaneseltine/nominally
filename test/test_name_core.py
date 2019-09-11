@@ -2,8 +2,6 @@ import pytest
 
 from nominally import Name, parse_name
 
-from .conftest import dict_entry_test
-
 BLANKINSOPS = [
     "Blankinsop, Jr., Mr. James 'Jimmy'",
     "Blankinsop Jr., Mr. James (Jimmy)",

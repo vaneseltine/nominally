@@ -1,4 +1,4 @@
-"""nominally: A maximum-strength name parser for record linkage."""
+"""nominally: a maximum-strength name parser for record linkage"""
 
 import sys
 import typing as T
@@ -6,7 +6,7 @@ import typing as T
 from nominally.api import parse_name, report
 from nominally.parser import Name
 
-__version__ = "0.9.4"
+__version__ = "0.9.5dev0"
 
 
 def cli_parse(raw_name: T.Optional[str] = None) -> int:

@@ -1,4 +1,5 @@
 import os
+import warnings
 from pathlib import Path
 
 import nox
@@ -8,7 +9,7 @@ from noxfile import SUPPORTED_PYTHONS
 nox.options.stop_on_first_error = False
 
 if not (os.getenv("CI", "").lower() == "true"):
-    raise RuntimeError("Must be in CI to run this file.")
+    warnings.warn("Must be in CI to run this file.")
 
 
 @nox.session(reuse_venv=True)

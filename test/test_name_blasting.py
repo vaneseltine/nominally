@@ -1,10 +1,8 @@
-"""pytest ./pytest/"""
-
 import pytest
 
 from nominally import Name
 
-from .conftest import load_bank, make_ids, dict_entry_test
+from .conftest import dict_entry_test, load_bank, make_ids
 
 
 @pytest.mark.parametrize("entry", load_bank("*"), ids=make_ids)

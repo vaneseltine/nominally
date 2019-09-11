@@ -2,12 +2,7 @@ import pytest
 
 from nominally.parser import Name
 
-from .conftest import (
-    load_bank,
-    make_ids,
-    pieces_to_words,
-    verify_approximate_ordering_of_leftovers,
-)
+from .conftest import load_bank, make_ids, pieces_to_words, verify_approximate_ordering
 
 
 def test_too_many_name_parts_post_suffix():
@@ -55,4 +50,4 @@ def test_suffix_extraction_maintained_first_last_order(entry):
     scrubbed, _ = Name._pre_process(entry["raw"])
     pre_pieces = scrubbed.copy()
     post_pieces, _ = Name._extract_suffixes(scrubbed)
-    verify_approximate_ordering_of_leftovers(pre_pieces, post_pieces)
+    verify_approximate_ordering(pre_pieces, post_pieces)

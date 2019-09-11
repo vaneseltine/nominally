@@ -27,21 +27,21 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
 
-        print(repr(raw))
-        pieces, working = self._pre_process(self._raw)
-        print(pieces)
-        print(working)
-        pieces, working["title"] = self._extract_title(pieces)
-        print(pieces)
-        print(working)
-        pieces, working["suffix"] = self._extract_suffixes(pieces)
-        print(pieces)
-        print(working)
-        working["first"], working["middle"], working["last"] = self._parse_fml(pieces)
-        print(working)
-        self._final = working
+        logger.debug(repr(raw))
+        pieces, work = self._pre_process(self._raw)
+        logger.debug(pieces)
+        logger.debug(work)
+        pieces, work["title"] = self._extract_title(pieces)
+        logger.debug(pieces)
+        logger.debug(work)
+        pieces, work["suffix"] = self._extract_suffixes(pieces)
+        logger.debug(pieces)
+        logger.debug(work)
+        work["first"], work["middle"], work["last"] = self._parse_fml(pieces)
+        logger.debug(work)
+        self._final = work
 
-        self._len = len([x for x in working.values() if x])
+        self._len = len([x for x in work.values() if x])
         self._unparsable = not self._len
         if not self.parsable:
             logger.info('Unparsable: "%s" ', self._raw)
@@ -237,8 +237,8 @@ class Name(MappingBase):
 
     def __getattr__(self, name: str) -> T.Any:
         """
-        Provides attribute access to all of Name._keys (by way of __iter__() for the
-        keys and __getitem__() for the value).
+        Provides attribute access to all of Name._keys (by way of __iter__()
+        for the keys and __getitem__() for the value).
         """
         if name in self.keys():
             return self[name]

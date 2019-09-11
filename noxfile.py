@@ -7,13 +7,16 @@ from shutil import rmtree
 
 import nox
 
-# -r on CLI to override and reuse all instead
 nox.options.reuse_existing_virtualenvs = False
-# --no-stop-on-first-error on CLI to override
 nox.options.stop_on_first_error = False
 
 CORE_PYTHON = "3.6"
 LINT_DIRS = ["nominally", "test"]
+PYLINT_ARGS = [
+    "nominally",
+    "test -d invalid-name -d no-self-use -d protected-access -d too-few-public-methods",
+]
+EXAMPLES = list(Path("./nominally/examples/").glob("*.py"))
 
 
 def get_versions_from_classifiers(deploy_file):
@@ -38,77 +41,72 @@ def make_clean_dir(s):
 
 
 @nox.session(reuse_venv=True)
-@nox.parametrize("path", LINT_DIRS.copy())
-def lint_flake8(session, path):
+@nox.parametrize("lint_dir", LINT_DIRS)
+def lint_flake8(session, lint_dir):
     session.install("-r", "requirements/lint.txt")
-    session.run("python", "-m", "flake8", str(path), "--show-source")
-
-
-PYLINTS = [
-    ["nominally"],
-    [
-        "test",
-        "-d",
-        "invalid-name",
-        "-d",
-        "no-self-use",
-        "-d",
-        "protected-access",
-        "-d",
-        "too-few-public-methods",
-        "-d",
-        "unused-import",
-    ],
-]
+    cmd = f"python -m flake8 --show-source {lint_dir}/*.py".split()
+    session.run(*cmd)
 
 
 @nox.session(reuse_venv=True)
-@nox.parametrize("args", PYLINTS, ids=LINT_DIRS.copy())
+@nox.parametrize("args", PYLINT_ARGS)
 def lint_pylint(session, args):
     session.install("-r", "requirements/lint.txt")
-    session.run("python", "-m", "pylint", "--score=no", *args)
+    cmd = "python -m pylint --score=no".split() + args.split()
+    session.run(*cmd)
 
 
 @nox.session(reuse_venv=True)
 def lint_typing(session):
     session.install("-U", "mypy")
     session.install("-r", "requirements.txt")
-    session.run("python", "-m", "mypy", "--strict", LINT_DIRS[0])
+    cmd = "python -m mypy --strict nominally".split()
+    session.run(*cmd)
 
 
 @nox.session(reuse_venv=True)
 def lint_black(session):
     session.install("-U", "black")
-    session.run(*"python -m black -t py36 --check .".split(), silent=True)
+    cmd = "python -m black -t py36 --check .".split()
+    session.run(*cmd)
 
 
 @nox.session(reuse_venv=False)
-def test_run_cli(session):
+def run_clis(session):
+    """
+    Not parameterized because it's not really worth polluting the report.
+    """
     session.install("-U", "-e", ".")
-    session.run("python", "-m", "nominally", "Bob", silent=True)
-    session.run("nominally", "Bob", silent=True)
-    session.run("nominally", silent=True)
+    for prefix in ["", "python -m "]:
+        for main_cmd in [
+            "nominally Bob",
+            "nominally -h",
+            "nominally --help",
+            "nominally -V",
+            "nominally --version",
+        ]:
+            cmd = (prefix + main_cmd).split()
+            session.run(*cmd, silent=True)
 
 
 @nox.session(reuse_venv=False)
-@nox.parametrize("example", list(Path("./nominally/examples/").glob("*.py")))
-def test_run_examples(session, example):
+@nox.parametrize("example", EXAMPLES)
+def run_examples(session, example):
     session.install("-U", "-e", ".")
     session.run("python", str(example), silent=True)
 
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
-def test_version(session):
+def pytest(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
-    if session.python == CORE_PYTHON:
-        session.run("python", "-m", "coverage", "run", "-m", "pytest")
-    else:
-        session.run("python", "-m", "pytest")
+    cov_subcmd = "coverage run -m " if session.python == CORE_PYTHON else ""
+    cmd = f"python -m {cov_subcmd}pytest".split()
+    session.run(*cmd)
 
 
-@nox.session(reuse_venv=True)
-def test_coverage(session):
+@nox.session(python=f"python{CORE_PYTHON}", reuse_venv=True)
+def coverage(session):
     session.install("-r", "requirements/test.txt")
     session.run("python", "-m", "coverage", "report")
     make_clean_dir("./build/coverage")
@@ -116,20 +114,11 @@ def test_coverage(session):
 
 
 @nox.session(reuse_venv=True)
-def todos(session):
-    TODO_GREPPER = r"TODO.*"
-    for subpath in LINT_DIRS:
-        session.run(
-            "grep",
-            "-ire",
-            TODO_GREPPER,
-            "-n",
-            "-o",
-            "--color=auto",
-            str(Path(subpath).absolute()),
-            external=True,
-            success_codes=(0, 1),
-        )
+def find_todos(session):
+    for lint_dir in LINT_DIRS:
+        path = str(Path(lint_dir).absolute())
+        cmd = f"grep -ire 'TODO.*' -n -o --color=auto {path}".split()
+        session.run(*cmd, external=True)
 
 
 if __name__ == "__main__":
