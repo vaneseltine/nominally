@@ -11,9 +11,9 @@ BLANKINSOPS = [
 
 
 def test_string_output():
-    raw = 'de la Véña, Dr. Jüan "Paco", Jr.'
+    raw = "Blankinsop, Jr., Mr. James Juju (Jimmy)"
     n = Name(raw)
-    assert str(n) == 'dr juan "paco" de la vena jr'
+    assert str(n) == "blankinsop, mr james (jimmy) juju jr"
 
 
 def test_repr_output():
@@ -26,10 +26,9 @@ def test_repr_output():
 
 
 def test_dict_output():
-    raw = 'de la Véña, Dr. Jüan "Paco", Jr.'
-    n = Name(raw)
-    dn = dict(n)
-    assert dict(dn) == dict(n) == n
+    name = Name('de la Véña, Dr. Jüan "Paco" Jeff, Jr.')
+    dicted = dict(name)
+    assert dict(dicted) == dict(name) == name
 
 
 def test_report_output():
@@ -41,10 +40,9 @@ def test_report_output():
     assert all(k in report for k in ("list", "raw", "parsed"))
 
 
-def test_reparse_name_output():
-    name = Name('de la Véña, Dr. Jüan "Paco", Jr.')
-    parsed_name = parse_name(str(name))
-    assert name == parsed_name
+def test_parse_name_output():
+    raw = "Blankinsop, Jr., Mr. James 'Jimmy'"
+    assert parse_name(raw) == Name(raw)
 
 
 @pytest.mark.parametrize("raw", ["", ",", "_"])
@@ -54,7 +52,7 @@ def test_some_message_about_parsability(raw):
     assert "pars" in repr(n).lower()
 
 
-@pytest.mark.parametrize("raw", ["Bob", "B B", "B"])
+@pytest.mark.parametrize("raw", ["Pepperpot", "J P", "P"])
 def test_no_message_about_parsability(raw):
     n = Name(raw)
     assert n.parsable
@@ -66,18 +64,6 @@ def test_no_equality_of_unparsables(name):
     name1 = Name(name)
     name2 = Name(name)
     assert name1 != name2
-
-
-@pytest.mark.parametrize(
-    "raw, length",
-    [
-        ("Doe-Ray, Dr. John P., Jr", 5),
-        ("Doe-Ray, Dr. John P. B. and J., Jr", 5),
-        ("John Doe", 2),
-    ],
-)
-def test_len(raw, length):
-    assert len(Name(raw)) == length
 
 
 @pytest.mark.parametrize("raw_one", BLANKINSOPS)

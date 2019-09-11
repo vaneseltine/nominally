@@ -78,6 +78,7 @@ PREFIXES = {
     "delle",
     "delli",
     "dello",
+    "dem",
     "der",
     "di",
     "do",

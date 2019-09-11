@@ -10,6 +10,7 @@ TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
 def dict_entry_test(testclass, entry):
     n = testclass(entry["raw"])
+    print(dict(n).keys())
     expected = {key: entry.get(key, "") for key in dict(n).keys()}
     assert dict(n) == expected
 
@@ -26,23 +27,6 @@ def load_bank(glob):
 
 def make_ids(entry):
     return entry.get("id") or entry.get("raw")
-
-
-def pieces_to_words(pieces):
-    return " ".join(pieces).split()
-
-
-def verify_approximate_ordering(pre, post):
-    ugly_in = str(pre).replace("'", " ")
-    ugly_out = str(post).replace("'", " ")
-    for marker in (" junior ", " j ", " h c "):
-        if marker in ugly_out:
-            assert marker in ugly_in
-            order_in = ugly_in.index(marker) > ugly_in.index("berger")
-            order_out = ugly_out.index(marker) > ugly_out.index("berger")
-            logger.warning(f"pre:  {ugly_in}")
-            logger.warning(f"post: {ugly_out}")
-            assert order_in == order_out
 
 
 @pytest.fixture(autouse=True)

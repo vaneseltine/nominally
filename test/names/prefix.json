@@ -13,13 +13,6 @@
         "last": "le"
     },
     {
-        "id": "comma_two_part_last_name_with_suffix_in_first_part",
-        "raw": "von bergen wessels md, pennie",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "md"
-    },
-    {
         "id": "prefix",
         "raw": "juan del sur",
         "first": "juan",
@@ -30,61 +23,6 @@
         "raw": "jill st. john",
         "first": "jill",
         "last": "st john"
-    },
-    {
-        "id": "prefix_before_two_part_last_name",
-        "raw": "pennie von bergen wessels",
-        "first": "pennie",
-        "last": "von bergen wessels"
-    },
-    {
-        "id": "prefix_before_two_part_last_name_with_suffix",
-        "raw": "pennie von bergen wessels iii",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "iii"
-    },
-    {
-        "id": "prefix_before_two_part_last_name_with_acronym_suffix",
-        "raw": "pennie von bergen wessels m.d.",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "md"
-    },
-    {
-        "id": "two_part_last_name_with_suffix_comma",
-        "raw": "pennie von bergen wessels, iii",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "iii"
-    },
-    {
-        "id": "two_part_last_name_with_suffix",
-        "raw": "von bergen wessels, pennie iii",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "iii"
-    },
-    {
-        "id": "last_name_two_part_last_name_with_two_suffixes",
-        "raw": "von bergen wessels md, pennie iii",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "md iii"
-    },
-    {
-        "id": "comma_two_part_last_name_with_acronym_suffix",
-        "raw": "von bergen wessels, pennie md",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "md"
-    },
-    {
-        "id": "title_two_part_last_name_with_suffix_in_first_part",
-        "raw": "pennie von bergen wessels md, iii",
-        "first": "pennie",
-        "last": "von bergen wessels",
-        "suffix": "md iii"
     },
     {
         "id": "portuguese_dos",

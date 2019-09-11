@@ -368,5 +368,32 @@
         "first": "j",
         "last": "goatberger",
         "suffix": "junior"
+    },
+    {
+        "id": "two_part_last_name",
+        "raw": "von bergen wessels, pennie",
+        "first": "pennie",
+        "last": "von bergen wessels"
+    },
+    {
+        "id": "two_part_last_name_precomma_suffix",
+        "raw": "von bergen wessels md, pennie",
+        "first": "pennie",
+        "last": "von bergen wessels",
+        "suffix": "md"
+    },
+    {
+        "id": "two_part_last_name_trailing_suffix",
+        "raw": "von bergen wessels, pennie iii",
+        "first": "pennie",
+        "last": "von bergen wessels",
+        "suffix": "iii"
+    },
+    {
+        "id": "two_part_last_name_double_suffix",
+        "raw": "von bergen wessels md, pennie iii",
+        "first": "pennie",
+        "last": "von bergen wessels",
+        "suffix": "md iii"
     }
 ]
