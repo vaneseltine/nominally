@@ -1,6 +1,6 @@
 """Invoke via `nox` or `python -m nox`"""
 
-import os
+import re
 import sys
 from pathlib import Path
 from shutil import rmtree
@@ -10,12 +10,23 @@ import nox
 # -r on CLI to override and reuse all instead
 nox.options.reuse_existing_virtualenvs = False
 # --no-stop-on-first-error on CLI to override
-nox.options.stop_on_first_error = True
+nox.options.stop_on_first_error = False
 
-CI = os.getenv("CIRCLECI", "").lower() == "true"
-
-
+CORE_PYTHON = "3.6"
 LINT_DIRS = ["nominally", "test"]
+
+
+def get_versions_from_classifiers(deploy_file):
+    versions = []
+    lines = Path(deploy_file).read_text().splitlines()
+    for line in lines:
+        hit = re.match(r".*Python :: ([0-9.]+)\W*$", line)
+        if hit:
+            versions.append(hit.group(1))
+    return versions
+
+
+SUPPORTED_PYTHONS = get_versions_from_classifiers("setup.cfg")
 
 
 def make_clean_dir(s):
@@ -61,6 +72,7 @@ def lint_pylint(session, args):
 @nox.session(reuse_venv=True)
 def lint_typing(session):
     session.install("-U", "mypy")
+    session.install("-r", "requirements.txt")
     session.run("python", "-m", "mypy", "--strict", LINT_DIRS[0])
 
 
@@ -70,7 +82,7 @@ def lint_black(session):
     session.run(*"python -m black -t py36 --check .".split(), silent=True)
 
 
-@nox.session(reuse_venv=True)
+@nox.session(reuse_venv=False)
 def test_run_cli(session):
     session.install("-U", "-e", ".")
     session.run("python", "-m", "nominally", "Bob", silent=True)
@@ -78,32 +90,28 @@ def test_run_cli(session):
     session.run("nominally", silent=True)
 
 
-@nox.session(reuse_venv=True)
+@nox.session(reuse_venv=False)
 @nox.parametrize("example", list(Path("./nominally/examples/").glob("*.py")))
 def test_run_examples(session, example):
     session.install("-U", "-e", ".")
     session.run("python", str(example), silent=True)
 
 
-@nox.session(python=("python3.6", "python3.7", "python3.8"), reuse_venv=False)
+@nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
 def test_version(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
-    session.run("python", "-m", "coverage", "run", "-m", "pytest")
+    if session.python == CORE_PYTHON:
+        session.run("python", "-m", "coverage", "run", "-m", "pytest")
+    else:
+        session.run("python", "-m", "pytest")
 
 
 @nox.session(reuse_venv=True)
 def test_coverage(session):
-    make_clean_dir("./build/coverage")
-    session.install("coverage==4.5.3")
-    if len(list(Path(".").glob(".coverage*"))) > 1:
-        print("Combining multiple coverage files...")
-        try:
-            Path(".coverage").unlink()
-        except FileNotFoundError:
-            pass
-        session.run("python", "-m", "coverage", "combine")
+    session.install("-r", "requirements/test.txt")
     session.run("python", "-m", "coverage", "report")
+    make_clean_dir("./build/coverage")
     session.run("python", "-m", "coverage", "html")
 
 
@@ -125,5 +133,6 @@ def todos(session):
 
 
 if __name__ == "__main__":
+    print(f"Pythons supported: {SUPPORTED_PYTHONS}")
     sys.stderr.write(f"Invoke {__file__} by running Nox.")
     sys.exit(1)
