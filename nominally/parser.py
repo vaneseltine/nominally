@@ -1,8 +1,8 @@
-from copy import deepcopy
 import logging
 import re
 import typing as T
 from collections import abc
+from copy import deepcopy
 
 from unidecode import unidecode_expect_ascii  # type: ignore
 
@@ -27,7 +27,7 @@ class Name(MappingBase):
 
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
-
+        print(self._raw)
         pieceslist, work = self._pre_process(self._raw)
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist, work["suffix"] = self._extract_suffixes(pieceslist)
@@ -48,7 +48,6 @@ class Name(MappingBase):
         direct_guesses = {k: guesses.pop(k) for k in fml_keys if k in guesses}
         building.update(direct_guesses)
 
-        die = False
         if guesses:
             print("just guesses")
             parse_key, final_pieces_to_parse = next(iter(guesses.items()))
@@ -56,7 +55,6 @@ class Name(MappingBase):
             if combined_bits and parse_key == "FML":
                 print("FML")
                 print(combined_bits)
-                die = False
                 guesses["L"] = [combined_bits.pop(-1)]
             if combined_bits:
                 guesses["F"] = [combined_bits.pop(0)]
@@ -64,15 +62,12 @@ class Name(MappingBase):
                 guesses["M"] = combined_bits
             building.update(guesses)
 
-        if die:
-            print(guesses)
-            exit()
-
         final_output = [building.get(x, []) for x in fml_keys]
         return final_output
 
     @classmethod
     def _guess_from_commas(cls, pieceslist: PiecesList) -> PiecesDict:
+        print("into _guess_from_commas", pieceslist)
         if not pieceslist:
             return {}
         if len(pieceslist) == 1:
@@ -84,7 +79,16 @@ class Name(MappingBase):
         result = {}
         result["L"], result["F"], *middles = pieceslist
         result["M"] = flatten(middles)
-        print(result)
+        print("outo _guess_from_commas", result)
+        return result
+
+    @classmethod
+    def _lfm_from_list(cls, pieceslist: PiecesList, last_name_index) -> PiecesDict:
+        result = {}
+        if last_name_index is not None:
+            result["L"] = pieceslist.pop(last_name_index)
+        result["F"], *middles = pieceslist
+        result["M"] = flatten(middles)
         return result
 
     @classmethod
@@ -109,10 +113,6 @@ class Name(MappingBase):
         s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
         s = s.strip("- ")  # drop leading/trailing hyphens and spaces
         return s
-
-    @staticmethod
-    def _string_to_pieces(remaining: str) -> Pieces:
-        return [x for x in re.split(r"\s*,\s*", remaining) if x]
 
     @staticmethod
     def _string_to_pieceslist(remaining: str) -> PiecesList:
