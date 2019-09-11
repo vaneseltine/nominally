@@ -35,6 +35,7 @@ class Name(MappingBase):
         logger.debug(pieces)
         logger.debug(work)
         pieces, work["suffix"] = self._extract_suffixes(pieces)
+        pieces = self._remove_numbers(pieces)
         logger.debug(pieces)
         logger.debug(work)
         work["first"], work["middle"], work["last"] = self._parse_fml(pieces)
@@ -45,6 +46,10 @@ class Name(MappingBase):
         self._unparsable = not self._len
         if not self.parsable:
             logger.info('Unparsable: "%s" ', self._raw)
+
+    @staticmethod
+    def _remove_numbers(pieces: Pieces) -> Pieces:
+        return [re.sub(r"\d", "", x) for x in pieces]
 
     @classmethod
     def _parse_fml(cls, pieces: Pieces) -> T.Tuple[Pieces, ...]:

@@ -125,5 +125,19 @@
         "raw": "vi, jack",
         "first": "jack",
         "last": "vi"
+    },
+    {
+        "id": "do_not_strip_numbers_for_suffixes",
+        "raw": "vetenari, havelock 5th",
+        "first": "havelock",
+        "last": "vetenari",
+        "suffix": "5th"
+    },
+    {
+        "id": "strip_numbers_for_non_suffixes",
+        "raw": "vete1nari, havelock0 5th",
+        "first": "havelock",
+        "last": "vetenari",
+        "suffix": "5th"
     }
 ]
