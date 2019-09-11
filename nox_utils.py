@@ -23,7 +23,7 @@ def version_check():
     print(f"Current version: {repo_v}")
     print(f"PyPI latest:     {pypi_v}")
     print(f"Deployable:      {deployable}")
-    return repo_v != pypi_v
+    return deployable
 
 
 def changed_since_pypi():
