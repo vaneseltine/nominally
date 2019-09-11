@@ -78,3 +78,7 @@ def make_clean_dir(s):
         rmtree(folder, ignore_errors=True)
     else:
         folder.parent.mkdir(exist_ok=True)
+
+
+if __name__ == "__main__":
+    version_check()
