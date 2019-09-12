@@ -4,7 +4,6 @@
 import os
 import re
 import subprocess
-import sys
 from pathlib import Path
 from shutil import rmtree
 
@@ -86,17 +85,15 @@ def make_clean_dir(s):
         folder.parent.mkdir(exist_ok=True)
 
 
-@nox.session(reuse_venv=True)
+@nox.session(python=False)
 def lint_flake8(session):
-    session.install("-r", "requirements/lint.txt")
     for lint_dir in ["nominally", "test", "."]:
         cmd = f"python -m flake8 --show-source {lint_dir}/*.py".split()
         session.run(*cmd)
 
 
-@nox.session(reuse_venv=True)
+@nox.session(python=False)
 def lint_pylint(session):
-    session.install("-r", "requirements/lint.txt")
     for args in [
         "nominally",
         "test -d invalid-name -d no-self-use -d protected-access -d too-few-public-methods",
@@ -105,51 +102,23 @@ def lint_pylint(session):
         session.run(*cmd)
 
 
-@nox.session(reuse_venv=True)
+@nox.session(python=False)
 def lint_typing(session):
-    session.install("-U", "mypy")
-    session.install("-r", "requirements.txt")
     cmd = "python -m mypy --strict nominally".split()
     session.run(*cmd)
 
 
-@nox.session(reuse_venv=True)
+@nox.session(python=False)
 def lint_black(session):
-    session.install("-U", "black")
     cmd = "python -m black -t py36 --check .".split()
     session.run(*cmd)
 
 
-@nox.session(reuse_venv=True)
+@nox.session(python=False)
 def lint_todos(session):
     for lint_dir in ["nominally", "test"]:
         cmd = f"grep -ire 'TODO.*' -n -o --color=auto {lint_dir}".split()
         session.run(*cmd, external=True, success_codes=[0, 1])
-
-
-@nox.session(reuse_venv=False)
-def run_clis(session):
-    session.install("-r", "requirements.txt")
-    session.install("-e", ".")
-    for prefix in ["", "python -m "]:
-        for main_cmd in [
-            "nominally Bob",
-            "nominally -h",
-            "nominally --help",
-            "nominally -V",
-            "nominally --version",
-        ]:
-            cmd = (prefix + main_cmd).split()
-            session.run(*cmd, silent=True)
-
-
-@nox.session(reuse_venv=False)
-def run_examples(session):
-    examples = list(Path("./nominally/examples/").glob("*.py"))
-    session.install("-r", "requirements.txt")
-    session.install(".")
-    for example in examples:
-        session.run("python", str(example), silent=True)
 
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
@@ -160,25 +129,41 @@ def pytest(session):
     session.run("python", "-m", "coverage", "report")
 
 
-@nox.session(reuse_venv=True)
+@nox.session(python=False)
 def coverage(session):
-    session.install("-r", "requirements/test.txt")
     if CI_LIVE:
-        session.install("-r", "requirements/test_running.txt")
         session.run("coveralls")
         return
     make_clean_dir("./build/coverage")
     session.run("python", "-m", "coverage", "html")
 
 
-@nox.session(reuse_venv=True)
+@nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
+def run_various_invocations(session):
+    session.install("-r", "requirements.txt")
+    session.install(".")
+    for prefix in ["", "python -m "]:
+        for main_cmd in [
+            "nominally Bob",
+            "nominally -h",
+            "nominally --help",
+            "nominally -V",
+            "nominally --version",
+        ]:
+            cmd = (prefix + main_cmd).split()
+            session.run(*cmd, silent=True)
+    examples = list(Path("./nominally/examples/").glob("*.py"))
+    for example in examples:
+        session.run("python", str(example), silent=True)
+
+
+@nox.session(python=False)
 def deploy(session):
     if not changed_since_pypi():
         session.skip("PyPI is up to date.")
     if not CI_LIVE:
         session.skip("Deploy only from CI.")
     print("Current version is more recent than PyPI. DEPLOY!")
-    session.install("-r", "requirements/deploy.txt")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
     session.run("python", "-m", "twine", "upload", "dist/*")
 
@@ -187,4 +172,3 @@ if __name__ == "__main__":
     print(f"Pythons supported: {SUPPORTED_PYTHONS}")
     changed_since_pypi()
     print(f"Invoke {__file__} by running Nox.")
-    sys.exit(1)

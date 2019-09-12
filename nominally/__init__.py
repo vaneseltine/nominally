@@ -6,7 +6,7 @@ import typing as T
 from nominally.api import parse_name, report
 from nominally.parser import Name
 
-__version__ = "0.9.5dev1"
+__version__ = "0.9.5dev3"
 
 
 def cli_parse(raw_name: T.Optional[str] = None) -> int:
