@@ -31,6 +31,6 @@ def make_ids(entry):
 
 @pytest.fixture(autouse=True)
 def add_output_spacing():
-    print("\n")
+    print("")
     yield
-    print("\n")
+    print("")

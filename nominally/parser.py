@@ -27,7 +27,7 @@ class Name(MappingBase):
 
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
-        print("raw  ", self._raw)
+        # print("raw  ", self._raw)
         pieceslist, work = self._pre_process(self._raw)
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist, work["suffix"] = self._extract_suffixes(pieceslist)
@@ -35,8 +35,9 @@ class Name(MappingBase):
         # print("work   ", work)
         # print("pl     ", comma_sep_pieceslist)
         work.update(self._lfm_from_list(comma_sep_pieceslist))
-        self._final = work
-        print("final ", self._final)
+        self._final = {k: v for k, v in work.items() if k in self._keys}
+        self._cleaned = " | ".join(work["cleaned"])
+        # print("final ", self._final)
 
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
@@ -47,31 +48,33 @@ class Name(MappingBase):
 
         result: PiecesDict = {"first": [], "middle": [], "last": []}
 
+        # Remove empties and finish if nothing of substance remains
+        pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
             return result  # return if empty
 
-        # Last: take from front if a comma-separated value is there; otherwise from end
+        # If we have only one piece left, group words and take its rightmost cluster
         if len(pieceslist) == 1:
             pieceslist[0] = cls._parse_pieces(pieceslist[0])
             result["last"] = [pieceslist[0].pop(-1)]
+        # Otherwise, meaning multiple pieces remain: take its rightmost piece
         else:
             result["last"] = pieceslist.pop(0)
 
-        # Remove empties
-        pieceslist[0] = [x for x in pieceslist[0] if x]
-        pieceslist = [x for x in pieceslist if x]
-
+        # Remove empties and finish if nothing of substance remains
+        pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
             return result
 
+        # If only one piece remains, take its leftmost word
         if len(pieceslist) == 1:
             result["first"] = [pieceslist[0].pop(0)]
+        # Otherwise, meaning multiple pieces remain: take its leftmost piece
         else:
             result["first"] = pieceslist.pop(0)
 
-        # Everything left is a middle name
+        # Everything remaining is a middle name
         result["middle"] = flatten_once(pieceslist)
-
         return result
 
     @classmethod
@@ -83,11 +86,17 @@ class Name(MappingBase):
         s = cls._clean_input(s)
         logger.debug(repr(s))
         pieceslist = cls._string_to_pieceslist(s)
+        working["cleaned"] = [s]
+        if working["nickname"]:
+            working["cleaned"] += working["nickname"]
         return pieceslist, working
 
     @staticmethod
     def _clean_input(s: str) -> str:
-        """Clean this string; assume that any nicknames have already been removed."""
+        """Clean this string to the simplest possible representation (but no simpler).
+
+        Assumes that any nicknames have already been removed or anything else that
+        would depend on special characters."""
         s = unidecode_expect_ascii(s).lower()
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
         s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
@@ -279,9 +288,14 @@ class Name(MappingBase):
     def raw(self) -> str:
         return self._raw
 
+    @property
+    def cleaned(self) -> str:
+        return self._cleaned
+
     def report(self) -> T.Dict[str, T.Any]:
         return {
             "raw": self.raw,
+            "cleaned": self.cleaned,
             "parsed": str(self),
             "list": list(self.values()),
             **dict(self),
