@@ -1,5 +1,6 @@
 import pytest
-from nominally.parser import Name, remove_falsey
+
+from nominally.parser import remove_falsey
 
 
 @pytest.mark.parametrize(

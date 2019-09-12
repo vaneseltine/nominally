@@ -306,11 +306,11 @@ def is_an_initial(value: str) -> bool:
     return bool(config.RE_INITIAL.match(value))
 
 
-def flatten(nested_list):
+def flatten(nested_list: T.List[T.Any]) -> T.List[T.Any]:
     return [item for sublist in nested_list for item in sublist]
 
 
-def remove_falsey(seq):
+def remove_falsey(seq: T.List[T.Any]) -> T.List[T.Any]:
     if not isinstance(seq, list):
         return seq
     return [x for x in map(remove_falsey, seq) if x]

@@ -1,6 +1,6 @@
-from nominally import Name
 import pytest
-from copy import deepcopy
+
+from nominally import Name
 
 
 @pytest.mark.parametrize(
@@ -45,4 +45,3 @@ def test_parse_fml_with_blanks(incoming):
 def test_parse_fml(incoming, f, m, l):
     answer = {"first": f, "middle": m, "last": l}
     assert Name._lfm_from_list(incoming) == answer
-

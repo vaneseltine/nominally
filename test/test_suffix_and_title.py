@@ -89,4 +89,3 @@ def test_title_ordering(entry):
     post_pieces, _ = Name._extract_title(scrubbed)
     if "berg" in entry["raw"]:
         correct_loose_ordering(pre_pieces, post_pieces)
-

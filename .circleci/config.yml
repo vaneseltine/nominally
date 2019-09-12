@@ -12,32 +12,32 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20190910c
+            - dependencies-20190911
       - run:
           name: Prepare Python environment
           command: |
             python3 -m venv .venv
             . .venv/bin/activate
-            python -m pip install -q -U pip
-            python -m pip install -q -r requirements/dev.txt
-            python -m pip --version
+            python3 -m pip install -q -U pip
+            python3 -m pip install -q -r requirements/dev.txt
+            python3 -m pip --version
       - save_cache:
           paths:
             - ".venv"
             - "~/.cache/pip"
-          key: dependencies-20190910c
+          key: dependencies-20190911
       - run:
           name: Install into updated environment
           command: |
             . .venv/bin/activate
-            python -m pip --version
-            python -m pip install -e .
+            python3 -m pip --version
+            python3 -m pip install -e .
       - run:
           name: Run nox
           command: |
             . .venv/bin/activate
-            python -m pip --version
-            python -m pip freeze
+            python3 -m pip --version
+            python3 -m pip freeze
             rm noxfile.py
-            nox --noxfile noxfile_circleci.py -l
-            nox --noxfile noxfile_circleci.py
+            nox --noxfile -l
+            nox --noxfile
