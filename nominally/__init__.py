@@ -16,7 +16,8 @@ def cli_parse(raw_name: T.Optional[str] = None) -> int:
         return usage()
     if sys.argv and sys.argv[0] in ("--version", "-V"):
         return version()
-    return report(raw_name or " ".join(sys.argv))
+    exit_code = report(raw_name or " ".join(sys.argv), details=True)
+    return exit_code
 
 
 def usage() -> int:

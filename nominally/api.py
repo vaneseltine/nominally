@@ -3,16 +3,14 @@ import typing as T
 from nominally.parser import Name
 
 
-def parse_name(s: str, details: bool = False) -> T.Dict[str, T.Any]:
-    name = Name(s)
-    if details:
-        return name.report()
-    return dict(name)
+def parse_name(s: str) -> T.Dict[str, T.Any]:
+    return dict(Name(s))
 
 
-def report(raw_name: str) -> int:
+def report(raw_name: str, details: bool = True) -> int:
     name = Name(raw_name)
-    prettier_print(name.report())
+    output = name.report() if details else dict(name)
+    prettier_print(output)
     return 0
 
 
