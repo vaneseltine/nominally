@@ -63,5 +63,24 @@ def issue_14_mc_as_prefix():
     ],
 )
 @pytest.mark.xfail()
-def issue_15_and_12_reduce_use_of_suffix_X_and_V(entry):
+def issue_12_make_trailing_X_and_V_middle_initials_if_last_up_front(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "samuel vimes v jr",
+            "first": "samuel",
+            "middle": "v",
+            "last": "vimes",
+            "suffix": "jr",
+        },
+        # {"raw": "vimes, sam vii", "first": "sam", "suffix": "vii", "last": "vimes"},
+        {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
+    ],
+)
+@pytest.mark.xfail()
+def issue_15_limit_generational_suffixes(entry):
     dict_entry_test(Name, entry)
