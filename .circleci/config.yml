@@ -38,6 +38,5 @@ jobs:
             . .venv/bin/activate
             python3 -m pip --version
             python3 -m pip freeze
-            rm noxfile.py
             nox -l
             nox
