@@ -1,6 +1,6 @@
 import pytest
 
-from nominally.parser import remove_falsey
+from nominally.parser import flatten_once, remove_falsey
 
 
 @pytest.mark.parametrize(
@@ -17,9 +17,6 @@ from nominally.parser import remove_falsey
 )
 def test_remove_falsey(incoming, outgoing):
     assert remove_falsey(incoming) == outgoing
-
-
-from nominally.parser import flatten_once
 
 
 class TestFlatten:

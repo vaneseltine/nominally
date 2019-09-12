@@ -27,17 +27,13 @@ class Name(MappingBase):
 
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
-        # print("raw  ", self._raw)
         pieceslist, work = self._pre_process(self._raw)
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist, work["suffix"] = self._extract_suffixes(pieceslist)
         comma_sep_pieceslist = self._remove_numbers(pieceslist)
-        # print("work   ", work)
-        # print("pl     ", comma_sep_pieceslist)
         work.update(self._lfm_from_list(comma_sep_pieceslist))
         self._final = {k: v for k, v in work.items() if k in self._keys}
         self._cleaned = " | ".join(work["cleaned"])
-        # print("final ", self._final)
 
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
@@ -190,11 +186,9 @@ class Name(MappingBase):
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        # print("_parse_pieces inn", pieces)
         out_pieces = cls._break_down_to_words(pieces)
         out_pieces = cls._combine_conjunctions(out_pieces)
         out_pieces = cls._combine_prefixes(out_pieces)
-        # print("_parse_pieces out", out_pieces)
         return out_pieces
 
     @staticmethod

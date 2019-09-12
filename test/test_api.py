@@ -1,9 +1,9 @@
+from string import ascii_lowercase
+
 import pytest
 
-from nominally.api import parse_name, report, prettier_print
+from nominally.api import parse_name, prettier_print, report
 from nominally.parser import Name
-
-from string import ascii_lowercase
 
 SAMPLE_RAW = "Johnson, Jr., Dr. Bergholt (Bloody Stupid) stuttley"
 

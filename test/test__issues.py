@@ -62,4 +62,3 @@ def issue_8_distinguish_suffixes_suitably_distinguishable_from_initials(entry):
 @pytest.mark.xfail(raises=AssertionError)
 def issue_22_ambiguous_handling_of_prefixes_in_first_name():
     assert Name("de ook, van ook") == Name("van ook de ook")
-
