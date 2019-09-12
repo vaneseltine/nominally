@@ -3,28 +3,9 @@ import pytest
 from nominally import Name
 
 
-# @pytest.mark.parametrize(
-#     "incoming",
-#     [
-#         ([[""]]),
-#         ([[""], []]),
-#         ([[], [""]]),
-#         ([[""], [""]]),
-#         ([[""], [""]]),
-#         ([[""], [""]]),
-#         ([[""], [""]]),
-#         ([[""], [""]]),
-#     ],
-# )
-# def test_parse_fml_with_blanks(incoming):
-#     assert Name._lfm_from_list(incoming) == {"first": [], "middle": [], "last": []}
-
-
 @pytest.mark.parametrize(
     "incoming, fir, mid, las",
     [
-        # ([[]], [], [], []),
-        # ([], [], [], []),
         ([["last"], ["first"], ["middle"]], ["first"], ["middle"], ["last"]),
         ([["last"], ["first"]], ["first"], [], ["last"]),
         ([["first", "middle", "last"]], ["first"], ["middle"], ["last"]),
@@ -43,5 +24,4 @@ from nominally import Name
     ],
 )
 def test_parse_fml(incoming, fir, mid, las):
-    answer = {"first": fir, "middle": mid, "last": las}
-    assert Name._lfm_from_list(incoming) == answer
+    assert Name._lfm_from_list(incoming) == {"first": fir, "middle": mid, "last": las}

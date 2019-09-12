@@ -44,21 +44,24 @@ def issue_7_allow_initials_written_properly():
     assert n.last == "tolkien"
 
 
-@pytest.mark.parametrize(
-    "entry",
-    [
-        {"raw": "v, samuel j", "first": "samuel", "middle": "j", "last": "v"},
-        {"raw": "samuel j v", "first": "samuel", "middle": "j", "last": "v"},
-    ],
-)
-@pytest.mark.xfail(
-    raises=AssertionError,
-    reason="Find some good ways to make suffixes when initials are unlikely.",
-)
-def issue_8_distinguish_suffixes_suitably_distinguishable_from_initials(entry):
-    dict_entry_test(Name, entry)
-
-
 @pytest.mark.xfail(raises=AssertionError)
 def issue_22_ambiguous_handling_of_prefixes_in_first_name():
     assert Name("de ook, van ook") == Name("van ook de ook")
+
+
+@pytest.mark.xfail(raises=AssertionError)
+def issue_14_mc_as_prefix():
+    assert Name("Ewan Gordon Mc Gregor") == Name("Mc Gregor, Ewan Gordon")
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "vimes, samuel v", "first": "samuel", "middle": "v", "last": "vimes"},
+        # {"raw": "vimes, sam vii", "first": "sam", "suffix": "vii", "last": "vimes"},
+        {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
+    ],
+)
+@pytest.mark.xfail()
+def issue_15_and_12_reduce_use_of_suffix_X_and_V(entry):
+    dict_entry_test(Name, entry)

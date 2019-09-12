@@ -10,7 +10,6 @@ TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
 def dict_entry_test(testclass, entry):
     n = testclass(entry["raw"])
-    print(dict(n).keys())
     expected = {key: entry.get(key, "") for key in dict(n).keys()}
     assert dict(n) == expected
 
@@ -29,7 +28,7 @@ def make_ids(entry):
     return entry.get("id") or entry.get("raw")
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=False)
 def add_output_spacing():
     print("")
     yield

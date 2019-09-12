@@ -11,19 +11,6 @@
         "last": "v"
     },
     {
-        "raw": "samuel vimes v",
-        "first": "samuel",
-        "last": "vimes",
-        "suffix": "v"
-    },
-    {
-        "raw": "samuel 'sam' vimes v",
-        "first": "samuel",
-        "last": "vimes",
-        "suffix": "v",
-        "nickname": "sam"
-    },
-    {
         "id": "two_suffixes",
         "raw": "kenneth clarke md phd",
         "first": "kenneth",

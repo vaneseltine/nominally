@@ -2,7 +2,7 @@ import pytest
 
 from nominally.parser import Name, flatten_once
 
-from .conftest import load_bank, make_ids
+from .conftest import load_bank, make_ids, dict_entry_test
 
 
 def correct_loose_ordering(pre, post):
@@ -83,3 +83,32 @@ def test_title_ordering(entry):
     post_pieces, _ = Name._extract_title(scrubbed)
     if "berg" in entry["raw"]:
         correct_loose_ordering(pre_pieces, post_pieces)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "v, samuel j", "first": "samuel", "last": "j", "suffix": "v"},
+        {"raw": "samuel j v", "first": "samuel", "last": "j", "suffix": "v"},
+    ],
+)
+def issue_8_do_not_make_initials(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "samuel vimes v", "first": "samuel", "last": "vimes", "suffix": "v"},
+        {
+            "raw": "samuel 'sam' vimes v",
+            "first": "samuel",
+            "last": "vimes",
+            "suffix": "v",
+            "nickname": "sam",
+        },
+    ],
+)
+def issue_8_make_suffixes(entry):
+    dict_entry_test(Name, entry)
+

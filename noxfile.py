@@ -16,6 +16,19 @@ if CI_LIVE:
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
 
+def get_versions_from_classifiers(deploy_file):
+    versions = []
+    lines = Path(deploy_file).read_text().splitlines()
+    for line in lines:
+        hit = re.match(r".*Python :: ([0-9.]+)\W*$", line)
+        if hit:
+            versions.append(hit.group(1))
+    return versions
+
+
+SUPPORTED_PYTHONS = get_versions_from_classifiers("setup.cfg")
+
+
 def changed_since_pypi():
     versions = {"__version__": get_module(), "git tag": get_tagged()}
     the_version = {x or "ERROR" for x in versions.values()}
@@ -62,19 +75,6 @@ def get_pypi():
     ).decode("utf-8")
     matc = re.compile(r"^nominally \(" + VERSION_PATTERN).search(result)
     return matc.group(1)
-
-
-def get_versions_from_classifiers(deploy_file):
-    versions = []
-    lines = Path(deploy_file).read_text().splitlines()
-    for line in lines:
-        hit = re.match(r".*Python :: ([0-9.]+)\W*$", line)
-        if hit:
-            versions.append(hit.group(1))
-    return versions
-
-
-SUPPORTED_PYTHONS = get_versions_from_classifiers("setup.cfg")
 
 
 def make_clean_dir(s):
