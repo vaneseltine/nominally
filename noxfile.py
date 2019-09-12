@@ -159,6 +159,7 @@ def run_various_invocations(session):
 
 @nox.session(python=False)
 def deploy(session):
+    """Upload to PyPI"""
     if not changed_since_pypi():
         session.skip("PyPI is up to date.")
     if not CI_LIVE:
