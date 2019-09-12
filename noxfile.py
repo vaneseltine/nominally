@@ -100,7 +100,6 @@ def lint_pylint(session):
     for args in [
         "nominally",
         "test -d invalid-name -d no-self-use -d protected-access -d too-few-public-methods",
-        "*.py",
     ]:
         cmd = "python -m pylint --score=no".split() + args.split()
         session.run(*cmd)
