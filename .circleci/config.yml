@@ -39,5 +39,5 @@ jobs:
             python3 -m pip --version
             python3 -m pip freeze
             rm noxfile.py
-            nox --noxfile -l
-            nox --noxfile
+            nox -l
+            nox
