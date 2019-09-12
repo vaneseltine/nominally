@@ -10,9 +10,6 @@ from shutil import rmtree
 
 import nox
 
-CORE_PYTHON = "3.6"
-
-
 CI_LIVE = os.getenv("CI", "").lower() == "true"
 if CI_LIVE:
     nox.options.stop_on_first_error = True  # Avoid premature deployment
@@ -92,7 +89,7 @@ def make_clean_dir(s):
 @nox.session(reuse_venv=True)
 def lint_flake8(session):
     session.install("-r", "requirements/lint.txt")
-    for lint_dir in ["nominally", "test"]:
+    for lint_dir in ["nominally", "test", "."]:
         cmd = f"python -m flake8 --show-source {lint_dir}/*.py".split()
         session.run(*cmd)
 
@@ -103,6 +100,7 @@ def lint_pylint(session):
     for args in [
         "nominally",
         "test -d invalid-name -d no-self-use -d protected-access -d too-few-public-methods",
+        "*.py",
     ]:
         cmd = "python -m pylint --score=no".split() + args.split()
         session.run(*cmd)
@@ -188,5 +186,6 @@ def deploy(session):
 
 if __name__ == "__main__":
     print(f"Pythons supported: {SUPPORTED_PYTHONS}")
+    changed_since_pypi()
     sys.stderr.write(f"Invoke {__file__} by running Nox.")
     sys.exit(1)
