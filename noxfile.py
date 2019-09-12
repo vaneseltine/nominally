@@ -94,8 +94,8 @@ def lint_flake8(session):
 
 @nox.session(python=False)
 def lint_pylint(session):
-    for args in ["nominally", 'test --rcfile="./test/pylintrc"']:
-        cmd = "python -m pylint --score=no".split() + args.split()
+    for args in ["nominally", "test --rcfile=./test/pylintrc"]:
+        cmd = (" ".join(("python -m pylint --score=no", args))).split()
         session.run(*cmd)
 
 
