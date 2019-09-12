@@ -27,16 +27,16 @@ class Name(MappingBase):
 
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
-        print(self._raw)
+        print("raw  ", self._raw)
         pieceslist, work = self._pre_process(self._raw)
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist, work["suffix"] = self._extract_suffixes(pieceslist)
         comma_sep_pieceslist = self._remove_numbers(pieceslist)
-        print("work   ", work)
-        print("pl     ", comma_sep_pieceslist)
+        # print("work   ", work)
+        # print("pl     ", comma_sep_pieceslist)
         work.update(self._lfm_from_list(comma_sep_pieceslist))
         self._final = work
-        print("final  ", self._final)
+        print("final ", self._final)
 
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
@@ -47,26 +47,31 @@ class Name(MappingBase):
 
         result: PiecesDict = {"first": [], "middle": [], "last": []}
 
-        pieceslist = remove_falsey(pieceslist)
+        if not any(flatten_once(pieceslist)):
+            return result  # return if empty
 
-        if not any(x for x in flatten(pieceslist)):
-            return result
-
+        # Last: take from front if a comma-separated value is there; otherwise from end
         if len(pieceslist) == 1:
             pieceslist[0] = cls._parse_pieces(pieceslist[0])
             result["last"] = [pieceslist[0].pop(-1)]
         else:
             result["last"] = pieceslist.pop(0)
 
+        # Remove empties
         pieceslist[0] = [x for x in pieceslist[0] if x]
         pieceslist = [x for x in pieceslist if x]
 
-        if len(pieceslist) > 1:
-            result["first"] = pieceslist.pop(0)
-            result["middle"] = flatten(pieceslist)
-        elif pieceslist:
+        if not any(flatten_once(pieceslist)):
+            return result
+
+        if len(pieceslist) == 1:
             result["first"] = [pieceslist[0].pop(0)]
-            result["middle"] = flatten(pieceslist)
+        else:
+            result["first"] = pieceslist.pop(0)
+
+        # Everything left is a middle name
+        result["middle"] = flatten_once(pieceslist)
+
         return result
 
     @classmethod
@@ -166,7 +171,8 @@ class Name(MappingBase):
 
     @staticmethod
     def _remove_numbers(pieces: PiecesList) -> PiecesList:
-        return [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
+        no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
+        return remove_falsey(no_numbers)
 
     @classmethod
     def _parse_pieces(cls, pieces: Pieces) -> Pieces:
@@ -175,11 +181,11 @@ class Name(MappingBase):
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        print("_parse_pieces inn", pieces)
+        # print("_parse_pieces inn", pieces)
         out_pieces = cls._break_down_to_words(pieces)
         out_pieces = cls._combine_conjunctions(out_pieces)
         out_pieces = cls._combine_prefixes(out_pieces)
-        print("_parse_pieces out", out_pieces)
+        # print("_parse_pieces out", out_pieces)
         return out_pieces
 
     @staticmethod
@@ -306,7 +312,7 @@ def is_an_initial(value: str) -> bool:
     return bool(config.RE_INITIAL.match(value))
 
 
-def flatten(nested_list: T.List[T.Any]) -> T.List[T.Any]:
+def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:
     return [item for sublist in nested_list for item in sublist]
 
 

@@ -1,6 +1,6 @@
 import pytest
 
-from nominally.parser import Name, flatten
+from nominally.parser import Name, flatten_once
 
 from .conftest import load_bank, make_ids
 
@@ -54,9 +54,9 @@ def test_suffix_extraction_did_not_mistrack_words(entry):
     pre_extraction, _ = Name._pre_process(entry["raw"])
     print("pre", pre_extraction)
     pieces, suffixes = Name._extract_suffixes(pre_extraction)
-    post_extraction = flatten(pieces) + suffixes
+    post_extraction = flatten_once(pieces) + suffixes
     print("post", post_extraction)
-    pre_comp = set(flatten(pre_extraction))
+    pre_comp = set(flatten_once(pre_extraction))
     post_comp = set(post_extraction)
     print("pre", pre_comp)
     print("post", post_comp)
