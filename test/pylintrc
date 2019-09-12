@@ -1,0 +1,41 @@
+[MASTER]
+ignore=CVS
+ignore-patterns=\..*$
+suggestion-mode=yes
+unsafe-load-any-extension=no
+
+[MESSAGES CONTROL]
+
+disable=bad-continuation,               # handled by black
+        line-too-long,                  # handled by black
+        import-error,                   # more of a problem to install
+        fixme,                          # covered elsewhere
+        logging-fstring-interpolation,  # WRONG
+        missing-docstring,              # yes yes
+        empty-docstring,                 # yes yes yes
+        protected-access,
+        no-self-use
+
+# Display a full report or only the messages.
+reports=no
+# Activate the evaluation score.
+score=yes
+
+[BASIC]
+
+# Naming styles
+argument-naming-style=snake_case
+attr-naming-style=snake_case
+class-attribute-naming-style=any
+class-naming-style=any
+const-naming-style=UPPER_CASE
+function-naming-style=snake_case
+inlinevar-naming-style=any
+method-naming-style=snake_case
+module-naming-style=snake_case
+variable-naming-style=snake_case
+# Include a hint for the correct naming format with invalid-name.
+include-naming-hint=yes
+
+# Good variable names which should always be accepted, separated by a comma.
+good-names = df, i, k, n, s, v, logger

@@ -49,11 +49,6 @@ def issue_22_ambiguous_handling_of_prefixes_in_first_name():
     assert Name("de ook, van ook") == Name("van ook de ook")
 
 
-@pytest.mark.xfail(raises=AssertionError)
-def issue_14_mc_as_prefix():
-    assert Name("Ewan Gordon Mc Gregor") == Name("Mc Gregor, Ewan Gordon")
-
-
 @pytest.mark.parametrize(
     "entry",
     [
@@ -62,8 +57,8 @@ def issue_14_mc_as_prefix():
         {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
     ],
 )
-@pytest.mark.xfail()
-def issue_12_make_trailing_X_and_V_middle_initials_if_last_up_front(entry):
+@pytest.mark.xfail(raises=AssertionError)
+def issue_12_make_trailing_x_and_v_middle_initials_if_last_up_front(entry):
     dict_entry_test(Name, entry)
 
 
@@ -81,6 +76,24 @@ def issue_12_make_trailing_X_and_V_middle_initials_if_last_up_front(entry):
         {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
     ],
 )
-@pytest.mark.xfail()
+@pytest.mark.xfail(raises=AssertionError)
 def issue_15_limit_generational_suffixes(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "J.R.R. Tolkien", "first": "j", "middle": "r r", "last": "tolkien"},
+        {
+            "raw": "Tolkien, J.R. Jr.",
+            "first": "j",
+            "middle": "r",
+            "last": "tolkien",
+            "suffix": "jr",
+        },
+    ],
+)
+@pytest.mark.xfail(raises=AssertionError)
+def issue_14_support_proper_initials(entry):
     dict_entry_test(Name, entry)

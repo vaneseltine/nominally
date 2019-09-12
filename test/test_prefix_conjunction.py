@@ -52,3 +52,16 @@ def test_conjunction_combine(incoming, outgoing):
 )
 def test_conjunction_avoid(static):
     assert Name._combine_conjunctions(static) == static
+
+
+@pytest.mark.parametrize(
+    "first, second",
+    (
+        ("Ewan Gordon Mc Gregor", "Mc Gregor, Ewan Gordon"),
+        ("Ewan Gordon Mac Gregor", "Mac Gregor, Ewan Gordon"),
+    ),
+)
+def issue_14_mc_and_mac_as_prefix(first, second):
+    print(Name(first))
+    print(Name(second))
+    assert Name(first) == Name(second)

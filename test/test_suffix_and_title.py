@@ -111,4 +111,3 @@ def issue_8_do_not_make_initials(entry):
 )
 def issue_8_make_suffixes(entry):
     dict_entry_test(Name, entry)
-

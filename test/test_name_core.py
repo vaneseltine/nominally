@@ -45,7 +45,7 @@ def test_parse_name_output():
     assert parse_name(raw) == Name(raw)
 
 
-@pytest.mark.parametrize("raw", ["", ",", "_"])
+@pytest.mark.parametrize("raw", ["", ",", "_", "2"])
 def test_some_message_about_parsability(raw):
     n = Name(raw)
     assert not n.parsable

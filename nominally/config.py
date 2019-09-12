@@ -57,13 +57,7 @@ SUFFIXES = SUFFIX_OR_NAME ^ SUFFIX_NOT_NAME
 
 # Name pieces that appear before a last name. Prefixes join to the piece
 # that follows them to make one new piece. They can be chained together, e.g
-# "von der" and "de la". Because they only appear in middle or last names,
-# they also signifiy that all following name pieces should be in the same name
-# part, for example, "von" will be joined to all following pieces that are not
-# prefixes or suffixes, allowing recognition of double last names when they
-# appear after a prefixes. So in "pennie von bergen wessels MD", "von" will
-# join with all following name pieces until the suffix "MD", resulting in the
-# correct parsing of the last name "von bergen wessels".
+# "von der" and "de la".
 PREFIXES = {
     "abu",
     "bin",
@@ -87,6 +81,8 @@ PREFIXES = {
     "ibn",
     "la",
     "le",
+    "mc",
+    "mac",
     "san",
     "santa",
     "st",
