@@ -186,5 +186,5 @@ def deploy(session):
 if __name__ == "__main__":
     print(f"Pythons supported: {SUPPORTED_PYTHONS}")
     changed_since_pypi()
-    sys.stderr.write(f"Invoke {__file__} by running Nox.")
+    print(f"Invoke {__file__} by running Nox.")
     sys.exit(1)
