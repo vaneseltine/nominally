@@ -16,7 +16,6 @@ CORE_PYTHON = "3.6"
 CI_LIVE = os.getenv("CI", "").lower() == "true"
 if CI_LIVE:
     nox.options.stop_on_first_error = True  # Avoid premature deployment
-    nox.options.reuse_existing_virtualenvs = False
 
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
@@ -33,9 +32,10 @@ def changed_since_pypi():
     repo_v = the_version.pop()
     pypi_v = get_pypi()
     deployable = (repo_v != pypi_v) and "dev" not in repo_v
-    print(f"Current version: {repo_v}")
-    print(f"PyPI latest:     {pypi_v}")
-    print(f"Deployable:      {deployable}")
+    print(f"Local:         {versions['__version__']}")
+    print(f"Git tag:       {versions['git tag']}")
+    print(f"PyPI:          {pypi_v}")
+    print(f"Deployable:    {deployable}")
     return deployable
 
 
@@ -176,10 +176,10 @@ def coverage(session):
 
 @nox.session(reuse_venv=True)
 def deploy(session):
-    if not CI_LIVE:
-        session.skip("Only deploying from CI.")
     if not changed_since_pypi():
         session.skip("PyPI is up to date.")
+    if not CI_LIVE:
+        session.skip("Deploy only from CI.")
     print("Current version is more recent than PyPI. DEPLOY!")
     session.install("-r", "requirements/deploy.txt")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
