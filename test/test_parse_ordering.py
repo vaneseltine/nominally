@@ -21,7 +21,7 @@ from nominally import Name
 
 
 @pytest.mark.parametrize(
-    "incoming, f, m, l",
+    "incoming, fir, mid, las",
     [
         # ([[]], [], [], []),
         # ([], [], [], []),
@@ -42,6 +42,6 @@ from nominally import Name
         ([["last"], ["first", "m1 m2"]], ["first"], ["m1 m2"], ["last"]),
     ],
 )
-def test_parse_fml(incoming, f, m, l):
-    answer = {"first": f, "middle": m, "last": l}
+def test_parse_fml(incoming, fir, mid, las):
+    answer = {"first": fir, "middle": mid, "last": las}
     assert Name._lfm_from_list(incoming) == answer
