@@ -105,13 +105,7 @@ def test_title_ordering(entry):
         correct_loose_ordering(pre_pieces, post_pieces)
 
 
-@pytest.mark.parametrize(
-    "entry",
-    [
-        {"raw": "v, samuel j", "first": "samuel", "last": "j", "suffix": "v"},
-        {"raw": "samuel j v", "first": "samuel", "last": "j", "suffix": "v"},
-    ],
-)
+@pytest.mark.parametrize("entry", [])
 def issue_8_do_not_make_initials(entry):
     dict_entry_test(Name, entry)
 
@@ -119,17 +113,48 @@ def issue_8_do_not_make_initials(entry):
 @pytest.mark.parametrize(
     "entry",
     [
-        {"raw": "samuel vimes v", "first": "samuel", "last": "vimes", "suffix": "v"},
+        {"raw": "v, samuel j", "first": "samuel", "last": "v", "middle": "j"},
+        {"raw": "samuel j v", "first": "samuel", "last": "v", "middle": "j"},
+        {"raw": "samuel vimes v", "first": "samuel", "middle": "vimes", "last": "v"},
         {
             "raw": "samuel 'sam' vimes v",
             "first": "samuel",
-            "last": "vimes",
-            "suffix": "v",
+            "middle": "vimes",
+            "last": "v",
             "nickname": "sam",
         },
     ],
 )
-def issue_8_make_suffixes(entry):
+def issue_8_final_suffix_resolutions_updated_for_issue_12(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "vimes, sam v", "first": "sam", "middle": "v", "last": "vimes"},
+        {"raw": "vimes, sam bob v", "first": "sam", "middle": "bob v", "last": "vimes"},
+        {"raw": "sam v vimes", "first": "sam", "middle": "v", "last": "vimes"},
+        {"raw": "sam v bob vimes", "first": "sam", "middle": "v bob", "last": "vimes"},
+    ],
+)
+def issue_12_fix_trailing_v(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "vimes, samuel vii",
+            "first": "samuel",
+            "middle": "vii",
+            "last": "vimes",
+        },
+        {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
+    ],
+)
+def issue_12_make_trailing_x_and_vii_working_by_removing_suffix_options(entry):
     dict_entry_test(Name, entry)
 
 
@@ -163,13 +188,25 @@ def issue_14_support_proper_initials(entry):
         {
             "raw": "samuel vimes v jr",
             "first": "samuel",
-            "middle": "v",
-            "last": "vimes",
+            "middle": "vimes",
+            "last": "v",
             "suffix": "jr",
         },
-        {"raw": "vimes, sam vii", "first": "sam", "suffix": "vii", "last": "vimes"},
         {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
     ],
 )
 def issue_15_limit_generational_suffixes(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "sam i vimes", "first": "sam", "middle": "i", "last": "vimes"},
+        {"raw": "sam ii vimes", "first": "sam", "suffix": "ii", "last": "vimes"},
+        {"raw": "sam iii vimes", "first": "sam", "suffix": "iii", "last": "vimes"},
+        {"raw": "sam iv vimes", "first": "sam", "suffix": "iv", "last": "vimes"},
+    ],
+)
+def issue_25_more_suffix_issues(entry):
     dict_entry_test(Name, entry)

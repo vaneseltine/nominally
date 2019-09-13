@@ -20,7 +20,7 @@ SUFFIX_PATTERNS = {
         (r"\s*ph\.?d\.?", False),
         (r"\s*m\.?d\.?", False),
         (r"\s*jr\.?", True),
-        (r"\s*jr\.?", True),
+        (r"\s*ii?[iv]+?\.?", True),
     ]
 }
 
@@ -35,7 +35,7 @@ CONJUNCTIONS = {"y"}
 TITLES = {"dr", "mr", "mrs", "ms"}
 
 # Cannot include things that could also be middle or last names
-POSSIBLE_NAME = {"junior", "v", "vi", "ix", "x"}
+POSSIBLE_NAME = {"junior"}
 PROFESSIONAL_SUFFIX = {"jd", "md", "phd"}
 GENERATIONAL_SUFFIX = {
     "sr",
@@ -50,21 +50,6 @@ GENERATIONAL_SUFFIX = {
     "4",
     "4th",
     "iv",
-    "5",
-    "5th",
-    "v",
-    "6",
-    "6th",
-    "vi",
-    "7",
-    "7th",
-    "vii",
-    "8",
-    "8th",
-    "viii",
-    "9",
-    "9th",
-    "ix",
 }
 
 SUFFIXES = GENERATIONAL_SUFFIX ^ PROFESSIONAL_SUFFIX

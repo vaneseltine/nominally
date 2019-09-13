@@ -8,8 +8,6 @@ from unidecode import unidecode_expect_ascii  # type: ignore
 
 from nominally import config
 
-print("nominally")
-
 Pieces = T.List[str]
 PiecesList = T.List[Pieces]
 PiecesDefaultDict = T.DefaultDict[str, Pieces]
@@ -28,32 +26,22 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
         pieceslist, work = self._pre_process(self._raw)
-        # print(f"0, {pieceslist}, {work}")
         pieceslist, work["title"] = self._extract_title(pieceslist)
-        # print(f"1, {pieceslist}, {work}")
         pieceslist, work = self._extract_suffixes(pieceslist, work)
-        # print(f"2, {pieceslist}, {work}")
         comma_sep_pieceslist = self._remove_numbers(pieceslist)
-        # print(f"3, {comma_sep_pieceslist}, {work}")
         work = self._combine_pieces_dicts(
             work, self._lfm_from_list(comma_sep_pieceslist)
         )
-        # print(f"4, {work}")
         self._final = self._get_final(work)
-        # print(f"5, {work}")
-        # print(self._final)
         self._cleaned = set(work["cleaned"])
-        # print(self._cleaned)
 
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
             print('Unparsable: "%s" ', self._raw)
-        # print(self.report())
 
     @classmethod
     def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDefaultDict]:
         # print(repr(s))
-        # working: PiecesDefaultDict = {k: [] for k in cls._keys}
         working: PiecesDefaultDict = defaultdict(list, {k: [] for k in cls._keys})
 
         s = str(s).lower()
@@ -94,19 +82,16 @@ class Name(MappingBase):
         # print(f"_sweep_suffixes in {s} {working}")
         for pat, generational in config.SUFFIX_PATTERNS.items():
             # print(f"searching {pat}")
-            if pat.search(s):
-                # print(f"found {pat} {s}")
-                new_suffix = [
-                    cls._clean_input(x, condense=True) for x in pat.findall(s)
-                ]
-                if generational:
-                    working["generational"] += new_suffix
-                else:
-                    working["suffix"] += new_suffix
-                s = pat.sub("", s)
-                # print(f"yay, {pat}, {repr(s)}")
-            # else:
-            # print(f"unfnd {pat} {s}")
+            if not pat.search(s):
+                continue
+            # print(f"found {pat} {s}")
+            new_suffix = [cls._clean_input(x, condense=True) for x in pat.findall(s)]
+            if generational:
+                working["generational"] += new_suffix
+            else:
+                working["suffix"] += new_suffix
+            s = pat.sub("", s)
+            # print(f"yay, {pat}, {repr(s)}")
 
         s = cls._clean_input(s)
         # print(f"_sweep_suffixes out {s} {working}")
@@ -170,6 +155,7 @@ class Name(MappingBase):
                 word = handling.pop()
                 if is_suffix(word):
                     if is_generational_suffix(word):
+                        # print("hey")
                         if working.get("generational"):
                             # print(f"We're going to slot this into mid name: {word}")
                             # print(working["middle"])

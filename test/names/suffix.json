@@ -60,37 +60,37 @@
         "suffix": "jr md"
     },
     {
-        "id": "potential_suffix_that_is_also_last_name_with_suffix",
+        "id": "later_generational_suffix_than_we_use1",
         "raw": "jack vi jr",
         "first": "jack",
         "last": "vi",
         "suffix": "jr"
     },
     {
-        "id": "potential_suffix_that_is_also_last_name",
+        "id": "later_generational_suffix_than_we_use2",
         "raw": "jack vi",
         "first": "jack",
         "last": "vi"
     },
     {
-        "id": "potential_suffix_that_is_also_last_name_comma",
+        "id": "later_generational_suffix_than_we_use3",
         "raw": "vi, jack",
         "first": "jack",
         "last": "vi"
     },
     {
         "id": "do_not_strip_numbers_for_suffixes",
-        "raw": "vetenari, havelock 5th",
+        "raw": "vetenari, havelock 3rd",
         "first": "havelock",
         "last": "vetenari",
-        "suffix": "5th"
+        "suffix": "3rd"
     },
     {
         "id": "strip_numbers_for_non_suffixes",
-        "raw": "vete1nari, havelock0 5th",
+        "raw": "vete1nari, havelock0 3rd",
         "first": "havelock",
         "last": "vetenari",
-        "suffix": "5th"
+        "suffix": "3rd"
     },
     {
         "id": "suffix_with_periods",
