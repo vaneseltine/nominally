@@ -158,3 +158,13 @@ def issue_6_name_to_name():
     name1 = Name("Dr. Horace 'Ook' Worblehat")
     name2 = Name(name1)
     assert name1 == name2
+
+
+def issue_3_allow_outer_only_single_quotes():
+    name = Name("Gwinifer 'Old Mother' Blackcap")
+    assert name.nickname == "old mother"
+
+
+def issue_3_do_not_overcapture_single_quotes():
+    name = Name("Gwinifer O'Canny Nutella' Blackcap")
+    assert not name.nickname

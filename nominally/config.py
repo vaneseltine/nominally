@@ -1,9 +1,11 @@
 import re
 
-RE_INITIAL = re.compile(r"^(\w\.|[A-Z])?$")
-RE_QUOTED_WORD = re.compile(r"(?<!\w)\'([^\s]*?)\'(?!\w)")
-RE_DOUBLE_QUOTES = re.compile(r'"(.*?)"')
-RE_PARENTHESIS = re.compile(r"\((.*?)\)")
+NICKNAME_BOUNDARIES = ([r"(?<!\w)\'", r"\'(?!\w)"], [r'"'] * 2, [r"\(", r"\)"])
+
+NICKNAME_PATTERNS = [
+    re.compile(open_pattern + r"(.*?)" + close_pattern)
+    for open_pattern, close_pattern in NICKNAME_BOUNDARIES
+]
 
 
 # Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".

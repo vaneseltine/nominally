@@ -118,11 +118,7 @@ class Name(MappingBase):
         Double quotes and parenthesis can span white space.
         """
 
-        for pattern in (
-            config.RE_QUOTED_WORD,
-            config.RE_DOUBLE_QUOTES,
-            config.RE_PARENTHESIS,
-        ):
+        for pattern in config.NICKNAME_PATTERNS:
             if pattern.search(s):
                 working["nickname"] += [x for x in pattern.findall(s)]
                 s = pattern.sub("", s)
@@ -305,7 +301,7 @@ def is_title(value: str) -> bool:
 
 
 def is_conjunction(piece: str) -> bool:
-    return piece.lower() in config.CONJUNCTIONS and not is_an_initial(piece)
+    return piece.lower() in config.CONJUNCTIONS
 
 
 def is_prefix(piece: str) -> bool:
@@ -313,11 +309,7 @@ def is_prefix(piece: str) -> bool:
 
 
 def is_suffix(piece: str) -> bool:
-    return piece in (config.SUFFIXES) and not is_an_initial(piece)
-
-
-def is_an_initial(value: str) -> bool:
-    return bool(config.RE_INITIAL.match(value))
+    return piece in (config.SUFFIXES)
 
 
 def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:

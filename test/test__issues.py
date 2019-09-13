@@ -9,11 +9,6 @@ from .conftest import dict_entry_test
     raises=AssertionError,
     reason="Allow multiword single quote nicknames while still supporting apostrophes",
 )
-def issue_3_allow_outer_only_single_quotes():
-    name = Name("Gwinifer 'Old Mother' Blackcap")
-    assert name.nickname == "old mother"
-
-
 @pytest.mark.xfail(
     raises=AssertionError,
     reason="Clean each nickname exactly like post-nickname full names",
