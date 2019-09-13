@@ -168,12 +168,12 @@ class Name(MappingBase):
                     out_suffixes.insert(0, word)
                     if is_generational_suffix(word):
                         if has_generational:
-                            logger.debug("We're going to ignore this: ", word)
+                            logger.debug(f"We're going to ignore this: {word}")
                         else:
-                            logger.debug("First gen:", word)
+                            logger.debug(f"First gen: {word}")
                         has_generational = True
                     else:
-                        logger.debug("Not gen:", word)
+                        logger.debug(f"Not gen: {word}")
 
                 else:
                     banking = handling + [word] + banking
