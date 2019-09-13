@@ -1,10 +1,11 @@
 version: 2.1
 workflows:
-  old_and_new:
+  do_it_all:
     jobs:
-      - build_new
+      - build
 
-  build_new:
+jobs:
+  build:
     docker:
       - image: circleci/python:3.6
     steps:
