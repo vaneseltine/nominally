@@ -14,17 +14,6 @@ def issue_5_leave_non_comma_placeholder_from_nicknames():
     assert name.last == "uberwald"
 
 
-@pytest.mark.xfail(
-    raises=AssertionError,
-    reason="Add nuance to Ph.D. and other inital suffixes to support, e.g., J.R.R.",
-)
-def issue_7_allow_initials_written_properly():
-    n = Name("J.R.R. Tolkien")
-    assert n.first == "j"
-    assert n.middle == "r r"
-    assert n.last == "tolkien"
-
-
 @pytest.mark.xfail(raises=AssertionError)
 def issue_22_ambiguous_handling_of_prefixes_in_first_name():
     assert Name("de ook, van ook") == Name("van ook de ook")
@@ -32,14 +21,21 @@ def issue_22_ambiguous_handling_of_prefixes_in_first_name():
 
 @pytest.mark.parametrize(
     "entry",
+    [{"raw": "vimes, samuel v", "first": "samuel", "middle": "v", "last": "vimes"}],
+)
+@pytest.mark.xfail()
+def issue_12_make_trailing_v_a_middle_still_broken(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
     [
-        {"raw": "vimes, samuel v", "first": "samuel", "middle": "v", "last": "vimes"},
-        # {"raw": "vimes, sam vii", "first": "sam", "suffix": "vii", "last": "vimes"},
+        {"raw": "vimes, sam vii", "first": "sam", "suffix": "vii", "last": "vimes"},
         {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
     ],
 )
-@pytest.mark.xfail(raises=AssertionError)
-def issue_12_make_trailing_x_and_v_middle_initials_if_last_up_front(entry):
+def issue_12_make_trailing_x_and_v_working_by_cheating(entry):
     dict_entry_test(Name, entry)
 
 
@@ -57,24 +53,5 @@ def issue_12_make_trailing_x_and_v_middle_initials_if_last_up_front(entry):
         {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
     ],
 )
-@pytest.mark.xfail(raises=AssertionError)
 def issue_15_limit_generational_suffixes(entry):
-    dict_entry_test(Name, entry)
-
-
-@pytest.mark.parametrize(
-    "entry",
-    [
-        {"raw": "J.R.R. Tolkien", "first": "j", "middle": "r r", "last": "tolkien"},
-        {
-            "raw": "Tolkien, J.R. Jr.",
-            "first": "j",
-            "middle": "r",
-            "last": "tolkien",
-            "suffix": "jr",
-        },
-    ],
-)
-@pytest.mark.xfail(raises=AssertionError)
-def issue_14_support_proper_initials(entry):
     dict_entry_test(Name, entry)

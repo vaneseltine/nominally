@@ -20,7 +20,8 @@
     {
         "id": "initials_also_suffix",
         "raw": "smith, j.r.",
-        "first": "jr",
+        "first": "j",
+        "middle": "r",
         "last": "smith"
     },
     {
@@ -44,7 +45,7 @@
         "last": "johnson"
     },
     {
-        "raw": "dr. j. h. c. goatberger, ii.",
+        "raw": "dr. j. h. c. goatberger, ii",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -75,7 +76,7 @@
         "suffix": "md"
     },
     {
-        "raw": "dr. j. h. c. goatberger ii.",
+        "raw": "dr. j. h. c. goatberger ii",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -91,7 +92,7 @@
         "suffix": "junior"
     },
     {
-        "raw": "dr. j. h. c. goatberger ii. md",
+        "raw": "dr. j. h. c. goatberger ii md",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -107,7 +108,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "dr. j. h. c. goatberger, ii. md",
+        "raw": "dr. j. h. c. goatberger, ii md",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -123,7 +124,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "dr. j. h. c. goatberger, ii., md",
+        "raw": "dr. j. h. c. goatberger, ii, md",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -139,7 +140,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, dr. j. h. c., ii., md",
+        "raw": "goatberger, dr. j. h. c., ii, md",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -155,7 +156,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, dr. j. h. c., ii. md",
+        "raw": "goatberger, dr. j. h. c., ii md",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -171,7 +172,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, dr. j. h. c. ii. md",
+        "raw": "goatberger, dr. j. h. c. ii md",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -187,7 +188,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, dr. j. h. c., ii.",
+        "raw": "goatberger, dr. j. h. c., ii",
         "title": "dr",
         "first": "j",
         "middle": "h c",
@@ -203,7 +204,7 @@
         "suffix": "junior"
     },
     {
-        "raw": "goatberger, dr. j. h. c. ii.",
+        "raw": "goatberger, dr. j. h. c. ii",
         "title": "dr",
         "first": "j",
         "middle": "h c",

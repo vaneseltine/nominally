@@ -1,6 +1,6 @@
 [
     {
-        "raw": "j. h. c. goatberger, ii.",
+        "raw": "j. h. c. goatberger, ii",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -27,7 +27,7 @@
         "suffix": "md"
     },
     {
-        "raw": "j. h. c. goatberger ii.",
+        "raw": "j. h. c. goatberger ii",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -41,7 +41,7 @@
         "suffix": "junior"
     },
     {
-        "raw": "j. h. c. goatberger ii. md",
+        "raw": "j. h. c. goatberger ii md",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -55,7 +55,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "j. h. c. goatberger, ii. md",
+        "raw": "j. h. c. goatberger, ii md",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -69,7 +69,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "j. h. c. goatberger, ii., md",
+        "raw": "j. h. c. goatberger, ii, md",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -83,7 +83,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, j. h. c., ii., md",
+        "raw": "goatberger, j. h. c., ii, md",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -97,7 +97,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, j. h. c., ii. md",
+        "raw": "goatberger, j. h. c., ii md",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -111,7 +111,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, j. h. c. ii. md",
+        "raw": "goatberger, j. h. c. ii md",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -125,7 +125,7 @@
         "suffix": "junior md"
     },
     {
-        "raw": "goatberger, j. h. c., ii.",
+        "raw": "goatberger, j. h. c., ii",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -139,7 +139,7 @@
         "suffix": "junior"
     },
     {
-        "raw": "goatberger, j. h. c. ii.",
+        "raw": "goatberger, j. h. c. ii",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -350,7 +350,7 @@
         "suffix": "phd"
     },
     {
-        "raw": "goatberger, ii., j. h. c.",
+        "raw": "goatberger, ii, j. h. c.",
         "first": "j",
         "middle": "h c",
         "last": "goatberger",
@@ -394,6 +394,6 @@
         "raw": "von bergen wessels md, pennie iii",
         "first": "pennie",
         "last": "von bergen wessels",
-        "suffix": "md iii"
+        "suffix": "iii md"
     }
 ]

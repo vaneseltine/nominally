@@ -2,7 +2,26 @@ import pytest
 
 from nominally.parser import Name, flatten_once
 
-from .conftest import load_bank, make_ids, dict_entry_test
+from .conftest import dict_entry_test, load_bank, make_ids
+
+
+def fake_working(**kwargs):
+    fresh = {k: [] for k in Name._keys}
+    return {**kwargs, **fresh}
+
+
+@pytest.mark.parametrize(
+    "args, outs, outwork",
+    [
+        [("bob", fake_working()), "bob", []],
+        [("bob ph.d.", fake_working()), "bob", ["phd"]],
+        [("bob ph.d.", fake_working()), "bob", ["phd"]],
+    ],
+)
+def test_sweep_suffixes(args, outs, outwork):
+    observed_string, observed_working = Name._sweep_suffixes(*args)
+    assert observed_string.strip() == outs
+    assert observed_working["suffix"] == outwork
 
 
 def correct_loose_ordering(pre, post):
@@ -38,22 +57,18 @@ def test_ordering_end_to_end(entry):
 
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_suffix_extraction_has_correct_suffixes(entry):
-    scrubbed, _d = Name._pre_process(entry["raw"])
-    _, suffixes = Name._extract_suffixes(scrubbed)
-    assert set(suffixes) == set(entry.get("suffix", "").split())
+    scrubbed, working = Name._pre_process(entry["raw"])
+    _, working = Name._extract_suffixes(scrubbed, working)
+    assert set(working["suffix"]) == set(entry.get("suffix", "").split())
 
 
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_suffix_extraction_did_not_mistrack_words(entry):
     pre_extraction, _d = Name._pre_process(entry["raw"])
-    # print("pre", pre_extraction)
-    pieces, suffixes = Name._extract_suffixes(pre_extraction)
-    post_extraction = flatten_once(pieces) + suffixes
-    # print("post", post_extraction)
+    pieces, working = Name._extract_suffixes(pre_extraction, fake_working())
+    post_extraction = flatten_once(pieces) + working["suffix"]
     pre_comp = set(flatten_once(pre_extraction))
     post_comp = set(post_extraction)
-    # print("pre", pre_comp)
-    # print("post", post_comp)
     assert pre_comp == post_comp
 
 
@@ -61,7 +76,7 @@ def test_suffix_extraction_did_not_mistrack_words(entry):
 def test_suffix_extraction_maintained_first_last_order(entry):
     scrubbed, _d = Name._pre_process(entry["raw"])
     pre_pieces = scrubbed.copy()
-    post_pieces, _ = Name._extract_suffixes(scrubbed)
+    post_pieces, _ = Name._extract_suffixes(scrubbed, fake_working())
     correct_loose_ordering(pre_pieces, post_pieces)
 
 
@@ -110,4 +125,28 @@ def issue_8_do_not_make_initials(entry):
     ],
 )
 def issue_8_make_suffixes(entry):
+    dict_entry_test(Name, entry)
+
+
+def issue_7_allow_initials_written_properly():
+    n = Name("J.R.R. Tolkien")
+    assert n.first == "j"
+    assert n.middle == "r r"
+    assert n.last == "tolkien"
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "J.R.R. Tolkien", "first": "j", "middle": "r r", "last": "tolkien"},
+        {
+            "raw": "Tolkien, J.R. Jr.",
+            "first": "j",
+            "middle": "r",
+            "last": "tolkien",
+            "suffix": "jr",
+        },
+    ],
+)
+def issue_14_support_proper_initials(entry):
     dict_entry_test(Name, entry)

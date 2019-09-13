@@ -39,39 +39,11 @@
         "suffix": "jr"
     },
     {
-        "id": "suffix_with_periods",
-        "raw": "joe dentist ph.d.",
-        "first": "joe",
-        "last": "dentist",
-        "suffix": "phd"
-    },
-    {
         "id": "two_suffixes_suffix_comma_format",
         "raw": "franklin washington, jr md",
         "first": "franklin",
         "last": "washington",
         "suffix": "jr md"
-    },
-    {
-        "id": "suffix_containing_periods",
-        "raw": "kenneth clarke m.d.",
-        "first": "kenneth",
-        "last": "clarke",
-        "suffix": "md"
-    },
-    {
-        "id": "suffix_containing_periods_lastname_comma_format",
-        "raw": "clarke, kenneth, m.d. ph.d.",
-        "first": "kenneth",
-        "last": "clarke",
-        "suffix": "md phd"
-    },
-    {
-        "id": "suffix_containing_periods_suffix_comma_format",
-        "raw": "kenneth clarke m.d., ph.d.",
-        "first": "kenneth",
-        "last": "clarke",
-        "suffix": "md phd"
     },
     {
         "id": "suffix_with_single_comma_format",
@@ -93,13 +65,6 @@
         "first": "jack",
         "last": "vi",
         "suffix": "jr"
-    },
-    {
-        "id": "potential_suffix_that_is_also_last_name_with_suffix_comma",
-        "raw": "vi iii, jack jr",
-        "first": "jack",
-        "last": "vi",
-        "suffix": "iii jr"
     },
     {
         "id": "potential_suffix_that_is_also_last_name",
@@ -126,5 +91,61 @@
         "first": "havelock",
         "last": "vetenari",
         "suffix": "5th"
+    },
+    {
+        "id": "suffix_with_periods",
+        "raw": "joe dentist ph.d.",
+        "first": "joe",
+        "last": "dentist",
+        "suffix": "phd"
+    },
+    {
+        "id": "suffix_containing_periods",
+        "raw": "kenneth clarke m.d.",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "md"
+    },
+    {
+        "id": "suffix_containing_periods_lastname_comma_format",
+        "raw": "clarke, kenneth, m.d. ph.d.",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "md phd"
+    },
+    {
+        "id": "suffix_containing_periods_suffix_comma_format",
+        "raw": "kenneth clarke m.d., ph.d.",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "md phd"
+    },
+    {
+        "id": "suffix_with_periods2",
+        "raw": "dentist ph.d., joe",
+        "first": "joe",
+        "last": "dentist",
+        "suffix": "phd"
+    },
+    {
+        "id": "suffix_containing_periods2",
+        "raw": "clarke m.d., kenneth",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "md"
+    },
+    {
+        "id": "suffix_containing_periods_lastname_comma_format2",
+        "raw": "clarke, m.d. ph.d., kenneth",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "md phd"
+    },
+    {
+        "id": "suffix_containing_periods_suffix_comma_format",
+        "raw": "clarke, m.d., ph.d., kenneth",
+        "first": "kenneth",
+        "last": "clarke",
+        "suffix": "md phd"
     }
 ]

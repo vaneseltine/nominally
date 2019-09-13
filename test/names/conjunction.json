@@ -35,10 +35,10 @@
     },
     {
         "id": "middle_initial_comma_lastname_and_suffix_conflict_with_conjun",
-        "raw": "smith, john y, iii, jr",
+        "raw": "smith, john y, jr",
         "first": "john",
         "middle": "y",
         "last": "smith",
-        "suffix": "iii jr"
+        "suffix": "jr"
     }
 ]

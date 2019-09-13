@@ -29,15 +29,40 @@ class Name(MappingBase):
         self._raw = raw
         pieceslist, work = self._pre_process(self._raw)
         pieceslist, work["title"] = self._extract_title(pieceslist)
-        pieceslist, work["suffix"] = self._extract_suffixes(pieceslist)
+        pieceslist, work = self._extract_suffixes(pieceslist, work)
         comma_sep_pieceslist = self._remove_numbers(pieceslist)
-        work.update(self._lfm_from_list(comma_sep_pieceslist))
-        self._final = {k: v for k, v in work.items() if k in self._keys}
+        work = self._combine_pieces_dicts(
+            work, self._lfm_from_list(comma_sep_pieceslist)
+        )
+        self._final = self._get_final(work)
         self._cleaned = " | ".join(work["cleaned"])
 
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
             logger.info('Unparsable: "%s" ', self._raw)
+        print(self.report())
+
+    @staticmethod
+    def _combine_pieces_dicts(dict1: PiecesDict, dict2: PiecesDict) -> PiecesDict:
+        outdict: PiecesDict = dict()
+        for key in set(list(dict1)) | set(list(dict2)):
+            val1 = dict1.get(key, [])
+            val2 = dict2.get(key, [])
+            if isinstance(val1, list) and isinstance(val2, list):
+                outdict[key] = val1 + val2
+            elif val1 == val2:
+                outdict[key] = val1
+            else:
+                print("Throwing away", key, val1, val2)
+        return outdict
+
+    @classmethod
+    def _get_final(cls, work: PiecesDict) -> PiecesDict:
+        return {k: cls.final_clean(v) for k, v in work.items() if k in cls._keys}
+
+    @staticmethod
+    def final_clean(pieces: Pieces) -> Pieces:
+        return [s.replace(".", "") for s in pieces]
 
     @classmethod
     def _lfm_from_list(cls, pieceslist: PiecesList) -> PiecesDict:
@@ -75,13 +100,14 @@ class Name(MappingBase):
 
     @classmethod
     def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDict]:
-        logger.debug(repr(s))
+        print(repr(s))
         working: PiecesDict = {k: [] for k in cls._keys}
 
         s = str(s).lower()
-        s, working = cls._parse_nicknames(s, working)
+        s, working = cls._sweep_nicknames(s, working)
+        s, working = cls._sweep_suffixes(s, working)
         s = cls._clean_input(s)
-        logger.debug(repr(s))
+        print(repr(s))
 
         pieceslist = cls._string_to_pieceslist(s)
         working["cleaned"] = [s]
@@ -90,7 +116,7 @@ class Name(MappingBase):
         return pieceslist, working
 
     @staticmethod
-    def _clean_input(s: str) -> str:
+    def _clean_input(s: str, condense: bool = False) -> str:
         """Clean this string to the simplest possible representation (but no simpler).
 
         Assumes that any nicknames have already been removed or anything else that
@@ -98,10 +124,13 @@ class Name(MappingBase):
         s = unidecode_expect_ascii(s).lower()
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
         s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
+        s = re.sub(r"\.\s*", ". ", s)  # reduce/add space after each .
         s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
-        s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all excluding - ' ,
+        s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all excluding - ' , .
         s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
         s = s.strip("- ")  # drop leading/trailing hyphens and spaces
+        if condense:
+            s = s.replace(" ", "")
         return s
 
     @staticmethod
@@ -110,7 +139,25 @@ class Name(MappingBase):
         return [x.split() for x in pieces if x]
 
     @classmethod
-    def _parse_nicknames(cls, s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
+    def _sweep_suffixes(cls, s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
+        working["gen_suffix"] = False
+        for pat, generational in config.SUFFIX_PATTERNS.items():
+            print("searching", pat)
+            if pat.search(s):
+                print("yay", pat, s)
+                new_suffix = [
+                    cls._clean_input(x, condense=True) for x in pat.findall(s)
+                ]
+                working["suffix"] += new_suffix
+                if generational:
+                    working["gen_suffix"] = True
+                s = pat.sub("", s)
+                print("yay", pat, s)
+        print("final", s, working)
+        return s, working
+
+    @classmethod
+    def _sweep_nicknames(cls, s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -142,15 +189,13 @@ class Name(MappingBase):
 
     @staticmethod
     def _extract_suffixes(
-        incoming: PiecesList, min_names: int = 2
-    ) -> T.Tuple[PiecesList, Pieces]:
+        incoming: PiecesList, working: PiecesDict, min_names: int = 2
+    ) -> T.Tuple[PiecesList, PiecesDict]:
 
         out_pl: PiecesList = []
-        out_suffixes: Pieces = []
         banking: Pieces = []
 
-        has_generational = False
-
+        print("come in xtact suff", working["suffix"])
         queued = deepcopy(incoming)  # avoid popping side effects
         while queued:
             handling = queued.pop()
@@ -163,25 +208,31 @@ class Name(MappingBase):
                 ):
                     banking = handling + banking
                     break
+                print("hbqo", handling, banking, queued, working["suffix"])
                 word = handling.pop()
                 if is_suffix(word):
-                    out_suffixes.insert(0, word)
+                    print("SUFFIX!", word)
                     if is_generational_suffix(word):
-                        if has_generational:
-                            logger.debug(f"We're going to ignore this: {word}")
+                        if working.get("gen_suffix"):
+                            print(f"We're going to slot this into mid name: {word}")
+                            print(working["middle"])
+                            working["middle"].insert(-1, word)
+                            print(working["middle"])
                         else:
-                            logger.debug(f"First gen: {word}")
-                        has_generational = True
+                            print(f"First gen: {word}")
+                            working["suffix"].insert(0, word)
+                        working["gen_suffix"] = True
                     else:
-                        logger.debug(f"Not gen: {word}")
+                        print(f"Not gen: {word}")
+                        working["suffix"].insert(0, word)
 
                 else:
                     banking = handling + [word] + banking
                     break
             if banking:
                 out_pl.insert(0, banking)
-
-        return (out_pl, out_suffixes)
+        print("out working", working)
+        return out_pl, working
 
     @staticmethod
     def _remove_numbers(pieces: PiecesList) -> PiecesList:
@@ -327,6 +378,11 @@ def is_suffix(piece: str) -> bool:
 
 def is_generational_suffix(piece: str) -> bool:
     return piece in config.GENERATIONAL_SUFFIX
+
+
+def is_likely_not_name(piece: str) -> bool:
+    return False
+    return piece in config.POSSIBLE_NAME in config.GENERATIONAL_SUFFIX
 
 
 def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:

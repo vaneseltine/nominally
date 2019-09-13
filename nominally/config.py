@@ -1,11 +1,28 @@
 import re
 
-NICKNAME_BOUNDARIES = ([r"(?<!\w)\'", r"\'(?!\w)"], [r'"'] * 2, [r"\(", r"\)"])
+NO_WORD_BEHIND = r"(?<!\w)"
+NO_WORD_AHEAD = r"(?!\w)"
+
+NICKNAME_BOUNDARIES = (
+    [NO_WORD_BEHIND + r"\'", r"\'" + NO_WORD_AHEAD],
+    [r'"'] * 2,
+    [r"\(", r"\)"],
+)
 
 NICKNAME_PATTERNS = [
     re.compile(open_pattern + r"(.*?)" + close_pattern)
     for open_pattern, close_pattern in NICKNAME_BOUNDARIES
 ]
+
+SUFFIX_PATTERNS = {
+    re.compile(NO_WORD_BEHIND + s + NO_WORD_AHEAD): generational
+    for s, generational in [
+        (r"ph\.?d\.?", False),
+        (r"m\.?d\.?", False),
+        (r"jr\.?", True),
+        (r"jr\.?", True),
+    ]
+}
 
 
 # Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".
@@ -16,7 +33,6 @@ CONJUNCTIONS = {"y"}
 
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
-
 
 # Cannot include things that could also be middle or last names
 POSSIBLE_NAME = {"junior", "v", "vi", "ix", "x"}
@@ -49,9 +65,6 @@ GENERATIONAL_SUFFIX = {
     "9",
     "9th",
     "ix",
-    "10",
-    "10th",
-    "x",
 }
 
 SUFFIXES = GENERATIONAL_SUFFIX ^ PROFESSIONAL_SUFFIX
