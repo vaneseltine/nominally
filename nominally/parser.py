@@ -45,7 +45,7 @@ class Name(MappingBase):
     @staticmethod
     def _combine_pieces_dicts(dict1: PiecesDict, dict2: PiecesDict) -> PiecesDict:
         outdict: PiecesDict = dict()
-        for key in set(list(dict1)) | set(list(dict2)):
+        for key in set(dict1) | set(dict2):
             val1 = dict1.get(key, [])
             val2 = dict2.get(key, [])
             if isinstance(val1, list) and isinstance(val2, list):

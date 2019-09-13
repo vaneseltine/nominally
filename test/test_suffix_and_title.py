@@ -150,3 +150,21 @@ def issue_7_allow_initials_written_properly():
 )
 def issue_14_support_proper_initials(entry):
     dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "samuel vimes v jr",
+            "first": "samuel",
+            "middle": "v",
+            "last": "vimes",
+            "suffix": "jr",
+        },
+        {"raw": "vimes, sam vii", "first": "sam", "suffix": "vii", "last": "vimes"},
+        {"raw": "vimes, samuel x", "first": "samuel", "middle": "x", "last": "vimes"},
+    ],
+)
+def issue_15_limit_generational_suffixes(entry):
+    dict_entry_test(Name, entry)
