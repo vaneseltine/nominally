@@ -29,7 +29,7 @@ def get_versions_from_classifiers(deploy_file):
 SUPPORTED_PYTHONS = get_versions_from_classifiers("setup.cfg")
 
 
-def changed_since_pypi():
+def release_change_since_pypi():
     versions = {"__version__": get_module(), "git tag": get_tagged()}
     the_version = {x or "ERROR" for x in versions.values()}
     if len(the_version) != 1:
@@ -155,12 +155,11 @@ def run_various_invocations(session):
 
 
 @nox.session(python=False)
-def deploy(session):
-    """Upload to PyPI"""
-    if not changed_since_pypi():
-        session.skip("PyPI is up to date.")
+def deploy_to_pypi(session):
+    if not release_change_since_pypi():
+        session.skip("PyPI up to date")
     if not CI_LIVE:
-        session.skip("Deploy only from CI.")
+        session.skip("Deploy only from CI")
     print("Current version is more recent than PyPI. DEPLOY!")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
     session.run("python", "-m", "twine", "upload", "dist/*")
@@ -168,5 +167,5 @@ def deploy(session):
 
 if __name__ == "__main__":
     print(f"Pythons supported: {SUPPORTED_PYTHONS}")
-    changed_since_pypi()
+    release_change_since_pypi()
     print(f"Invoke {__file__} by running Nox.")
