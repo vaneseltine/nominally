@@ -1,6 +1,7 @@
+from collections import defaultdict
+
 import pytest
 
-from collections import defaultdict
 from nominally.parser import Name, flatten_once
 
 from .conftest import dict_entry_test, load_bank, make_ids

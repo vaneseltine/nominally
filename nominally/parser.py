@@ -1,7 +1,7 @@
-import logging
+# import logging
 import re
 import typing as T
-from collections import abc
+from collections import abc, defaultdict
 from copy import deepcopy
 
 from unidecode import unidecode_expect_ascii  # type: ignore
@@ -18,8 +18,6 @@ if T.TYPE_CHECKING:
     MappingBase = T.Mapping[str, str]
 else:
     MappingBase = abc.Mapping
-
-from collections import defaultdict
 
 
 class Name(MappingBase):
