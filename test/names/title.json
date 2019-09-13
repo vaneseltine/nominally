@@ -25,26 +25,6 @@
         "last": "smith"
     },
     {
-        "id": "della_as_first_name",
-        "raw": "della johnson",
-        "first": "della",
-        "last": "johnson"
-    },
-    {
-        "id": "della_as_first_name_with_middle_name",
-        "raw": "della alex johnson",
-        "first": "della",
-        "middle": "alex",
-        "last": "johnson"
-    },
-    {
-        "id": "della_as_middle_name",
-        "raw": "alex della johnson",
-        "first": "alex",
-        "middle": "della",
-        "last": "johnson"
-    },
-    {
         "raw": "dr. j. h. c. goatberger, ii",
         "title": "dr",
         "first": "j",

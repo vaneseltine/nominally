@@ -68,7 +68,7 @@ PREFIXES = {
     "dei",
     "del",
     "dela",
-    # "della",
+    "della",
     "delle",
     "delli",
     "dello",

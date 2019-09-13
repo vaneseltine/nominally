@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pytest
 
-
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
 
