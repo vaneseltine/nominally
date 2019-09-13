@@ -25,6 +25,18 @@ def test_repr_output():
     )
 
 
+@pytest.mark.parametrize(
+    "raw, cleaned",
+    [
+        ("vimes jr., sam", {"vimes, sam", "jr"}),
+        ("sam vimes jr.", {"sam vimes", "jr"}),
+        ("vimes jr., sam (Stoneface)", {"vimes, sam", "jr", "stoneface"}),
+    ],
+)
+def issue_24_cleaned_output_as_sets(raw, cleaned):
+    assert Name(raw).cleaned == cleaned
+
+
 def test_dict_output():
     name = Name('de la Véña, Dr. Jüan "Paco" Jeff, Jr.')
     dicted = dict(name)

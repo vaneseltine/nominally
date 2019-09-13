@@ -50,7 +50,9 @@ class TestCleanName:
         [
             "praline; mr eric",
             "praline: mr eric",
+            "praline : mr eric",
             "praline, mr eric",
+            "praline , mr eric",
             "praline;mr eric",
             "praline:mr eric",
             "praline,mr eric",

@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pytest
 
-from nominally.parser import logger
 
 TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
@@ -22,7 +21,6 @@ def load_bank(glob):
     total_bank = []
     for path in test_bank_files:
         test_bank = json.loads(path.read_text(encoding="utf8"))
-        logger.debug(f"{len(test_bank):>3} from {path}")
         total_bank.extend(test_bank)
     return total_bank
 

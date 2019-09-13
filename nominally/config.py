@@ -17,10 +17,10 @@ NICKNAME_PATTERNS = [
 SUFFIX_PATTERNS = {
     re.compile(NO_WORD_BEHIND + s + NO_WORD_AHEAD): generational
     for s, generational in [
-        (r"ph\.?d\.?", False),
-        (r"m\.?d\.?", False),
-        (r"jr\.?", True),
-        (r"jr\.?", True),
+        (r"\s*ph\.?d\.?", False),
+        (r"\s*m\.?d\.?", False),
+        (r"\s*jr\.?", True),
+        (r"\s*jr\.?", True),
     ]
 }
 

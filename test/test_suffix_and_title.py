@@ -1,5 +1,6 @@
 import pytest
 
+from collections import defaultdict
 from nominally.parser import Name, flatten_once
 
 from .conftest import dict_entry_test, load_bank, make_ids
@@ -7,7 +8,7 @@ from .conftest import dict_entry_test, load_bank, make_ids
 
 def fake_working(**kwargs):
     fresh = {k: [] for k in Name._keys}
-    return {**kwargs, **fresh}
+    return defaultdict(list, {**kwargs, **fresh})
 
 
 @pytest.mark.parametrize(
@@ -51,22 +52,25 @@ def test_way_too_many_name_parts_post_suffix():
 
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_ordering_end_to_end(entry):
-    name_dict = dict(Name(entry["raw"]))
-    assert name_dict == {key: entry.get(key, "") for key in name_dict.keys()}
+    name = Name(entry["raw"])
+    for key in ["first", "middle", "last"]:
+        assert entry.get(key, "") == name[key]
 
 
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_suffix_extraction_has_correct_suffixes(entry):
     scrubbed, working = Name._pre_process(entry["raw"])
     _, working = Name._extract_suffixes(scrubbed, working)
-    assert set(working["suffix"]) == set(entry.get("suffix", "").split())
+    assert set(working["suffix"] + working["generational"]) == set(
+        entry.get("suffix", "").split()
+    )
 
 
 @pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
 def test_suffix_extraction_did_not_mistrack_words(entry):
     pre_extraction, _d = Name._pre_process(entry["raw"])
     pieces, working = Name._extract_suffixes(pre_extraction, fake_working())
-    post_extraction = flatten_once(pieces) + working["suffix"]
+    post_extraction = flatten_once(pieces) + working["suffix"] + working["generational"]
     pre_comp = set(flatten_once(pre_extraction))
     post_comp = set(post_extraction)
     assert pre_comp == post_comp

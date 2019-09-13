@@ -86,7 +86,7 @@ evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / stateme
 #msg-template=
 
 # Set the output format. Available: text, parseable, colorized, json, msvs
-output-format=colorized
+output-format=text
 
 # Display a full report or only the messages.
 reports=no

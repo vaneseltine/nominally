@@ -8,16 +8,18 @@ from unidecode import unidecode_expect_ascii  # type: ignore
 
 from nominally import config
 
-logger = logging.getLogger("nominally")
+# print("nominally")
 
 Pieces = T.List[str]
 PiecesList = T.List[Pieces]
-PiecesDict = T.Dict[str, Pieces]
+PiecesDefaultDict = T.DefaultDict[str, Pieces]
 
 if T.TYPE_CHECKING:
     MappingBase = T.Mapping[str, str]
 else:
     MappingBase = abc.Mapping
+
+from collections import defaultdict
 
 
 class Name(MappingBase):
@@ -28,47 +30,63 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
         pieceslist, work = self._pre_process(self._raw)
+        # print(f"0, {pieceslist}, {work}")
         pieceslist, work["title"] = self._extract_title(pieceslist)
+        # print(f"1, {pieceslist}, {work}")
         pieceslist, work = self._extract_suffixes(pieceslist, work)
+        # print(f"2, {pieceslist}, {work}")
         comma_sep_pieceslist = self._remove_numbers(pieceslist)
+        # print(f"3, {comma_sep_pieceslist}, {work}")
         work = self._combine_pieces_dicts(
             work, self._lfm_from_list(comma_sep_pieceslist)
         )
+        # print(f"4, {work}")
         self._final = self._get_final(work)
-        self._cleaned = " | ".join(work["cleaned"])
+        # print(f"5, {work}")
+        # print(self._final)
+        self._cleaned = set(work["cleaned"])
+        # print(self._cleaned)
 
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
-            logger.info('Unparsable: "%s" ', self._raw)
-        print(self.report())
+            print('Unparsable: "%s" ', self._raw)
+        # print(self.report())
 
-    @staticmethod
-    def _combine_pieces_dicts(dict1: PiecesDict, dict2: PiecesDict) -> PiecesDict:
-        outdict: PiecesDict = dict()
-        for key in set(dict1) | set(dict2):
-            val1 = dict1.get(key, [])
-            val2 = dict2.get(key, [])
-            if isinstance(val1, list) and isinstance(val2, list):
-                outdict[key] = val1 + val2
-            elif val1 == val2:
-                outdict[key] = val1
-            else:
-                print("Throwing away", key, val1, val2)
+    @classmethod
+    def _combine_pieces_dicts(
+        cls, dict1: PiecesDefaultDict, dict2: PiecesDefaultDict
+    ) -> PiecesDefaultDict:
+        # print(f"comb in1 {dict1}")
+        # print(f"comb in2 {dict2}")
+        outdict: PiecesDefaultDict = defaultdict(
+            list,
+            {
+                key: dict1[key] + dict2[key]
+                for key in (set(dict1) | set(dict2) | set(cls._keys))
+            },
+        )
+        # print(f"comb out {outdict}")
         return outdict
 
     @classmethod
-    def _get_final(cls, work: PiecesDict) -> PiecesDict:
-        return {k: cls.final_clean(v) for k, v in work.items() if k in cls._keys}
+    def _get_final(cls, work: PiecesDefaultDict) -> T.Dict[str, Pieces]:
+        # print("get_final", work)
+        work["suffix"] += work["generational"]
+        final: T.Dict[str, Pieces] = {k: cls.final_clean(work[k]) for k in cls._keys}
+        # print(final)
+        return final
 
     @staticmethod
     def final_clean(pieces: Pieces) -> Pieces:
         return [s.replace(".", "") for s in pieces]
 
     @classmethod
-    def _lfm_from_list(cls, pieceslist: PiecesList) -> PiecesDict:
+    def _lfm_from_list(cls, pieceslist: PiecesList) -> PiecesDefaultDict:
 
-        result: PiecesDict = {"first": [], "middle": [], "last": []}
-
+        result: PiecesDefaultDict = defaultdict(
+            list, {"first": [], "middle": [], "last": []}
+        )
+        # print(f"_lfm_from_list", pieceslist)
         # Remove empties and finish if nothing of substance remains
         pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
@@ -96,23 +114,26 @@ class Name(MappingBase):
 
         # Everything remaining is a middle name
         result["middle"] = flatten_once(pieceslist)
+        # print(f"_lfm_from_list", result)
         return result
 
     @classmethod
-    def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDict]:
-        print(repr(s))
-        working: PiecesDict = {k: [] for k in cls._keys}
+    def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDefaultDict]:
+        # print(repr(s))
+        # working: PiecesDefaultDict = {k: [] for k in cls._keys}
+        working: PiecesDefaultDict = defaultdict(list, {k: [] for k in cls._keys})
 
         s = str(s).lower()
         s, working = cls._sweep_nicknames(s, working)
         s, working = cls._sweep_suffixes(s, working)
         s = cls._clean_input(s)
-        print(repr(s))
+        # print(repr(s))
 
         pieceslist = cls._string_to_pieceslist(s)
         working["cleaned"] = [s]
-        if working["nickname"]:
-            working["cleaned"] += working["nickname"]
+        for k in [*cls._keys, "generational"]:
+            if working[k]:
+                working["cleaned"] += working[k]
         return pieceslist, working
 
     @staticmethod
@@ -123,11 +144,11 @@ class Name(MappingBase):
         would depend on special characters."""
         s = unidecode_expect_ascii(s).lower()
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
-        s = re.sub(r";|:|,", ", ", s)  # convert : ; , to , with spacing
+        s = re.sub(r"\s*(;|:|,)", ", ", s)  # convert : ; , to , with spacing
         s = re.sub(r"\.\s*", ". ", s)  # reduce/add space after each .
         s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
         s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all excluding - ' , .
-        s = re.sub(r"\s+", " ", s)  # condense all whitespace to single space
+        s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
         s = s.strip("- ")  # drop leading/trailing hyphens and spaces
         if condense:
             s = s.replace(" ", "")
@@ -139,25 +160,33 @@ class Name(MappingBase):
         return [x.split() for x in pieces if x]
 
     @classmethod
-    def _sweep_suffixes(cls, s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
-        working["gen_suffix"] = False
+    def _sweep_suffixes(
+        cls, s: str, working: PiecesDefaultDict
+    ) -> T.Tuple[str, PiecesDefaultDict]:
+        # print(f"_sweep_suffixes in {s} {working}")
         for pat, generational in config.SUFFIX_PATTERNS.items():
-            print("searching", pat)
+            # print(f"searching {pat}")
             if pat.search(s):
-                print("yay", pat, s)
+                # print(f"found {pat} {s}")
                 new_suffix = [
                     cls._clean_input(x, condense=True) for x in pat.findall(s)
                 ]
-                working["suffix"] += new_suffix
                 if generational:
-                    working["gen_suffix"] = True
+                    working["generational"] += new_suffix
+                else:
+                    working["suffix"] += new_suffix
                 s = pat.sub("", s)
-                print("yay", pat, s)
-        print("final", s, working)
+                # print(f"yay, {pat}, {repr(s)}")
+            # else:
+            # print(f"unfnd {pat} {s}")
+        s = cls._clean_input(s)
+        # print(f"_sweep_suffixes out {s} {working}")
         return s, working
 
     @classmethod
-    def _sweep_nicknames(cls, s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
+    def _sweep_nicknames(
+        cls, s: str, working: PiecesDefaultDict
+    ) -> T.Tuple[str, PiecesDefaultDict]:
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -189,13 +218,13 @@ class Name(MappingBase):
 
     @staticmethod
     def _extract_suffixes(
-        incoming: PiecesList, working: PiecesDict, min_names: int = 2
-    ) -> T.Tuple[PiecesList, PiecesDict]:
+        incoming: PiecesList, working: PiecesDefaultDict, min_names: int = 2
+    ) -> T.Tuple[PiecesList, PiecesDefaultDict]:
 
         out_pl: PiecesList = []
         banking: Pieces = []
 
-        print("come in xtact suff", working["suffix"])
+        # print(f"come in xtact suff{working}")
         queued = deepcopy(incoming)  # avoid popping side effects
         while queued:
             handling = queued.pop()
@@ -208,22 +237,20 @@ class Name(MappingBase):
                 ):
                     banking = handling + banking
                     break
-                print("hbqo", handling, banking, queued, working["suffix"])
+                # print(f"hbqo {handling}, {banking}, {queued}, {working['suffix']}")
                 word = handling.pop()
                 if is_suffix(word):
-                    print("SUFFIX!", word)
                     if is_generational_suffix(word):
-                        if working.get("gen_suffix"):
-                            print(f"We're going to slot this into mid name: {word}")
-                            print(working["middle"])
+                        if working.get("generational"):
+                            # print(f"We're going to slot this into mid name: {word}")
+                            # print(working["middle"])
                             working["middle"].insert(-1, word)
-                            print(working["middle"])
+                            # print(working["middle"])
                         else:
-                            print(f"First gen: {word}")
-                            working["suffix"].insert(0, word)
-                        working["gen_suffix"] = True
+                            # print(f"First gen: {word}")
+                            working["generational"] = [word]
                     else:
-                        print(f"Not gen: {word}")
+                        # print(f"Not gen: {word}")
                         working["suffix"].insert(0, word)
 
                 else:
@@ -231,7 +258,7 @@ class Name(MappingBase):
                     break
             if banking:
                 out_pl.insert(0, banking)
-        print("out working", working)
+        # print(f"out working {working}")
         return out_pl, working
 
     @staticmethod
@@ -343,7 +370,7 @@ class Name(MappingBase):
         return self._raw
 
     @property
-    def cleaned(self) -> str:
+    def cleaned(self) -> T.Set[str]:
         return self._cleaned
 
     def report(self) -> T.Dict[str, T.Any]:
@@ -378,11 +405,6 @@ def is_suffix(piece: str) -> bool:
 
 def is_generational_suffix(piece: str) -> bool:
     return piece in config.GENERATIONAL_SUFFIX
-
-
-def is_likely_not_name(piece: str) -> bool:
-    return False
-    return piece in config.POSSIBLE_NAME in config.GENERATIONAL_SUFFIX
 
 
 def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:
