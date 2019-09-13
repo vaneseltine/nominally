@@ -62,6 +62,4 @@ def test_conjunction_avoid(static):
     ),
 )
 def issue_14_mc_and_mac_as_prefix(first, second):
-    print(Name(first))
-    print(Name(second))
     assert Name(first) == Name(second)
