@@ -17,14 +17,13 @@ CONJUNCTIONS = {"y"}
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
-SUFFIX_OR_NAME = {"junior", "v", "vi", "ix", "x"}
 
 # Cannot include things that could also be middle or last names
-SUFFIX_NOT_NAME = {
-    "jd",
-    "md",
-    "phd",
+POSSIBLE_NAME = {"junior", "v", "vi", "ix", "x"}
+PROFESSIONAL_SUFFIX = {"jd", "md", "phd"}
+GENERATIONAL_SUFFIX = {
     "sr",
+    "junior",
     "jr",
     "2",
     "2nd",
@@ -37,10 +36,10 @@ SUFFIX_NOT_NAME = {
     "iv",
     "5",
     "5th",
-    # "v",
+    "v",
     "6",
     "6th",
-    # "vi",
+    "vi",
     "7",
     "7th",
     "vii",
@@ -49,13 +48,14 @@ SUFFIX_NOT_NAME = {
     "viii",
     "9",
     "9th",
-    # "ix",
+    "ix",
     "10",
     "10th",
-    # "x",
+    "x",
 }
 
-SUFFIXES = SUFFIX_OR_NAME ^ SUFFIX_NOT_NAME
+SUFFIXES = GENERATIONAL_SUFFIX ^ PROFESSIONAL_SUFFIX
+SUFFIX_OR_NAME = SUFFIXES & POSSIBLE_NAME
 
 # Name pieces that appear before a last name. Prefixes join to the piece
 # that follows them to make one new piece. They can be chained together, e.g

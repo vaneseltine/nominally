@@ -14,10 +14,11 @@ Run a quick name at the command line:
 ```
   $ nominally "Jimmy Blankinsop"
          raw: Jimmy Blankinsop
-      parsed: jimmy blankinsop
+     cleaned: jimmy blankinsop
+      parsed: blankinsop, jimmy
         list: ['', 'jimmy', '', 'blankinsop', '', '']
-      title:
-      first: jimmy
+       title:
+       first: jimmy
       middle:
         last: blankinsop
       suffix:
@@ -48,7 +49,7 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 >>> n.raw
 'DR. PEACHES BARTKOWICZ'
 >>> n.report()
-{'raw': 'DR. PEACHES BARTKOWICZ', 'parsed': 'dr peaches bartkowicz', 'list': ['dr', 'peaches', '', 'bartkowicz', '', ''], 'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}
+{'raw': 'DR. PEACHES BARTKOWICZ', 'cleaned': 'dr peaches bartkowicz', 'parsed': 'bartkowicz, dr peaches', 'list': ['dr', 'peaches', '', 'bartkowicz', '', ''], 'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}
 ```
 Now a live example using Pandas:  https://colab.research.google.com/gist/vaneseltine/964fc9dec60e59410b91bbcaf1fe2d11/nom_pandas.ipynb
 

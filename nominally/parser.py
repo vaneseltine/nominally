@@ -149,6 +149,8 @@ class Name(MappingBase):
         out_suffixes: Pieces = []
         banking: Pieces = []
 
+        has_generational = False
+
         queued = deepcopy(incoming)  # avoid popping side effects
         while queued:
             handling = queued.pop()
@@ -164,6 +166,15 @@ class Name(MappingBase):
                 word = handling.pop()
                 if is_suffix(word):
                     out_suffixes.insert(0, word)
+                    if is_generational_suffix(word):
+                        if has_generational:
+                            logger.debug("We're going to ignore this: ", word)
+                        else:
+                            logger.debug("First gen:", word)
+                        has_generational = True
+                    else:
+                        logger.debug("Not gen:", word)
+
                 else:
                     banking = handling + [word] + banking
                     break
@@ -312,6 +323,10 @@ def is_prefix(piece: str) -> bool:
 
 def is_suffix(piece: str) -> bool:
     return piece in config.SUFFIXES
+
+
+def is_generational_suffix(piece: str) -> bool:
+    return piece in config.GENERATIONAL_SUFFIX
 
 
 def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:
