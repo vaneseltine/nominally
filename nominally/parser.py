@@ -77,10 +77,12 @@ class Name(MappingBase):
     def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDict]:
         logger.debug(repr(s))
         working: PiecesDict = {k: [] for k in cls._keys}
+
         s = str(s).lower()
         s, working = cls._parse_nicknames(s, working)
         s = cls._clean_input(s)
         logger.debug(repr(s))
+
         pieceslist = cls._string_to_pieceslist(s)
         working["cleaned"] = [s]
         if working["nickname"]:
@@ -107,8 +109,8 @@ class Name(MappingBase):
         pieces = re.split(r"\s*,\s*", remaining)
         return [x.split() for x in pieces if x]
 
-    @staticmethod
-    def _parse_nicknames(s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
+    @classmethod
+    def _parse_nicknames(cls, s: str, working: PiecesDict) -> T.Tuple[str, PiecesDict]:
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -120,7 +122,7 @@ class Name(MappingBase):
 
         for pattern in config.NICKNAME_PATTERNS:
             if pattern.search(s):
-                working["nickname"] += [x for x in pattern.findall(s)]
+                working["nickname"] += [cls._clean_input(x) for x in pattern.findall(s)]
                 s = pattern.sub("", s)
         return s, working
 
@@ -309,7 +311,7 @@ def is_prefix(piece: str) -> bool:
 
 
 def is_suffix(piece: str) -> bool:
-    return piece in (config.SUFFIXES)
+    return piece in config.SUFFIXES
 
 
 def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:

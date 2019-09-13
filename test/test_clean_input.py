@@ -98,3 +98,9 @@ class TestCleanName:
     )
     def t_strip_margin_hyphens(self, raw, cooked):
         assert Name._clean_input(raw) == cooked
+
+
+def issue_4_clean_nicknames():
+    name = Name("ang%ua (ba%%rky) uberwald")
+    assert name.first == "angua"
+    assert name.nickname == "barky"

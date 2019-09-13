@@ -7,20 +7,6 @@ from .conftest import dict_entry_test
 
 @pytest.mark.xfail(
     raises=AssertionError,
-    reason="Allow multiword single quote nicknames while still supporting apostrophes",
-)
-@pytest.mark.xfail(
-    raises=AssertionError,
-    reason="Clean each nickname exactly like post-nickname full names",
-)
-def issue_4_clean_nicknames():
-    name = Name("ang%ua (ba%%rky) uberwald")
-    assert name.first == "angua"
-    assert name.nickname == "barky"
-
-
-@pytest.mark.xfail(
-    raises=AssertionError,
     reason="Probably not, but add a placeholder to keep names separated",
 )
 def issue_5_leave_non_comma_placeholder_from_nicknames():
