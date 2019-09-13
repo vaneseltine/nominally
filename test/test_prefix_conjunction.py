@@ -12,7 +12,7 @@ from nominally.parser import Name
     ),
 )
 def test_prefix_combining(incoming, outgoing):
-    assert Name._combine_prefixes(incoming) == outgoing
+    assert Name._combine_rightmost_prefixes(incoming) == outgoing
 
 
 @pytest.mark.parametrize(
@@ -26,7 +26,7 @@ def test_prefix_combining(incoming, outgoing):
     ),
 )
 def test_prefix_avoid(static):
-    assert Name._combine_prefixes(static) == static
+    assert Name._combine_rightmost_prefixes(static) == static
 
 
 @pytest.mark.parametrize(
@@ -63,3 +63,11 @@ def test_conjunction_avoid(static):
 )
 def issue_14_mc_and_mac_as_prefix(first, second):
     assert Name(first) == Name(second)
+
+
+def issue_22_ambiguous_handling_of_prefixes_in_first_name():
+    name1 = Name("de ook, van ook yolo moomoo")
+    print(name1, "\n")
+    name2 = Name("van ook yolo moomoo de ook")
+    print(name2, "\n")
+    assert name1 == name2

@@ -5,11 +5,6 @@ from nominally import Name
 from .conftest import dict_entry_test
 
 
-@pytest.mark.xfail(raises=AssertionError)
-def issue_22_ambiguous_handling_of_prefixes_in_first_name():
-    assert Name("de ook, van ook") == Name("van ook de ook")
-
-
 @pytest.mark.parametrize(
     "entry",
     [{"raw": "vimes, samuel v", "first": "samuel", "middle": "v", "last": "vimes"}],

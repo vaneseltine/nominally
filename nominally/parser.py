@@ -8,7 +8,7 @@ from unidecode import unidecode_expect_ascii  # type: ignore
 
 from nominally import config
 
-# print("nominally")
+print("nominally")
 
 Pieces = T.List[str]
 PiecesList = T.List[Pieces]
@@ -51,71 +51,6 @@ class Name(MappingBase):
         # print(self.report())
 
     @classmethod
-    def _combine_pieces_dicts(
-        cls, dict1: PiecesDefaultDict, dict2: PiecesDefaultDict
-    ) -> PiecesDefaultDict:
-        # print(f"comb in1 {dict1}")
-        # print(f"comb in2 {dict2}")
-        outdict: PiecesDefaultDict = defaultdict(
-            list,
-            {
-                key: dict1[key] + dict2[key]
-                for key in (set(dict1) | set(dict2) | set(cls._keys))
-            },
-        )
-        # print(f"comb out {outdict}")
-        return outdict
-
-    @classmethod
-    def _get_final(cls, work: PiecesDefaultDict) -> T.Dict[str, Pieces]:
-        # print("get_final", work)
-        work["suffix"] += work["generational"]
-        final: T.Dict[str, Pieces] = {k: cls.final_clean(work[k]) for k in cls._keys}
-        # print(final)
-        return final
-
-    @staticmethod
-    def final_clean(pieces: Pieces) -> Pieces:
-        return [s.replace(".", "") for s in pieces]
-
-    @classmethod
-    def _lfm_from_list(cls, pieceslist: PiecesList) -> PiecesDefaultDict:
-
-        result: PiecesDefaultDict = defaultdict(
-            list, {"first": [], "middle": [], "last": []}
-        )
-        # print(f"_lfm_from_list", pieceslist)
-        # Remove empties and finish if nothing of substance remains
-        pieceslist = remove_falsey(pieceslist)
-        if not any(flatten_once(pieceslist)):
-            return result  # return if empty
-
-        # If we have only one piece left, group words and take its rightmost cluster
-        if len(pieceslist) == 1:
-            pieceslist[0] = cls._parse_pieces(pieceslist[0])
-            result["last"] = [pieceslist[0].pop(-1)]
-        # Otherwise, meaning multiple pieces remain: take its rightmost piece
-        else:
-            result["last"] = pieceslist.pop(0)
-
-        # Remove empties and finish if nothing of substance remains
-        pieceslist = remove_falsey(pieceslist)
-        if not any(flatten_once(pieceslist)):
-            return result
-
-        # If only one piece remains, take its leftmost word
-        if len(pieceslist) == 1:
-            result["first"] = [pieceslist[0].pop(0)]
-        # Otherwise, meaning multiple pieces remain: take its leftmost piece
-        else:
-            result["first"] = pieceslist.pop(0)
-
-        # Everything remaining is a middle name
-        result["middle"] = flatten_once(pieceslist)
-        # print(f"_lfm_from_list", result)
-        return result
-
-    @classmethod
     def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDefaultDict]:
         # print(repr(s))
         # working: PiecesDefaultDict = {k: [] for k in cls._keys}
@@ -152,11 +87,6 @@ class Name(MappingBase):
             s = s.replace(" ", "")
         return s
 
-    @staticmethod
-    def _string_to_pieceslist(remaining: str) -> PiecesList:
-        pieces = re.split(r"\s*,\s*", remaining)
-        return [x.split() for x in pieces if x]
-
     @classmethod
     def _sweep_suffixes(
         cls, s: str, working: PiecesDefaultDict
@@ -177,6 +107,7 @@ class Name(MappingBase):
                 # print(f"yay, {pat}, {repr(s)}")
             # else:
             # print(f"unfnd {pat} {s}")
+
         s = cls._clean_input(s)
         # print(f"_sweep_suffixes out {s} {working}")
         return s, working
@@ -264,8 +195,72 @@ class Name(MappingBase):
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
         return remove_falsey(no_numbers)
 
+    @staticmethod
+    def _string_to_pieceslist(remaining: str) -> PiecesList:
+        pieces = re.split(r"\s*,\s*", remaining)
+        return [x.split() for x in pieces if x]
+
     @classmethod
-    def _parse_pieces(cls, pieces: Pieces) -> Pieces:
+    def _combine_pieces_dicts(
+        cls, dict1: PiecesDefaultDict, dict2: PiecesDefaultDict
+    ) -> PiecesDefaultDict:
+        outdict: PiecesDefaultDict = defaultdict(
+            list,
+            {
+                key: dict1[key] + dict2[key]
+                for key in (set(dict1) | set(dict2) | set(cls._keys))
+            },
+        )
+        return outdict
+
+    @classmethod
+    def _get_final(cls, work: PiecesDefaultDict) -> T.Dict[str, Pieces]:
+        work["suffix"] += work["generational"]
+        final: T.Dict[str, Pieces] = {k: cls.final_clean(work[k]) for k in cls._keys}
+        return final
+
+    @staticmethod
+    def final_clean(pieces: Pieces) -> Pieces:
+        return [s.replace(".", "") for s in pieces]
+
+    @classmethod
+    def _lfm_from_list(cls, pieceslist: PiecesList) -> PiecesDefaultDict:
+
+        result: PiecesDefaultDict = defaultdict(
+            list, {"first": [], "middle": [], "last": []}
+        )
+        # Remove empties and finish if nothing of substance remains
+        pieceslist = remove_falsey(pieceslist)
+        if not any(flatten_once(pieceslist)):
+            return result  # return if empty
+
+        # If we have only one piece left, group words and take its rightmost cluster
+        if len(pieceslist) == 1:
+            pieceslist[0] = cls._cluster_words(pieceslist[0])
+            result["last"] = [pieceslist[0].pop(-1)]
+        # Otherwise, meaning multiple pieces remain: take its rightmost piece
+        else:
+            result["last"] = pieceslist.pop(0)
+        # print("-------------------------------------------", pieceslist)
+
+        # Remove empties and finish if nothing of substance remains
+        pieceslist = remove_falsey(pieceslist)
+        if not any(flatten_once(pieceslist)):
+            return result
+
+        # If only one piece remains, take its leftmost word
+        if len(pieceslist) == 1:
+            result["first"] = [pieceslist[0].pop(0)]
+        # Otherwise, meaning multiple pieces remain: take its leftmost piece
+        else:
+            result["first"] = pieceslist.pop(0)
+
+        # Everything remaining is a middle name
+        result["middle"] = flatten_once(pieceslist)
+        return result
+
+    @classmethod
+    def _cluster_words(cls, pieces: Pieces) -> Pieces:
         """
         Split list of pieces down to individual words and
             - join on conjuctions if appropriate
@@ -273,7 +268,7 @@ class Name(MappingBase):
         """
         out_pieces = cls._break_down_to_words(pieces)
         out_pieces = cls._combine_conjunctions(out_pieces)
-        out_pieces = cls._combine_prefixes(out_pieces)
+        out_pieces = cls._combine_rightmost_prefixes(out_pieces)
         return out_pieces
 
     @staticmethod
@@ -297,20 +292,31 @@ class Name(MappingBase):
         return result
 
     @staticmethod
-    def _combine_prefixes(pieces: Pieces) -> Pieces:
+    def _combine_rightmost_prefixes(pieces: Pieces) -> Pieces:
         if len(pieces) < 3:
             return pieces
-
-        result: PiecesList = [[]]
+        # print(f"---- combine in {pieces}")
+        result: PiecesList = []
         queued = deepcopy(pieces)  # avoid popping side effects
         while queued:
             word = queued.pop(-1)
-            # A prefix goes in the first box; otherwise make a new box
-            if is_prefix(word):
-                result[0].insert(0, word)
-            else:
-                # Otherwise make a new box
+            # Make a new box
+            if not is_prefix(word):
                 result.insert(0, [word])
+                # print(len(pieces), len(result))
+                if len(result) > 1:
+                    # print("collapse res", result, pieces)
+                    result = [[s] for s in queued] + result
+                    # print("collapse res", result, pieces)
+                    break
+                continue
+
+            # A prefix goes in the first box
+            if not result:
+                result = [[]]
+            result[0].insert(0, word)
+
+        # print(f"---- combine out {result}")
         final_pieces: Pieces = [" ".join(piece) for piece in result if piece]
         return final_pieces
 
