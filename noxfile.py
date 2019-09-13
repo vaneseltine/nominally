@@ -107,7 +107,9 @@ def lint_typing(session):
 
 @nox.session(python=False)
 def lint_black(session):
-    cmd = "python -m black -t py36 --check .".split()
+    cmd = "python -m black -t py36 .".split()
+    if CI_LIVE:
+        cmd = cmd + ["--check"]
     session.run(*cmd)
 
 
@@ -149,9 +151,6 @@ def run_various_invocations(session):
         ]:
             cmd = (prefix + main_cmd).split()
             session.run(*cmd, silent=True)
-    examples = list(Path("./nominally/examples/").glob("*.py"))
-    for example in examples:
-        session.run("python", str(example), silent=True)
 
 
 @nox.session(python=False)
