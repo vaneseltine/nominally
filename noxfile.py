@@ -13,6 +13,8 @@ CI_LIVE = os.getenv("CI", "").lower() == "true"
 if CI_LIVE:
     nox.options.stop_on_first_error = True  # Avoid premature deployment
 
+nox.options.stop_on_first_error = True
+
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
 
@@ -162,6 +164,18 @@ def deploy_to_pypi(session):
     print("Current version is more recent than PyPI. DEPLOY!")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
     session.run("python", "-m", "twine", "upload", "dist/*")
+
+
+@nox.session(python=False)
+def push_to_github(session):
+    if not nox.options.stop_on_first_error:
+        session.skip("Error-free run disabled")
+    if os.getenv("DESKTOP_SESSION") != "i3" or os.getenv("HOME") != "/home/matt":
+        session.skip("Auto-push only from home")
+    if subprocess.check_output(["git", "add", "-n", "--all"]):
+        session.skip("Uncommitted changes")
+    output = subprocess.check_output(["git", "push"])
+    print(output.decode("utf8"))
 
 
 if __name__ == "__main__":
