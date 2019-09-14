@@ -99,7 +99,6 @@ class Name(MappingBase):
         cls, s: str, working: PiecesDefaultDict
     ) -> T.Tuple[str, PiecesDefaultDict]:
         if working["generational"]:
-            print("MOOOOO")
             return s, working
         if not config.JUNIOR_PATTERN.findall(s):
             return s, working
@@ -262,26 +261,24 @@ class Name(MappingBase):
         if len(pieces) < 3:
             return pieces
         # print(f"---- combine in {pieces}")
-        result: PiecesList = []
+        result: PiecesList = [[]]
         while pieces:
             word = pieces.pop(-1)
-            # Make a new box
-            if not is_prefix(word):
-                result.insert(0, [word])
-
-                if len(result) > 1:
-                    # print("collapse res", result, pieces)
-                    result = [[s] for s in pieces] + result
-                    # print("collapse res", result, pieces)
-                    break
-                else:
-                    continue
-
             # A prefix goes in the first box
-            if not result:
-                result = [[]]
-            result[0].insert(0, word)
+            if is_prefix(word):
+                result[0].insert(0, word)
+                continue
+            # Make a new box
+            result.insert(0, [word])
+            # print(f"result at 270 is {result}")
+            if len(result) > 2:
+                # print("collapse res", result, pieces)
+                result = [[s] for s in pieces] + result
+                # print("collapse res", result, pieces)
+                break
 
+            # print(f"result at 283 is {result}")
+        # print(f"pieces {pieces}")
         # print(f"---- combine out {result}")
         final_pieces: Pieces = [" ".join(piece) for piece in result if piece]
         return final_pieces

@@ -14,7 +14,8 @@ disable=bad-continuation,               # handled by black
         missing-docstring,              # yes yes
         empty-docstring,                 # yes yes yes
         protected-access,
-        no-self-use
+        no-self-use,
+        duplicate-code
 
 # Display a full report or only the messages.
 reports=no

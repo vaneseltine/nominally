@@ -3,6 +3,10 @@ import pytest
 from nominally.parser import Name
 
 
+def only_weird_prefixes():
+    assert Name("van de von der von")
+
+
 @pytest.mark.parametrize(
     "incoming, outgoing",
     (
