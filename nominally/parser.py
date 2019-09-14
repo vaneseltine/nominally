@@ -1,4 +1,3 @@
-# import logging
 import re
 import typing as T
 from collections import abc, defaultdict
@@ -30,7 +29,6 @@ class Name(MappingBase):
         pieceslist = self._remove_numbers(pieceslist)
         pieceslist, work = self._grab_junior(pieceslist, work)
         work = self._lfm_from_list(pieceslist, work)
-        # work = self._combine_pieces_dicts(work, lfm_dict)
         self._final = self._get_final(work)
         self._cleaned = set(work["cleaned"])
 
@@ -101,6 +99,7 @@ class Name(MappingBase):
         cls, s: str, working: PiecesDefaultDict
     ) -> T.Tuple[str, PiecesDefaultDict]:
         if working["generational"]:
+            print("MOOOOO")
             return s, working
         if not config.JUNIOR_PATTERN.findall(s):
             return s, working
@@ -154,19 +153,6 @@ class Name(MappingBase):
     def _string_to_pieceslist(remaining: str) -> PiecesList:
         pieces = re.split(r"\s*,\s*", remaining)
         return [x.split() for x in pieces if x]
-
-    @classmethod
-    def _combine_pieces_dicts(
-        cls, dict1: PiecesDefaultDict, dict2: PiecesDefaultDict
-    ) -> PiecesDefaultDict:
-        outdict: PiecesDefaultDict = defaultdict(
-            list,
-            {
-                key: dict1[key] + dict2[key]
-                for key in (set(dict1) | set(dict2) | set(cls._keys))
-            },
-        )
-        return outdict
 
     @classmethod
     def _get_final(cls, work: PiecesDefaultDict) -> T.Dict[str, Pieces]:
@@ -277,16 +263,15 @@ class Name(MappingBase):
             return pieces
         # print(f"---- combine in {pieces}")
         result: PiecesList = []
-        queued = deepcopy(pieces)  # avoid popping side effects
-        while queued:
-            word = queued.pop(-1)
+        while pieces:
+            word = pieces.pop(-1)
             # Make a new box
             if not is_prefix(word):
                 result.insert(0, [word])
 
                 if len(result) > 1:
                     # print("collapse res", result, pieces)
-                    result = [[s] for s in queued] + result
+                    result = [[s] for s in pieces] + result
                     # print("collapse res", result, pieces)
                     break
                 else:
@@ -366,10 +351,6 @@ class Name(MappingBase):
             "list": list(self.values()),
             **dict(self),
         }
-
-
-def count_words(piecelist: T.Sequence[T.Any]) -> int:
-    return sum(len(x) for x in piecelist)
 
 
 def is_title(value: str) -> bool:

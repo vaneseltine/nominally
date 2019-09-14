@@ -35,4 +35,4 @@ def make_ids(entry):
 def add_output_spacing():
     print("")
     yield
-    # print("")
+    print("")

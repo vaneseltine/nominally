@@ -151,3 +151,39 @@ def issue_15_limit_generational_suffixes(entry):
 )
 def issue_25_more_suffix_issues(entry):
     dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "junior e. i vimes",
+            "first": "junior",
+            "middle": "e i",
+            "last": "vimes",
+        },
+        {
+            "raw": "junior e. ii vimes",
+            "first": "junior",
+            "middle": "e",
+            "suffix": "ii",
+            "last": "vimes",
+        },
+        {
+            "raw": "junior e. iii vimes",
+            "first": "junior",
+            "middle": "e",
+            "suffix": "iii",
+            "last": "vimes",
+        },
+        {
+            "raw": "junior e. iv vimes",
+            "first": "junior",
+            "middle": "e",
+            "suffix": "iv",
+            "last": "vimes",
+        },
+    ],
+)
+def test_junior_with_gen_suffix(entry):
+    dict_entry_test(Name, entry)
