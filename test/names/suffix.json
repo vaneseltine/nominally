@@ -39,13 +39,6 @@
         "suffix": "jr"
     },
     {
-        "id": "two_suffixes_suffix_comma_format",
-        "raw": "franklin washington, jr md",
-        "first": "franklin",
-        "last": "washington",
-        "suffix": "jr md"
-    },
-    {
         "id": "suffix_with_single_comma_format",
         "raw": "john doe jr., md",
         "first": "john",
@@ -147,5 +140,40 @@
         "first": "kenneth",
         "last": "clarke",
         "suffix": "md phd"
+    },
+    {
+        "id": "two_suffixes_suffix_comma_format",
+        "raw": "franklin washington, m.d. j.d.",
+        "first": "franklin",
+        "last": "washington",
+        "suffix": "jd md"
+    },
+    {
+        "id": "two_suffixes_suffix_comma_format",
+        "raw": "franklin washington, j.d. m.d.",
+        "first": "franklin",
+        "last": "washington",
+        "suffix": "jd md"
+    },
+    {
+        "id": "three_suffixes_suffix_comma_format",
+        "raw": "franklin washington, j.d. md jr.",
+        "first": "franklin",
+        "last": "washington",
+        "suffix": "jd md jr"
+    },
+    {
+        "id": "three_suffixes_suffix_comma_format",
+        "raw": "franklin washington, jd md jr.",
+        "first": "franklin",
+        "last": "washington",
+        "suffix": "jd md jr"
+    },
+    {
+        "id": "three_suffixes_suffix_comma_format",
+        "raw": "franklin washington, jd md sr.",
+        "first": "franklin",
+        "last": "washington",
+        "suffix": "jd md sr"
     }
 ]

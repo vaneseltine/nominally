@@ -10,6 +10,9 @@ def dict_entry_test(testclass, entry):
     n = testclass(entry["raw"])
     observed = dict(n)
     expected = {key: entry.get(key, "") for key in observed.keys()}
+    print("raw:", entry["raw"])
+    print("exp:", expected["suffix"])
+    print("obs:", observed["suffix"])
     expected["suffix"] = set(expected["suffix"])
     observed["suffix"] = set(observed["suffix"])
     assert observed == expected
@@ -28,8 +31,8 @@ def make_ids(entry):
     return entry.get("id") or entry.get("raw")
 
 
-@pytest.fixture(autouse=False)
+@pytest.fixture(autouse=True)
 def add_output_spacing():
     print("")
     yield
-    print("")
+    # print("")

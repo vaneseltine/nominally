@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import pytest
 
 from nominally import Name
@@ -24,4 +26,8 @@ from nominally import Name
     ],
 )
 def test_parse_fml(incoming, fir, mid, las):
-    assert Name._lfm_from_list(incoming) == {"first": fir, "middle": mid, "last": las}
+    assert Name._lfm_from_list(incoming, defaultdict(list)) == {
+        "first": fir,
+        "middle": mid,
+        "last": las,
+    }

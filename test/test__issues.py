@@ -42,6 +42,13 @@ from .conftest import dict_entry_test
             "last": "della",
         },
         {
+            "id": "della_as_last_name2",
+            "raw": "della, alex eggers",
+            "first": "alex",
+            "middle": "eggers",
+            "last": "della",
+        },
+        {
             "id": "della_as_last_name",
             "raw": "alex eggers della jr",
             "first": "alex",
@@ -62,6 +69,30 @@ from .conftest import dict_entry_test
             "first": "alex",
             "middle": "della",
             "last": "fennel",
+        },
+        {
+            "id": "de_la_too",
+            "raw": "alex de la fennel",
+            "first": "alex",
+            "last": "de la fennel",
+        },
+        {
+            "id": "von_der_too",
+            "raw": "alex von der fennel",
+            "first": "alex",
+            "last": "von der fennel",
+        },
+        {
+            "id": "de_la_too2",
+            "raw": "de la fennel, alex",
+            "first": "alex",
+            "last": "de la fennel",
+        },
+        {
+            "id": "von_der_too",
+            "raw": "von der fennel, alex",
+            "first": "alex",
+            "last": "von der fennel",
         },
     ],
 )

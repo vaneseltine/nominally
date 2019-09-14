@@ -27,11 +27,10 @@ class Name(MappingBase):
         self._raw = raw
         pieceslist, work = self._pre_process(self._raw)
         pieceslist, work["title"] = self._extract_title(pieceslist)
-        pieceslist, work = self._extract_suffixes(pieceslist, work)
-        comma_sep_pieceslist = self._remove_numbers(pieceslist)
-        work = self._combine_pieces_dicts(
-            work, self._lfm_from_list(comma_sep_pieceslist)
-        )
+        pieceslist = self._remove_numbers(pieceslist)
+        pieceslist, work = self._grab_junior(pieceslist, work)
+        work = self._lfm_from_list(pieceslist, work)
+        # work = self._combine_pieces_dicts(work, lfm_dict)
         self._final = self._get_final(work)
         self._cleaned = set(work["cleaned"])
 
@@ -65,7 +64,7 @@ class Name(MappingBase):
         would depend on special characters."""
         s = unidecode_expect_ascii(s).lower()
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
-        s = re.sub(r"\s*(;|:|,)", ", ", s)  # convert : ; , to , with spacing
+        s = re.sub(r"(\s*(;|:|,))+", ", ", s)  # convert : ; , to , with spacing
         s = re.sub(r"\.\s*", ". ", s)  # reduce/add space after each .
         s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
         s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all excluding - ' , .
@@ -92,9 +91,25 @@ class Name(MappingBase):
                 working["suffix"] += new_suffix
             s = pat.sub("", s)
             # print(f"yay, {pat}, {repr(s)}")
-
+        # Remove any comma-bracketed 'junior's
+        s, working = cls._sweep_junior(s, working)
         s = cls._clean_input(s)
-        # print(f"_sweep_suffixes out {s} {working}")
+        return s, working
+
+    @classmethod
+    def _sweep_junior(
+        cls, s: str, working: PiecesDefaultDict
+    ) -> T.Tuple[str, PiecesDefaultDict]:
+        if working["generational"]:
+            return s, working
+        if not config.JUNIOR_PATTERN.findall(s):
+            return s, working
+        if len(config.WORD_FINDER.findall(s)) < 3:
+            return s, working
+
+        s = config.JUNIOR_PATTERN.sub(", ", s)
+        working["generational"].insert(0, "junior")
+
         return s, working
 
     @classmethod
@@ -131,52 +146,6 @@ class Name(MappingBase):
         return outgoing, []
 
     @staticmethod
-    def _extract_suffixes(
-        incoming: PiecesList, working: PiecesDefaultDict, min_names: int = 2
-    ) -> T.Tuple[PiecesList, PiecesDefaultDict]:
-
-        out_pl: PiecesList = []
-        banking: Pieces = []
-
-        # print(f"come in xtact suff{working}")
-        queued = deepcopy(incoming)  # avoid popping side effects
-        while queued:
-            handling = queued.pop()
-            while handling:
-                banking = []
-                if (
-                    sum(len(x) for x in (handling, banking))
-                    + sum(count_words(pl) for pl in (queued, out_pl))
-                    <= min_names
-                ):
-                    banking = handling + banking
-                    break
-                # print(f"hbqo {handling}, {banking}, {queued}, {working['suffix']}")
-                word = handling.pop()
-                if is_suffix(word):
-                    if is_generational_suffix(word):
-                        # print("hey")
-                        if working.get("generational"):
-                            # print(f"We're going to slot this into mid name: {word}")
-                            # print(working["middle"])
-                            working["middle"].insert(-1, word)
-                            # print(working["middle"])
-                        else:
-                            # print(f"First gen: {word}")
-                            working["generational"] = [word]
-                    else:
-                        # print(f"Not gen: {word}")
-                        working["suffix"].insert(0, word)
-
-                else:
-                    banking = handling + [word] + banking
-                    break
-            if banking:
-                out_pl.insert(0, banking)
-        # print(f"out working {working}")
-        return out_pl, working
-
-    @staticmethod
     def _remove_numbers(pieces: PiecesList) -> PiecesList:
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
         return remove_falsey(no_numbers)
@@ -210,40 +179,65 @@ class Name(MappingBase):
         return [s.replace(".", "") for s in pieces]
 
     @classmethod
-    def _lfm_from_list(cls, pieceslist: PiecesList) -> PiecesDefaultDict:
+    def _grab_junior(
+        cls, pieceslist: PiecesList, work: PiecesDefaultDict
+    ) -> T.Tuple[PiecesList, PiecesDefaultDict]:
+        checklist = flatten_once(pieceslist)
+        if "junior" not in checklist:
+            return pieceslist, work
+        if len(checklist) < 3:
+            return pieceslist, work
+        if work["generational"]:
+            return pieceslist, work
 
-        result: PiecesDefaultDict = defaultdict(
-            list, {"first": [], "middle": [], "last": []}
-        )
+        if pieceslist[-1][-1] == "junior":
+            pieceslist[-1].remove("junior")
+            work["generational"].insert(0, "junior")
+            return pieceslist, work
+
+        first_name_cluster_index = 0 if len(pieceslist) == 1 else 1
+
+        junior_index = pieceslist[first_name_cluster_index].index("junior")
+
+        if junior_index:
+            pieceslist[first_name_cluster_index].remove("junior")
+            work["generational"].insert(0, "junior")
+
+        return pieceslist, work
+
+    @classmethod
+    def _lfm_from_list(
+        cls, pieceslist: PiecesList, work: PiecesDefaultDict
+    ) -> PiecesDefaultDict:
         # Remove empties and finish if nothing of substance remains
         pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
-            return result  # return if empty
+            return work  # return if empty
 
         # If we have only one piece left, group words and take its rightmost cluster
         if len(pieceslist) == 1:
             pieceslist[0] = cls._cluster_words(pieceslist[0])
-            result["last"] = [pieceslist[0].pop(-1)]
+            work["last"] = [pieceslist[0].pop(-1)]
         # Otherwise, meaning multiple pieces remain: take its rightmost piece
         else:
-            result["last"] = pieceslist.pop(0)
+            work["last"] = pieceslist.pop(0)
         # print("-------------------------------------------", pieceslist)
 
         # Remove empties and finish if nothing of substance remains
         pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
-            return result
+            return work
 
         # If only one piece remains, take its leftmost word
         if len(pieceslist) == 1:
-            result["first"] = [pieceslist[0].pop(0)]
+            work["first"] = [pieceslist[0].pop(0)]
         # Otherwise, meaning multiple pieces remain: take its leftmost piece
         else:
-            result["first"] = pieceslist.pop(0)
+            work["first"] = pieceslist.pop(0)
 
         # Everything remaining is a middle name
-        result["middle"] = flatten_once(pieceslist)
-        return result
+        work["middle"] = flatten_once(pieceslist)
+        return work
 
     @classmethod
     def _cluster_words(cls, pieces: Pieces) -> Pieces:
@@ -289,13 +283,14 @@ class Name(MappingBase):
             # Make a new box
             if not is_prefix(word):
                 result.insert(0, [word])
-                # print(len(pieces), len(result))
+
                 if len(result) > 1:
                     # print("collapse res", result, pieces)
                     result = [[s] for s in queued] + result
                     # print("collapse res", result, pieces)
                     break
-                continue
+                else:
+                    continue
 
             # A prefix goes in the first box
             if not result:
@@ -387,14 +382,6 @@ def is_conjunction(piece: str) -> bool:
 
 def is_prefix(piece: str) -> bool:
     return piece in config.PREFIXES
-
-
-def is_suffix(piece: str) -> bool:
-    return piece in config.SUFFIXES
-
-
-def is_generational_suffix(piece: str) -> bool:
-    return piece in config.GENERATIONAL_SUFFIX
 
 
 def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:

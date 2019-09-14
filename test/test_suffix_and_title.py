@@ -2,9 +2,9 @@ from collections import defaultdict
 
 import pytest
 
-from nominally.parser import Name, flatten_once
+from nominally.parser import Name
 
-from .conftest import dict_entry_test, load_bank, make_ids
+from .conftest import dict_entry_test
 
 
 def fake_working(**kwargs):
@@ -49,65 +49,6 @@ def test_way_too_many_name_parts_post_suffix():
     assert name.first == "bergholt"
     assert name.middle == "stuttley joonyor"
     assert name.last == "johnson"
-
-
-@pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
-def test_ordering_end_to_end(entry):
-    name = Name(entry["raw"])
-    for key in ["first", "middle", "last"]:
-        assert entry.get(key, "") == name[key]
-
-
-@pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
-def test_suffix_extraction_has_correct_suffixes(entry):
-    scrubbed, working = Name._pre_process(entry["raw"])
-    _, working = Name._extract_suffixes(scrubbed, working)
-    assert set(working["suffix"] + working["generational"]) == set(
-        entry.get("suffix", "").split()
-    )
-
-
-@pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
-def test_suffix_extraction_did_not_mistrack_words(entry):
-    pre_extraction, _d = Name._pre_process(entry["raw"])
-    pieces, working = Name._extract_suffixes(pre_extraction, fake_working())
-    post_extraction = flatten_once(pieces) + working["suffix"] + working["generational"]
-    pre_comp = set(flatten_once(pre_extraction))
-    post_comp = set(post_extraction)
-    assert pre_comp == post_comp
-
-
-@pytest.mark.parametrize("entry", load_bank("ordering"), ids=make_ids)
-def test_suffix_extraction_maintained_first_last_order(entry):
-    scrubbed, _d = Name._pre_process(entry["raw"])
-    pre_pieces = scrubbed.copy()
-    post_pieces, _ = Name._extract_suffixes(scrubbed, fake_working())
-    correct_loose_ordering(pre_pieces, post_pieces)
-
-
-@pytest.mark.parametrize(
-    "entry", load_bank("title") + load_bank("ordering"), ids=make_ids
-)
-def test_title_extracts(entry):
-    scrubbed, _d = Name._pre_process(entry["raw"])
-    _, title = Name._extract_title(scrubbed)
-    assert set(title) == set(entry.get("title", "").split())
-
-
-@pytest.mark.parametrize(
-    "entry", load_bank("title") + load_bank("ordering"), ids=make_ids
-)
-def test_title_ordering(entry):
-    scrubbed, _d = Name._pre_process(entry["raw"])
-    pre_pieces = scrubbed.copy()
-    post_pieces, _ = Name._extract_title(scrubbed)
-    if "berg" in entry["raw"]:
-        correct_loose_ordering(pre_pieces, post_pieces)
-
-
-@pytest.mark.parametrize("entry", [])
-def issue_8_do_not_make_initials(entry):
-    dict_entry_test(Name, entry)
 
 
 @pytest.mark.parametrize(
