@@ -19,6 +19,6 @@ coveralls==1.8.1
 PyYAML==5.1.2
 
 # Build docs
-sphinx-rd-theme==0.4.3
+sphinx-rtd-theme==0.4.3
 Sphinx==2.2.0
 doc8==0.8.0
