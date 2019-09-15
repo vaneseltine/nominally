@@ -1,6 +1,7 @@
 import typing as T
 
 from nominally.parser import Name
+from nominally.utilities import prettier_print
 
 
 def parse_name(s: str) -> T.Dict[str, T.Any]:
@@ -12,9 +13,3 @@ def report(raw_name: str, details: bool = True) -> int:
     output = name.report() if details else dict(name)
     prettier_print(output)
     return 0
-
-
-def prettier_print(dictionary: T.Mapping[str, T.Any]) -> None:
-    """pprint.pprint unacceptably sorts"""
-    for k, v in dictionary.items():
-        print(f"{k:>10}: {v}")

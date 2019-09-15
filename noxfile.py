@@ -18,11 +18,11 @@ nox.options.stop_on_first_error = True
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
 CORE_COMMANDS = [
-    "nominally Vimes",
     "nominally -h",
     "nominally --help",
     "nominally -V",
     "nominally --version",
+    "nominally Vimes",
 ]
 
 
@@ -157,9 +157,12 @@ def coverage(session):
 
 @nox.session(python=False)
 def build_docs(session):
+    if CI_LIVE:
+        session.skip("Not building on CI")
     # ./build/docs/index.html
     session.run("doc8", "docs", "-q")
-    session.run("python", "-m", "sphinx", "docs/source", "build/docs", "-a", "-n", "-q")
+    sphinx_options = "-q -a -E -n".split()
+    session.run("python", "-m", "sphinx", "docs/source", "build/docs", *sphinx_options)
 
 
 @nox.session(python=False)

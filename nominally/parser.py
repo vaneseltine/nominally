@@ -6,6 +6,7 @@ from copy import deepcopy
 from unidecode import unidecode_expect_ascii  # type: ignore
 
 from nominally import config
+from nominally.utilities import flatten_once, remove_falsey
 
 Pieces = T.List[str]
 PiecesList = T.List[Pieces]
@@ -18,7 +19,7 @@ else:
 
 
 class Name(MappingBase):
-    """A human name, broken down into individual components."""
+    """A human name, separated and simplified into component parts."""
 
     _keys = ["title", "first", "middle", "last", "suffix", "nickname"]
 
@@ -132,7 +133,7 @@ class Name(MappingBase):
             next_cluster = pieceslist.pop(0)
 
             first_word, *remainder = next_cluster
-            if is_title(first_word):
+            if first_word in config.TITLES:
                 outgoing = outgoing + [remainder] + pieceslist
                 return outgoing, [first_word]
 
@@ -152,11 +153,11 @@ class Name(MappingBase):
     @classmethod
     def _get_final(cls, work: PiecesDefaultDict) -> T.Dict[str, Pieces]:
         work["suffix"] += work["generational"]
-        final: T.Dict[str, Pieces] = {k: cls.final_clean(work[k]) for k in cls._keys}
+        final: T.Dict[str, Pieces] = {k: cls._final_clean(work[k]) for k in cls._keys}
         return final
 
     @staticmethod
-    def final_clean(pieces: Pieces) -> Pieces:
+    def _final_clean(pieces: Pieces) -> Pieces:
         return [s.replace(".", "") for s in pieces]
 
     @classmethod
@@ -243,7 +244,7 @@ class Name(MappingBase):
         queued = deepcopy(words)  # avoid popping side effects
         while queued:
             word = queued.pop(-1)
-            if is_conjunction(word) and result and queued:
+            if word in config.CONJUNCTIONS and result and queued:
                 clause = [queued.pop(-1), word, result.pop(0)]
                 word = " ".join(clause)
             result.insert(0, word)
@@ -256,7 +257,7 @@ class Name(MappingBase):
         result: PiecesList = []
 
         for word in reversed(pieces):
-            if len(result) > 1 or not is_prefix(word):
+            if len(result) > 1 or word not in config.PREFIXES:
                 result.insert(0, [word])
                 continue
             if result:
@@ -332,25 +333,3 @@ class Name(MappingBase):
             "list": list(self.values()),
             **dict(self),
         }
-
-
-def is_title(value: str) -> bool:
-    return value in config.TITLES
-
-
-def is_conjunction(piece: str) -> bool:
-    return piece.lower() in config.CONJUNCTIONS
-
-
-def is_prefix(piece: str) -> bool:
-    return piece in config.PREFIXES
-
-
-def flatten_once(nested_list: T.List[T.Any]) -> T.List[T.Any]:
-    return [item for sublist in nested_list for item in sublist]
-
-
-def remove_falsey(seq: T.List[T.Any]) -> T.List[T.Any]:
-    if not isinstance(seq, list):
-        return seq
-    return [x for x in map(remove_falsey, seq) if x]

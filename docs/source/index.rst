@@ -10,7 +10,11 @@ Welcome to nominally's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: nominally
+.. automodule:: nominally.api
+   :members:
+   :undoc-members:
+
+.. automodule:: nominally.parser
    :members:
    :undoc-members:
 

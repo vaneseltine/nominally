@@ -1,6 +1,6 @@
 import pytest
 
-from nominally.parser import flatten_once, remove_falsey
+from nominally.utilities import flatten_once, remove_falsey
 
 
 @pytest.mark.parametrize(
