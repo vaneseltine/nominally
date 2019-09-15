@@ -9,6 +9,7 @@ __test*
 !.builds/
 !.github/
 
+
 # Standardish directories
 _build/
 build/
@@ -20,6 +21,7 @@ lib/
 lib64/
 log/
 parts/
+prof/
 sdist/
 temp/
 var/
@@ -30,6 +32,7 @@ var/
 .coverage.*
 coverage.xml
 .coveralls*
+*.cprof
 *.egg
 *.egg-info
 *.env
