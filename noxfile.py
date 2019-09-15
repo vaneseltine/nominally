@@ -161,8 +161,8 @@ def build_docs(session):
         session.skip("Not building on CI")
     # ./build/docs/index.html
     session.run("doc8", "docs", "-q")
-    sphinx_options = "-q -a -E -n".split()
-    session.run("python", "-m", "sphinx", "docs/source", "build/docs", *sphinx_options)
+    sphinx_options = "-q -a -E -n -W".split()
+    session.run("python", "-m", "sphinx", "docs", "build/docs", *sphinx_options)
 
 
 @nox.session(python=False)

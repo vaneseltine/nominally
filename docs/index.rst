@@ -14,6 +14,8 @@ Welcome to nominally's documentation!
    :members:
    :undoc-members:
 
+or as mod:
+
 .. automodule:: nominally.parser
    :members:
    :undoc-members:
