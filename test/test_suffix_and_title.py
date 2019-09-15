@@ -187,3 +187,20 @@ def issue_25_more_suffix_issues(entry):
 )
 def test_junior_with_gen_suffix(entry):
     dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "pieceslist, grab_it",
+    [
+        ([["junior", "vimes"]], False),
+        ([["junior", "sam", "vimes"]], False),
+        ([["junior", "sam", "vimes"]], False),
+        ([["junior", "sam", "vimes"]], False),
+        ([["junior", "sam", "vimes"]], False),
+        ([["sam", "vimes", "junior"]], True),
+        ([["sam", "junior", "vimes"]], True),
+    ],
+)
+def test_unit_grab_junior(pieceslist, grab_it):
+    _, work = Name._grab_junior(pieceslist, defaultdict(list))
+    assert ("junior" in work["generational"]) == grab_it

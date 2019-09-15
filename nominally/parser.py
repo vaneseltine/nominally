@@ -35,6 +35,7 @@ class Name(MappingBase):
         self._unparsable = not any(x for x in self.values() if x)
         if not self.parsable:
             print('Unparsable: "%s" ', self._raw)
+        # print(self.report())
 
     @classmethod
     def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDefaultDict]:
@@ -179,11 +180,9 @@ class Name(MappingBase):
             pieceslist[-1].remove("junior")
             work["generational"].insert(0, "junior")
             return pieceslist, work
-
         first_name_cluster_index = 0 if len(pieceslist) == 1 else 1
 
         junior_index = pieceslist[first_name_cluster_index].index("junior")
-
         if junior_index:
             pieceslist[first_name_cluster_index].remove("junior")
             work["generational"].insert(0, "junior")
@@ -260,26 +259,17 @@ class Name(MappingBase):
     def _combine_rightmost_prefixes(pieces: Pieces) -> Pieces:
         if len(pieces) < 3:
             return pieces
-        # print(f"---- combine in {pieces}")
-        result: PiecesList = [[]]
-        while pieces:
-            word = pieces.pop(-1)
-            # A prefix goes in the first box
-            if is_prefix(word):
-                result[0].insert(0, word)
-                continue
-            # Make a new box
-            result.insert(0, [word])
-            # print(f"result at 270 is {result}")
-            if len(result) > 2:
-                # print("collapse res", result, pieces)
-                result = [[s] for s in pieces] + result
-                # print("collapse res", result, pieces)
-                break
+        result: PiecesList = []
 
-            # print(f"result at 283 is {result}")
-        # print(f"pieces {pieces}")
-        # print(f"---- combine out {result}")
+        for word in reversed(pieces):
+            if len(result) > 1 or not is_prefix(word):
+                result.insert(0, [word])
+                continue
+            if result:
+                result[0].insert(0, word)
+            else:
+                result = [[word]]
+
         final_pieces: Pieces = [" ".join(piece) for piece in result if piece]
         return final_pieces
 

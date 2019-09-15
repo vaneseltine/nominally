@@ -17,6 +17,14 @@ nox.options.stop_on_first_error = True
 
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
+CORE_COMMANDS = [
+    "nominally Bob",
+    "nominally -h",
+    "nominally --help",
+    "nominally -V",
+    "nominally --version",
+]
+
 
 def get_versions_from_classifiers(deploy_file):
     versions = []
@@ -128,6 +136,14 @@ def pytest(session):
     session.install(".")
     session.run("python", "-m", "coverage", "run", "-m", "pytest")
     session.run("python", "-m", "coverage", "report")
+    run_various_invocations(session)
+
+
+def run_various_invocations(session):
+    for prefix in ["", "python -m "]:
+        for main_cmd in CORE_COMMANDS:
+            cmd = (prefix + main_cmd).split()
+            session.run(*cmd, silent=True)
 
 
 @nox.session(python=False)
@@ -137,22 +153,6 @@ def coverage(session):
         return
     make_clean_dir("./build/coverage")
     session.run("python", "-m", "coverage", "html")
-
-
-@nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
-def run_various_invocations(session):
-    session.install("-r", "requirements.txt")
-    session.install(".")
-    for prefix in ["", "python -m "]:
-        for main_cmd in [
-            "nominally Bob",
-            "nominally -h",
-            "nominally --help",
-            "nominally -V",
-            "nominally --version",
-        ]:
-            cmd = (prefix + main_cmd).split()
-            session.run(*cmd, silent=True)
 
 
 @nox.session(python=False)

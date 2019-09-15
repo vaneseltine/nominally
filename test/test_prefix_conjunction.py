@@ -69,9 +69,7 @@ def issue_14_mc_and_mac_as_prefix(first, second):
     assert Name(first) == Name(second)
 
 
-def issue_22_ambiguous_handling_of_prefixes_in_first_name():
+def issue_22_consistently_handle_of_prefixes_in_first_name():
     name1 = Name("de ook, van ook yolo moomoo")
-    print(name1, "\n")
     name2 = Name("van ook yolo moomoo de ook")
-    print(name2, "\n")
     assert name1 == name2
