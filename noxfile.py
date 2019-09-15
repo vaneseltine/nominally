@@ -18,7 +18,7 @@ nox.options.stop_on_first_error = True
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
 CORE_COMMANDS = [
-    "nominally Bob",
+    "nominally Vimes",
     "nominally -h",
     "nominally --help",
     "nominally -V",
@@ -156,6 +156,13 @@ def coverage(session):
 
 
 @nox.session(python=False)
+def build_docs(session):
+    # ./build/docs/index.html
+    session.run("doc8", "docs", "-q")
+    session.run("python", "-m", "sphinx", "docs/source", "build/docs", "-a", "-n", "-q")
+
+
+@nox.session(python=False)
 def deploy_to_pypi(session):
     if not release_change_since_pypi():
         session.skip("PyPI up to date")
@@ -170,7 +177,11 @@ def deploy_to_pypi(session):
 def push_to_github(session):
     if not nox.options.stop_on_first_error:
         session.skip("Error-free run disabled")
-    if os.getenv("DESKTOP_SESSION") != "i3" or os.getenv("HOME") != "/home/matt":
+    if (
+        CI_LIVE
+        or os.getenv("HOME") != "/home/matt"
+        or os.getenv("DESKTOP_SESSION") != "i3"
+    ):
         session.skip("Auto-push only from home")
     if subprocess.check_output(["git", "add", "-n", "--all"]):
         session.skip("Uncommitted changes")

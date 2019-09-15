@@ -1,5 +1,6 @@
 -r common.txt
-# This file contains the minimum to run pytest (reducing nox venv times)
+
+# This file contains the minimum to run the test suite
 coverage==4.5.4
 hypothesis==4.36.0
 pytest==5.1.2

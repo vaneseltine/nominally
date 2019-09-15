@@ -12,7 +12,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20190912f
+            - dependencies-20190915
       - run:
           name: Prepare environment
           command: |
@@ -27,7 +27,7 @@ jobs:
             - ".venv"
             - ".nox"
             - "~/.cache/pip"
-          key: dependencies-20190912f
+          key: dependencies-20190915
       - run:
           name: Run the nox gauntlet
           command: |

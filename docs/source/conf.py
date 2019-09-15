@@ -58,6 +58,15 @@ intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 
 intersphinx_timeout = 10
 
+
+autodoc_default_options = {
+    "ignore-module-all": True,
+    "autodoc_member_order": "bysource",
+}
+# Does not appear to be working
+autodoc_member_order = "bysource"
+
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
@@ -74,6 +83,10 @@ exclude_patterns = []
 # html_theme = "alabaster"
 html_theme = "sphinx_rtd_theme"  # pip install sphinx_rtd_theme
 
+
+# A Windows icon file (.ico) 16x16 or 32x32 pixels large.
+# html_favicon = "./_static/favicon.ico"
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -85,3 +98,5 @@ html_theme_options = {
     "sticky_navigation": True,
     "prev_next_buttons_location": "both",
 }
+
+html_show_sphinx = False
