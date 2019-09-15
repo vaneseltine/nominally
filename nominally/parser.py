@@ -24,29 +24,19 @@ class Name(MappingBase):
 
     def __init__(self, raw: str = "") -> None:
         self._raw = raw
-        pieceslist, work = self._pre_process(self._raw)
-        pieceslist, work["title"] = self._extract_title(pieceslist)
-        pieceslist = self._remove_numbers(pieceslist)
-        pieceslist, work = self._grab_junior(pieceslist, work)
-        work = self._lfm_from_list(pieceslist, work)
-        self._final = self._get_final(work)
-        self._cleaned = set(work["cleaned"])
 
-        self._unparsable = not any(x for x in self.values() if x)
-        if not self.parsable:
-            print('Unparsable: "%s" ', self._raw)
-        # print(self.report())
+        pieceslist, work = self._pre_process(self._raw)
+        self._cleaned = set(work["cleaned"])
+        self._final: T.Dict[str, Pieces] = self._process(pieceslist, work)
 
     @classmethod
     def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDefaultDict]:
-        # print(repr(s))
         working: PiecesDefaultDict = defaultdict(list, {k: [] for k in cls._keys})
 
         s = str(s).lower()
         s, working = cls._sweep_nicknames(s, working)
         s, working = cls._sweep_suffixes(s, working)
         s = cls._clean_input(s)
-        # print(repr(s))
 
         pieceslist = cls._string_to_pieceslist(s)
         working["cleaned"] = [s]
@@ -54,6 +44,15 @@ class Name(MappingBase):
             if working[k]:
                 working["cleaned"] += working[k]
         return pieceslist, working
+
+    def _process(
+        self, pieceslist: PiecesList, work: PiecesDefaultDict
+    ) -> T.Dict[str, Pieces]:
+        pieceslist, work["title"] = self._extract_title(pieceslist)
+        pieceslist = self._remove_numbers(pieceslist)
+        pieceslist, work = self._grab_junior(pieceslist, work)
+        work = self._lfm_from_list(pieceslist, work)
+        return self._get_final(work)
 
     @staticmethod
     def _clean_input(s: str, condense: bool = False) -> str:
@@ -77,19 +76,15 @@ class Name(MappingBase):
     def _sweep_suffixes(
         cls, s: str, working: PiecesDefaultDict
     ) -> T.Tuple[str, PiecesDefaultDict]:
-        # print(f"_sweep_suffixes in {s} {working}")
         for pat, generational in config.SUFFIX_PATTERNS.items():
-            # print(f"searching {pat}")
             if not pat.search(s):
                 continue
-            # print(f"found {pat} {s}")
             new_suffix = [cls._clean_input(x, condense=True) for x in pat.findall(s)]
             if generational:
                 working["generational"] += new_suffix
             else:
                 working["suffix"] += new_suffix
             s = pat.sub("", s)
-            # print(f"yay, {pat}, {repr(s)}")
         # Remove any comma-bracketed 'junior's
         s, working = cls._sweep_junior(s, working)
         s = cls._clean_input(s)
@@ -205,7 +200,6 @@ class Name(MappingBase):
         # Otherwise, meaning multiple pieces remain: take its rightmost piece
         else:
             work["last"] = pieceslist.pop(0)
-        # print("-------------------------------------------", pieceslist)
 
         # Remove empties and finish if nothing of substance remains
         pieceslist = remove_falsey(pieceslist)
@@ -320,7 +314,7 @@ class Name(MappingBase):
 
     @property
     def parsable(self) -> bool:
-        return not self._unparsable
+        return any(x for x in self.values() if x)
 
     @property
     def raw(self) -> str:
