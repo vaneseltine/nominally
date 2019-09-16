@@ -9,8 +9,6 @@ from nominally import config
 from nominally.utilities import flatten_once, remove_falsey
 
 Pieces = T.List[str]
-PiecesList = T.List[Pieces]
-PiecesDefaultDict = T.DefaultDict[str, Pieces]
 
 if T.TYPE_CHECKING:
     MappingBase = T.Mapping[str, str]
@@ -31,8 +29,12 @@ class Name(MappingBase):
         self._final: T.Dict[str, Pieces] = self._process(pieceslist, work)
 
     @classmethod
-    def _pre_process(cls, s: str) -> T.Tuple[PiecesList, PiecesDefaultDict]:
-        working: PiecesDefaultDict = defaultdict(list, {k: [] for k in cls._keys})
+    def _pre_process(
+        cls, s: str
+    ) -> T.Tuple[T.List[Pieces], T.DefaultDict[str, Pieces]]:
+        working: T.DefaultDict[str, Pieces] = defaultdict(
+            list, {k: [] for k in cls._keys}
+        )
 
         s = str(s).lower()
         s, working = cls._sweep_nicknames(s, working)
@@ -47,7 +49,7 @@ class Name(MappingBase):
         return pieceslist, working
 
     def _process(
-        self, pieceslist: PiecesList, work: PiecesDefaultDict
+        self, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
     ) -> T.Dict[str, Pieces]:
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist = self._remove_numbers(pieceslist)
@@ -79,8 +81,8 @@ class Name(MappingBase):
 
     @classmethod
     def _sweep_suffixes(
-        cls, s: str, working: PiecesDefaultDict
-    ) -> T.Tuple[str, PiecesDefaultDict]:
+        cls, s: str, working: T.DefaultDict[str, Pieces]
+    ) -> T.Tuple[str, T.DefaultDict[str, Pieces]]:
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
                 continue
@@ -97,8 +99,8 @@ class Name(MappingBase):
 
     @classmethod
     def _sweep_junior(
-        cls, s: str, working: PiecesDefaultDict
-    ) -> T.Tuple[str, PiecesDefaultDict]:
+        cls, s: str, working: T.DefaultDict[str, Pieces]
+    ) -> T.Tuple[str, T.DefaultDict[str, Pieces]]:
         if working["generational"]:
             return s, working
         if not config.JUNIOR_PATTERN.findall(s):
@@ -113,8 +115,8 @@ class Name(MappingBase):
 
     @classmethod
     def _sweep_nicknames(
-        cls, s: str, working: PiecesDefaultDict
-    ) -> T.Tuple[str, PiecesDefaultDict]:
+        cls, s: str, working: T.DefaultDict[str, Pieces]
+    ) -> T.Tuple[str, T.DefaultDict[str, Pieces]]:
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -131,8 +133,8 @@ class Name(MappingBase):
         return s, working
 
     @staticmethod
-    def _extract_title(pieceslist: PiecesList) -> T.Tuple[PiecesList, Pieces]:
-        outgoing: PiecesList = []
+    def _extract_title(pieceslist: T.List[Pieces]) -> T.Tuple[T.List[Pieces], Pieces]:
+        outgoing: T.List[Pieces] = []
         while pieceslist:
             next_cluster = pieceslist.pop(0)
 
@@ -145,17 +147,17 @@ class Name(MappingBase):
         return outgoing, []
 
     @staticmethod
-    def _remove_numbers(pieces: PiecesList) -> PiecesList:
+    def _remove_numbers(pieces: T.List[Pieces]) -> T.List[Pieces]:
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
         return remove_falsey(no_numbers)
 
     @staticmethod
-    def _string_to_pieceslist(remaining: str) -> PiecesList:
+    def _string_to_pieceslist(remaining: str) -> T.List[Pieces]:
         pieces = re.split(r"\s*,\s*", remaining)
         return [x.split() for x in pieces if x]
 
     @classmethod
-    def _get_final(cls, work: PiecesDefaultDict) -> T.Dict[str, Pieces]:
+    def _get_final(cls, work: T.DefaultDict[str, Pieces]) -> T.Dict[str, Pieces]:
         work["suffix"] += work["generational"]
         final: T.Dict[str, Pieces] = {k: cls._final_clean(work[k]) for k in cls._keys}
         return final
@@ -166,8 +168,8 @@ class Name(MappingBase):
 
     @classmethod
     def _grab_junior(
-        cls, pieceslist: PiecesList, work: PiecesDefaultDict
-    ) -> T.Tuple[PiecesList, PiecesDefaultDict]:
+        cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
+    ) -> T.Tuple[T.List[Pieces], T.DefaultDict[str, Pieces]]:
         checklist = flatten_once(pieceslist)
         if "junior" not in checklist:
             return pieceslist, work
@@ -191,8 +193,8 @@ class Name(MappingBase):
 
     @classmethod
     def _lfm_from_list(
-        cls, pieceslist: PiecesList, work: PiecesDefaultDict
-    ) -> PiecesDefaultDict:
+        cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
+    ) -> T.DefaultDict[str, Pieces]:
         # Remove empties and finish if nothing of substance remains
         pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
@@ -258,7 +260,7 @@ class Name(MappingBase):
     def _combine_rightmost_prefixes(pieces: Pieces) -> Pieces:
         if len(pieces) < 3:
             return pieces
-        result: PiecesList = []
+        result: T.List[Pieces] = []
 
         for word in reversed(pieces):
             if len(result) > 1 or word not in config.PREFIXES:
