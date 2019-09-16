@@ -4,6 +4,8 @@ import re
 import sys
 from pathlib import Path
 
+import alabaster
+
 project = "nominally"
 author = "Matt VanEseltine"
 copyright = "2019, Matt VanEseltine"
@@ -65,14 +67,9 @@ templates_path = ["templates"]
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-# -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
+html_theme_path = [alabaster.get_path()]
+extensions += ["alabaster"]
 html_theme = "alabaster"
-# html_theme = "sphinx_rtd_theme"  # pip install sphinx_rtd_theme
-
 
 # A Windows icon file (.ico) 16x16 or 32x32 pixels large.
 # html_favicon = "./_static/favicon.ico"
@@ -88,9 +85,10 @@ html_theme_options = {
     "show_related": False,
     "description": "A maximum-strength name parser for record linkage",
     "github_button": True,
-    "github_type": "follow",
+    "github_type": "star",
     "github_user": "vaneseltine",
     "github_repo": "nominally",
+    "github_count": False,
     "show_powered_by": True,
     "show_relbars": True,
 }

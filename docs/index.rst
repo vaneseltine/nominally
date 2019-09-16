@@ -26,10 +26,13 @@ Record Linkage
 --------------------------
 
 When deduplicating names in a database or matching people across
-multiple datasets, varying practices in how name parts are recorded
+multiple datasets, varying practices and quality across datasets
 introduce noise and misrepresentation. For example, titles and suffixes
 are often inconsistently recorded, or not recorded at all. Prefixes
 of last names (e.g., "van" and "de la") are misplaced among middle names.
+First and middle name splits may be arbitrary. More than one last name
+may be partitioned into middle name. Names might or might not use accents
+and other characters outside the standard ASCII table.
 
 Nominally is designed for the front end of data preprocessing for
 record linkage, aggressively cleaning and extracting features
@@ -43,7 +46,7 @@ condensing Nominally's output to a single-field string representation.
 Other great Python packages targeting record linkage include:
     - https://github.com/J535D165/recordlinkage
     - https://github.com/dedupeio/dedupe
-    - https://github.com/usc-isi-i2/rltk/
+    - https://github.com/usc-isi-i2/rltk
 
 Contents
 =========
