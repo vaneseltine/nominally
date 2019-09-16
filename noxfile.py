@@ -4,14 +4,15 @@
 import os
 import re
 import subprocess
+import webbrowser
 from pathlib import Path
 from shutil import rmtree
 
 import nox
 
 CI_LIVE = os.getenv("CI", "").lower() == "true"
-if CI_LIVE:
-    nox.options.stop_on_first_error = True  # Avoid premature deployment
+# if CI_LIVE:
+#     nox.options.stop_on_first_error = True  # Avoid premature deployment
 
 nox.options.stop_on_first_error = True
 
@@ -159,10 +160,10 @@ def coverage(session):
 def build_docs(session):
     if CI_LIVE:
         session.skip("Not building on CI")
-    # ./build/docs/index.html
     session.run("doc8", "docs", "-q")
     sphinx_options = "-q -a -E -n -W".split()
     session.run("python", "-m", "sphinx", "docs", "build/docs", *sphinx_options)
+    webbrowser.open_new_tab("./build/docs/index.html")
 
 
 @nox.session(python=False)

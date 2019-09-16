@@ -1,3 +1,5 @@
+<p align="center">
+
 [![License: AGPL 3.0+](https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet)](https://www.gnu.org/licenses/agpl-3.0)
 [![Python: 3.6+](https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square)](https://pypi.python.org/pypi/nominally)
 [![Package hosted on PyPI](https://img.shields.io/pypi/v/nominally?style=flat-square)](https://pypi.python.org/pypi/nominally)
@@ -6,6 +8,8 @@
 [![Coverage at Coveralls](https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square)](https://coveralls.io/github/vaneseltine/nominally)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/nominally/latest?style=flat-square)](https://nominally.readthedocs.io/en/latest/)
 [![Latest commit](https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square)](https://github.com/vaneseltine/nominally)
+
+</p>
 
 <h2>nominally: a maximum-strength name parser for record linkage</h2>
 
