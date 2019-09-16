@@ -11,8 +11,6 @@ from shutil import rmtree
 import nox
 
 CI_LIVE = os.getenv("CI", "").lower() == "true"
-# if CI_LIVE:
-#     nox.options.stop_on_first_error = True  # Avoid premature deployment
 
 nox.options.stop_on_first_error = True
 

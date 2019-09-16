@@ -54,18 +54,17 @@ Example at the Console
 
 .. code-block::
 
-    > nominally "St John Nobbs, Cecil Nobbs Wormsborough"
-
-           raw: St John Nobbs, Cecil Nobbs Wormsborough
-       cleaned: {'st john nobbs, cecil nobbs wormsborough'}
-        parsed: st john nobbs, cecil nobbs wormsborough
-          list: ['', 'cecil', 'nobbs wormsborough', 'st john nobbs', '', '']
+    › nominally "St John Nobbs, Cecil (Nobby) Wormsborough"
+           raw: St John Nobbs, Cecil (Nobby) Wormsborough
+       cleaned: {'nobby', 'st john nobbs, cecil wormsborough'}
+        parsed: st john nobbs, cecil (nobby) wormsborough
+          list: ['', 'cecil', 'wormsborough', 'st john nobbs', '', 'nobby']
          title:
          first: cecil
-        middle: nobbs wormsborough
+        middle: wormsborough
           last: st john nobbs
         suffix:
-      nickname:
+      nickname: nobby
 
 Example via Import
 =========================
