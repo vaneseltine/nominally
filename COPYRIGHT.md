@@ -1,6 +1,6 @@
 ## nominally copyright statement
 
-**nominally** is a program to separate commonly-used parts of human names.
+**nominally** is a program to separate commonly-used parts of personal names.
 
 Copyright (C) 2019 Matt VanEseltine.
 

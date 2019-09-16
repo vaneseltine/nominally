@@ -19,7 +19,7 @@ else:
 
 
 class Name(MappingBase):
-    """A human name, separated and simplified into component parts."""
+    """A personal name, separated and simplified into component parts."""
 
     _keys = ["title", "first", "middle", "last", "suffix", "nickname"]
 
@@ -37,7 +37,7 @@ class Name(MappingBase):
         s = str(s).lower()
         s, working = cls._sweep_nicknames(s, working)
         s, working = cls._sweep_suffixes(s, working)
-        s = cls._clean_input(s)
+        s = cls.clean_input(s)
 
         pieceslist = cls._string_to_pieceslist(s)
         working["cleaned"] = [s]
@@ -56,11 +56,15 @@ class Name(MappingBase):
         return self._get_final(work)
 
     @staticmethod
-    def _clean_input(s: str, condense: bool = False) -> str:
+    def clean_input(s: str, condense: bool = False) -> str:
         """Clean this string to the simplest possible representation (but no simpler).
 
-        Assumes that any nicknames have already been removed or anything else that
-        would depend on special characters."""
+        .. note::
+
+            Assumes that any nicknames have already been removed,
+            along with anything else that would depend on special
+            characters (other than commas).
+        """
         s = unidecode_expect_ascii(s).lower()
         s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
         s = re.sub(r"(\s*(;|:|,))+", ", ", s)  # convert : ; , to , with spacing
@@ -80,7 +84,7 @@ class Name(MappingBase):
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
                 continue
-            new_suffix = [cls._clean_input(x, condense=True) for x in pat.findall(s)]
+            new_suffix = [cls.clean_input(x, condense=True) for x in pat.findall(s)]
             if generational:
                 working["generational"] += new_suffix
             else:
@@ -88,7 +92,7 @@ class Name(MappingBase):
             s = pat.sub("", s)
         # Remove any comma-bracketed 'junior's
         s, working = cls._sweep_junior(s, working)
-        s = cls._clean_input(s)
+        s = cls.clean_input(s)
         return s, working
 
     @classmethod
@@ -122,7 +126,7 @@ class Name(MappingBase):
 
         for pattern in config.NICKNAME_PATTERNS:
             if pattern.search(s):
-                working["nickname"] += [cls._clean_input(x) for x in pattern.findall(s)]
+                working["nickname"] += [cls.clean_input(x) for x in pattern.findall(s)]
                 s = pattern.sub("", s)
         return s, working
 

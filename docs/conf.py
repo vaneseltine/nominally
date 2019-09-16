@@ -70,8 +70,8 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-# html_theme = "alabaster"
-html_theme = "sphinx_rtd_theme"  # pip install sphinx_rtd_theme
+html_theme = "alabaster"
+# html_theme = "sphinx_rtd_theme"  # pip install sphinx_rtd_theme
 
 
 # A Windows icon file (.ico) 16x16 or 32x32 pixels large.
@@ -81,12 +81,17 @@ html_theme = "sphinx_rtd_theme"  # pip install sphinx_rtd_theme
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["static"]
-
 html_theme_options = {
-    "style_external_links": False,
-    "collapse_navigation": False,
-    "sticky_navigation": True,
-    "prev_next_buttons_location": "both",
+    "fixed_sidebar": True,
+    # "logo": "logo2.png",
+    # "logo_name": True,
+    "show_related": False,
+    "description": "A maximum-strength name parser for record linkage",
+    "github_button": True,
+    "github_type": "follow",
+    "github_user": "vaneseltine",
+    "github_repo": "nominally",
+    "show_powered_by": True,
+    "show_relbars": True,
 }
-
 html_show_sphinx = False

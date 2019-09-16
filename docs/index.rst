@@ -1,13 +1,5 @@
 .. nominally documentation master file
 
-*nominally*: *a* *maximum-strength* *name* *parser* *for* *record* *linkage*
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-
 What Nominally Does
 ===================
 
@@ -21,143 +13,50 @@ A name is parsed into five core fields:
 4. Last
 5. Suffix
 
-These should be fairly self-explanatory; read on for examples.
+If you're already looking for a way to parse personal names,
+these should be fairly self-explanatory, but do see :ref:`examples`.
 
 A command line tool is provided for convenience,
 but the expected use case involves parsing
-a list (or an np.Series or a pd.DataFrame) of names.
+a list or
+`pd.Series <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html>`_
+of names.
 
-What Nominally Is Not Intended to Do
-=====================================
+Record Linkage
+--------------------------
 
-- Present canonical names; strings are *aggressively* cleaned.
-- Preserve suffix or title ordering (treat these as sets).
-- Handle particularly many suffixes (PhD, MD, generational up to IV).
-- Handle particularly many titles (Dr. Mr. Mrs., and Ms. are about it).
-- Handle any non-Western name ordering.
-- Receive input other than Python 3 strings in UTF-8.
-- Support mutability of name instances.
-- Support mononyms.
+When deduplicating names in a database or matching people across
+multiple datasets, varying practices in how name parts are recorded
+introduce noise and misrepresentation. For example, titles and suffixes
+are often inconsistently recorded, or not recorded at all. Prefixes
+of last names (e.g., "van" and "de la") are misplaced among middle names.
 
+Nominally is designed for the front end of data preprocessing for
+record linkage, aggressively cleaning and extracting features
+of personal names.
 
-Installation
-============
+Nominally's name parsing is
+`idempotent <https://en.wikipedia.org/wiki/Idempotence>`_.
+Parsing and reparsing any name will not change the outcome, even when
+condensing Nominally's output to a single-field string representation.
 
-Install via ``pip install nominally``.
-Nominally requires Python 3.6 or higher and
-has one external dependency
-(`unidecode <https://pypi.org/project/Unidecode/>`_).
+Other great Python packages targeting record linkage include:
+    - https://github.com/J535D165/recordlinkage
+    - https://github.com/dedupeio/dedupe
+    - https://github.com/usc-isi-i2/rltk/
 
+Contents
+=========
 
-Example at the Console
-=========================
+.. toctree::
+    :maxdepth: 2
 
-.. code-block::
-
-    › nominally "St John Nobbs, Cecil (Nobby) Wormsborough"
-           raw: St John Nobbs, Cecil (Nobby) Wormsborough
-       cleaned: {'nobby', 'st john nobbs, cecil wormsborough'}
-        parsed: st john nobbs, cecil (nobby) wormsborough
-          list: ['', 'cecil', 'wormsborough', 'st john nobbs', '', 'nobby']
-         title:
-         first: cecil
-        middle: wormsborough
-          last: st john nobbs
-        suffix:
-      nickname: nobby
-
-Example via Import
-=========================
-
-The :py:func:`nominally.api.parse_name` function returns the five core fields:
-
-.. code-block:: python
-
-    >>> import nominally
-    >>> nominally.parse_name('Samuel "Young Sam" Vimes II')
-    {
-        'title': '',
-        'first': 'samuel',
-        'middle': '',
-        'last': 'vimes',
-        'suffix': 'ii',
-        'nickname': 'young sam'
-    }
-
-And :py:func:`nominally.api.report` returns the more detailed dict
-as used in the command line interface:
-
-    >>> import nominally
-    >>> nominally.report("Havelock 'Dog-botherer' Vetinari")
-        raw: Havelock 'Dog-botherer' Vetinari
-    cleaned: {'dog-botherer', 'havelock vetinari'}
-        parsed: vetinari, havelock (dog-botherer)
-        list: ['', 'havelock', '', 'vetinari', '', 'dog-botherer']
-        title:
-        first: havelock
-        middle:
-        last: vetinari
-        suffix:
-    nickname: dog-botherer
-
-Additional features are exposed via
-the :py:class:`nominally.parser.Name` class:
-
-.. code-block:: python
-
-    >>> from nominally import Name
-    >>> n = Name('Delphine Angua von Überwald')
-    >>> n.report()
-    {
-        'raw': 'Delphine Angua von Überwald',
-        'cleaned': {'delphine angua von uberwald'},
-        'parsed': 'von uberwald, delphine angua',
-        'list': ['', 'delphine', 'angua', 'von uberwald', '', ''],
-        'title': '',
-        'first': 'delphine',
-        'middle': 'angua',
-        'last': 'von uberwald',
-        'suffix': '', 'nickname': ''
-    }
-    >>> n.raw
-    'Delphine Angua von Überwald'
-    >>> n.cleaned
-    {'delphine angua von uberwald'}
-    >>> n.first
-    'delphine'
-    >>> n['first']
-    'delphine'
-    >>> n.get('first')
-    'delphine'
-    >>> dict(n)
-    {
-      'title': '',
-      'first': 'delphine',
-      'middle': 'angua',
-      'last': 'von uberwald',
-      'suffix': '',
-      'nickname': ''
-    }
-
-More Examples
-==================
-
-See https://github.com/vaneseltine/nominally-examples/
-for detailed examples of nominally usage.
-
-How the Sausage is Made
-============================
-
-.. automodule:: nominally.api
-   :members:
-   :undoc-members:
-
-.. automodule:: nominally.parser
-   :members:
-   :undoc-members:
+    basics
+    faq
+    sausage
 
 Indices and tables
--------------------
+===================
 
 * :ref:`genindex`
 * :ref:`modindex`
