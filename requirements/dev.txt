@@ -19,7 +19,5 @@ coveralls==1.8.1
 PyYAML==5.1.2
 
 # Build docs
-# sphinx-rtd-theme==0.4.3
--e git+https://github.com/readthedocs/sphinx_rtd_theme.git@feb0beb44a444f875f3369a945e6055965ee993f#egg=sphinx_rtd_theme
 Sphinx==2.2.0
 doc8==0.8.0
