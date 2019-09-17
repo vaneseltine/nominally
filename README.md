@@ -6,11 +6,9 @@
 
 <p align="center">
 <a href="https://www.gnu.org/licenses/agpl-3.0"><img alt="License: AGPL 3.0+" src="https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet" /></a>
-<a href="https://pypi.python.org/pypi/nominally"><img alt="Python: 3.6+" src="https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square" /></a>
 <a href="https://pypi.python.org/pypi/nominally"><img alt="Package hosted on PyPI" src="https://img.shields.io/pypi/v/nominally?style=flat-square" /></a>
-<a href="https://github.com/vaneseltine/nominally/releases"><img alt="Repo hosted on GitHub" src="https://img.shields.io/github/v/tag/vaneseltine/nominally?style=flat-square&label=github" /></a>
+<img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/nominally?style=flat-square">
 <a href="https://circleci.com/gh/vaneseltine/nominally"><img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square" /></a>
-<a href="https://coveralls.io/github/vaneseltine/nominally"><img alt="Coverage at Coveralls" src="https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square" /></a>
 <a href="https://nominally.readthedocs.io/en/latest/"><img alt="Read the Docs (latest)" src="https://img.shields.io/readthedocs/nominally/latest?style=flat-square" /></a>
 <a href="https://github.com/vaneseltine/nominally"><img alt="Latest commit" src="https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square" /></a>
 </p>
@@ -36,10 +34,18 @@ Pull out the major parts...
 $ python -q
 >>> from nominally import parse_name
 >>> parse_name("Blankinsop, Jr., Mr. James 'Jimmy'")
-{'title': 'mr', 'first': 'james', 'middle': '', 'last': 'blankinsop', 'suffix': 'jr', 'nickname': 'jimmy'}
+{
+  'title': 'mr',
+  'first': 'james',
+  'middle': '',
+  'last': 'blankinsop',
+  'suffix': 'jr',
+  'nickname': 'jimmy'
+}
 ```
 Or separate into individual parts; complete string; lists; dicts...
 ```
+$ python -q
 >>> from nominally import Name
 >>> n = Name("DR. PEACHES BARTKOWICZ")
 >>> n
@@ -47,7 +53,14 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 >>> str(n)
 'dr peaches bartkowicz'
 >>> dict(n)
-{'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}
+{
+  'title': 'dr',
+  'first': 'peaches',
+  'middle': '',
+  'last': 'bartkowicz',
+  'suffix': '',
+  'nickname': ''
+}
 >>> list(n.values())
 ['dr', 'peaches', '', 'bartkowicz', '', '']
 >>> n.first
@@ -57,43 +70,24 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 >>> n.raw
 'DR. PEACHES BARTKOWICZ'
 >>> n.report()
-{'raw': 'DR. PEACHES BARTKOWICZ', 'cleaned': 'dr peaches bartkowicz', 'parsed': 'bartkowicz, dr peaches', 'list': ['dr', 'peaches', '', 'bartkowicz', '', ''], 'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''}
-```
-Now a live example using Pandas:  https://colab.research.google.com/gist/vaneseltine/964fc9dec60e59410b91bbcaf1fe2d11/nom_pandas.ipynb
-
-Go from list...
-
-```
-# raw_names
-["Graham Arthur Chapman",
- "cleese, john m",
- "Gilliam, Terrence (Terry) Vance",
- "Eric Idle",
- 'Mr. Terence "Terry" Graham Parry Jones',
- "M E Palin",
- "Neil James Innes",
- "carol cleveland",
- "Adams, Douglas N"]
-```
-...to DataFrame in a couple simple notebook cells.
-```
-                                        0  title     first        middle       last  suffix  nickname
-0                   Graham Arthur Chapman           graham        arthur    chapman
-1                          cleese, john m             john             m     cleese
-2         Gilliam, Terrence (Terry) Vance         terrence         vance    gilliam             terry
-3                               Eric Idle             eric                     idle
-4  Mr. Terence "Terry" Graham Parry Jones     mr   terence  graham parry      jones             terry
-5                               M E Palin                m             e      palin
-7                         carol cleveland            carol                cleveland
-6                        Neil James Innes             neil         james      innes
-8                        Adams, Douglas N          douglas             n      adams
+{
+  'raw': 'DR. PEACHES BARTKOWICZ',
+  'cleaned': 'dr peaches bartkowicz',
+  'parsed': 'bartkowicz, dr peaches',
+  'list': ['dr', 'peaches', '', 'bartkowicz', '', ''],
+  'title': 'dr',
+  'first': 'peaches',
+  'middle': '',
+  'last': 'bartkowicz',
+  'suffix': '',
+  'nickname': ''
+}
 ```
 
-### 🎓 Origins
+### 🔬 Elaborate Examples
 
-**Nominally** grew from a fork of the
-[python-nameparser](https://github.com/derek73/python-nameparser) package, and
-has greatly benefitted from its test bank.
+For fully worked examples, see:
+https://github.com/vaneseltine/nominally-examples/
 
 ### 🧙‍ Author
 
