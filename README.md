@@ -1,6 +1,6 @@
 <p align="center">
-
-![Nominally Logo](https://raw.githubusercontent.com/vaneseltine/nominally/master/docs/_static/nominally_logo.png)
+  <img src="https://raw.githubusercontent.com/vaneseltine/nominally/master/docs/_static/nominally_logo.png" alt="Nominally Logo" width=200 />
+</p>
 
 <h2>nominally: a maximum-strength name parser for record linkage</h2>
 
@@ -8,6 +8,7 @@
 [![Python: 3.6+](https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square)](https://pypi.python.org/pypi/nominally)
 [![Package hosted on PyPI](https://img.shields.io/pypi/v/nominally?style=flat-square)](https://pypi.python.org/pypi/nominally)
 [![Repo hosted on GitHub](https://img.shields.io/github/v/tag/vaneseltine/nominally?style=flat-square&label=github)](https://github.com/vaneseltine/nominally/releases)
+
 [![Builds at CircleCI](https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square)](https://circleci.com/gh/vaneseltine/nominally)
 [![Coverage at Coveralls](https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square)](https://coveralls.io/github/vaneseltine/nominally)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/nominally/latest?style=flat-square)](https://nominally.readthedocs.io/en/latest/)
