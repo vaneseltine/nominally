@@ -71,7 +71,7 @@ extensions += ["alabaster"]
 html_theme = "alabaster"
 
 # A Windows icon file (.ico) 16x16 or 32x32 pixels large.
-# html_favicon = "./_static/favicon.ico"
+html_favicon = "./_static/favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
