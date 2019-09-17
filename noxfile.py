@@ -4,14 +4,20 @@
 import os
 import re
 import subprocess
+import sys
 import webbrowser
 from pathlib import Path
 from shutil import rmtree
 
 import nox
 
-CI_LIVE = os.getenv("CI", "").lower() == "true"
-
+IN_CI = os.getenv("CI", "").lower() == "true"
+IN_WINDOWS = sys.platform.startswith("win")
+AT_HOME = (
+    not IN_CI
+    and os.getenv("HOME") == "/home/matt"
+    and os.getenv("DESKTOP_SESSION") == "i3"
+)
 nox.options.stop_on_first_error = True
 
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
@@ -66,15 +72,15 @@ def get_tagged():
 
 def get_module():
     path = Path("./nominally/__init__.py")
-    prefix = '__version__[ ="]+?'
-    return read_n_grep(path, prefix)
+    pattern = '__version__[ ="]+?' + VERSION_PATTERN
+    return read_n_grep(path, pattern)
 
 
-def read_n_grep(path, prefix, pattern=VERSION_PATTERN):
-    text = Path(path).read_text()
-    result = re.compile(prefix + pattern).search(text)
+def read_n_grep(path, pattern):
+    text = Path(path).read_text("utf-8")
+    result = re.compile(pattern).search(text)
     if not result:
-        return f"Failed to find version in {path}"
+        return None
     return result.group(1)
 
 
@@ -117,7 +123,7 @@ def lint_typing(session):
 @nox.session(python=False)
 def lint_black(session):
     cmd = "python -m black -t py36 .".split()
-    if CI_LIVE:
+    if IN_CI:
         cmd = cmd + ["--check"]
     session.run(*cmd)
 
@@ -125,8 +131,10 @@ def lint_black(session):
 @nox.session(python=False)
 def lint_todos(session):
     for lint_dir in ["nominally", "test"]:
-        cmd = f"grep -ire 'TODO.*' -n -o --color=auto {lint_dir}".split()
-        session.run(*cmd, external=True, success_codes=[0, 1])
+        for file in Path(lint_dir).glob("*.*"):
+            result = read_n_grep(file, "(TODO.*)")
+            if result:
+                print(result)
 
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
@@ -147,7 +155,7 @@ def run_various_invocations(session):
 
 @nox.session(python=False)
 def coverage(session):
-    if CI_LIVE:
+    if IN_CI:
         session.run("coveralls")
         return
     make_clean_dir("./build/coverage")
@@ -156,19 +164,22 @@ def coverage(session):
 
 @nox.session(python=False)
 def build_docs(session):
-    if CI_LIVE:
+    if IN_CI:
         session.skip("Not building on CI")
     session.run("doc8", "docs", "-q")
     sphinx_options = "-q -a -E -n -W".split()
     session.run("python", "-m", "sphinx", "docs", "build/docs", *sphinx_options)
-    webbrowser.open_new_tab("./build/docs/index.html")
+    url = "./build/docs/index.html"
+    if IN_WINDOWS:
+        url = f"file://{Path(url).resolve()}"
+    webbrowser.open_new_tab(url)
 
 
 @nox.session(python=False)
 def deploy_to_pypi(session):
     if not release_change_since_pypi():
         session.skip("PyPI up to date")
-    if not CI_LIVE:
+    if not IN_CI:
         session.skip("Deploy only from CI")
     print("Current version is more recent than PyPI. DEPLOY!")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
@@ -179,11 +190,7 @@ def deploy_to_pypi(session):
 def push_to_github(session):
     if not nox.options.stop_on_first_error:
         session.skip("Error-free run disabled")
-    if (
-        CI_LIVE
-        or os.getenv("HOME") != "/home/matt"
-        or os.getenv("DESKTOP_SESSION") != "i3"
-    ):
+    if not AT_HOME:
         session.skip("Auto-push only from home")
     if subprocess.check_output(["git", "add", "-n", "--all"]):
         session.skip("Uncommitted changes")
