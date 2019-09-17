@@ -1,5 +1,9 @@
 <p align="center">
 
+![Nominally Logo](https://raw.githubusercontent.com/vaneseltine/nominally/master/docs/_static/nominally_logo.png)
+
+<h2>nominally: a maximum-strength name parser for record linkage</h2>
+
 [![License: AGPL 3.0+](https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet)](https://www.gnu.org/licenses/agpl-3.0)
 [![Python: 3.6+](https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square)](https://pypi.python.org/pypi/nominally)
 [![Package hosted on PyPI](https://img.shields.io/pypi/v/nominally?style=flat-square)](https://pypi.python.org/pypi/nominally)
@@ -11,7 +15,6 @@
 
 </p>
 
-<h2>nominally: a maximum-strength name parser for record linkage</h2>
 
 ### 🖥️ Examples
 
