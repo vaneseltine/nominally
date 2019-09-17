@@ -163,10 +163,14 @@ def coverage(session):
 
 
 @nox.session(python=False)
+def lint_docs(session):
+    session.run("doc8", "docs", "-q")
+
+
+@nox.session(python=False)
 def build_docs(session):
     if IN_CI:
         session.skip("Not building on CI")
-    session.run("doc8", "docs", "-q")
     sphinx_options = "-q -a -E -n -W".split()
     session.run("python", "-m", "sphinx", "docs", "build/docs", *sphinx_options)
     url = "./build/docs/index.html"
