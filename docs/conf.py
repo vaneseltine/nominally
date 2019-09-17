@@ -58,7 +58,6 @@ autodoc_default_options = {
 # Does not appear to be working
 autodoc_member_order = "bysource"
 
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
@@ -82,6 +81,7 @@ html_theme_options = {
     "fixed_sidebar": True,
     "logo": "nominally_logo.png",
     "logo_name": True,
+    "logo_text_align": "center",
     "show_related": False,
     "description": "A maximum-strength name parser for record linkage",
     "github_button": True,

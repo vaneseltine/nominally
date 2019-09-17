@@ -41,9 +41,11 @@ Name ordering
 
 We only handle
 `Western name order <https://en.wikipedia.org/wiki/Personal_name#Name_order>`_.
-No effort is made to disentangle or rearrange names based on their origins.
+No effort is made to disentangle or rearrange names
+based on their origins.
 
-We do not preserve suffix or title ordering. Treat these as sets.
+We do not preserve suffix or title ordering.
+Treat these as sets.
 
 Titles and suffixes
 -------------------------------------

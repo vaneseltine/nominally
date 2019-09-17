@@ -40,7 +40,9 @@ nameparser
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Nominally** began in mid-2019 as a fork of the
-`Name Parser <https://github.com/derek73/python-nameparser>`_ package
+`Name Parser <https://github.com/derek73/python-nameparser>`_
+package
 (`v. 1.0.4, ce92f37 <https://github.com/derek73/python-nameparser/commit/ce92f379e96a324178e259a378aab628cbc12a6e>`_).
 Name Parser is copyright (C) 2014-2019 Derek Gulbranson
-and licensed herein under the GNU Lesser General Public License, version 2.1.
+and licensed herein under the GNU Lesser General Public License,
+version 2.1.

@@ -20,7 +20,8 @@ Examples
 Import
 ---------------
 
-The :py:func:`nominally.api.parse_name` function returns the five core fields:
+The :py:func:`nominally.api.parse_name` function
+returns the five core fields:
 
 .. code-block:: python
 

@@ -5,18 +5,15 @@
 <h2 align="center">nominally: a maximum-strength name parser for record linkage</h2>
 
 <p align="center">
-
-[![License: AGPL 3.0+](https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet)](https://www.gnu.org/licenses/agpl-3.0)
-[![Python: 3.6+](https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square)](https://pypi.python.org/pypi/nominally)
-[![Package hosted on PyPI](https://img.shields.io/pypi/v/nominally?style=flat-square)](https://pypi.python.org/pypi/nominally)
-[![Repo hosted on GitHub](https://img.shields.io/github/v/tag/vaneseltine/nominally?style=flat-square&label=github)](https://github.com/vaneseltine/nominally/releases)
-[![Builds at CircleCI](https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square)](https://circleci.com/gh/vaneseltine/nominally)
-[![Coverage at Coveralls](https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square)](https://coveralls.io/github/vaneseltine/nominally)
-[![Read the Docs (version)](https://img.shields.io/readthedocs/nominally/latest?style=flat-square)](https://nominally.readthedocs.io/en/latest/)
-[![Latest commit](https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square)](https://github.com/vaneseltine/nominally)
-
+<a href="https://www.gnu.org/licenses/agpl-3.0"><img alt="License: AGPL 3.0+" src="https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet" /></a>
+<a href="https://pypi.python.org/pypi/nominally"><img alt="Python: 3.6+" src="https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square" /></a>
+<a href="https://pypi.python.org/pypi/nominally"><img alt="Package hosted on PyPI" src="https://img.shields.io/pypi/v/nominally?style=flat-square" /></a>
+<a href="https://github.com/vaneseltine/nominally/releases"><img alt="Repo hosted on GitHub" src="https://img.shields.io/github/v/tag/vaneseltine/nominally?style=flat-square&label=github" /></a>
+<a href="https://circleci.com/gh/vaneseltine/nominally"><img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square" /></a>
+<a href="https://coveralls.io/github/vaneseltine/nominally"><img alt="Coverage at Coveralls" src="https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square" /></a>
+<a href="https://nominally.readthedocs.io/en/latest/"><img alt="Read the Docs (latest)" src="https://img.shields.io/readthedocs/nominally/latest?style=flat-square" /></a>
+<a href="https://github.com/vaneseltine/nominally"><img alt="Latest commit" src="https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square" /></a>
 </p>
-
 
 ### 🖥️ Examples
 
