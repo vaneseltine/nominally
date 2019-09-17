@@ -97,7 +97,7 @@ Console
 
 .. code-block::
 
-    › nominally "St John Nobbs, Cecil (Nobby) Wormsborough"
+    $ nominally "St John Nobbs, Cecil (Nobby) Wormsborough"
            raw: St John Nobbs, Cecil (Nobby) Wormsborough
        cleaned: {'nobby', 'st john nobbs, cecil wormsborough'}
         parsed: st john nobbs, cecil (nobby) wormsborough
