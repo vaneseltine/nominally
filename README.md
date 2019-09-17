@@ -2,13 +2,14 @@
   <img src="https://raw.githubusercontent.com/vaneseltine/nominally/master/docs/_static/nominally_logo.png" alt="Nominally Logo" width=200 />
 </p>
 
-<h2>nominally: a maximum-strength name parser for record linkage</h2>
+<h2 align="center">nominally: a maximum-strength name parser for record linkage</h2>
+
+<p align="center">
 
 [![License: AGPL 3.0+](https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet)](https://www.gnu.org/licenses/agpl-3.0)
 [![Python: 3.6+](https://img.shields.io/pypi/pyversions/nominally.svg?&style=flat-square)](https://pypi.python.org/pypi/nominally)
 [![Package hosted on PyPI](https://img.shields.io/pypi/v/nominally?style=flat-square)](https://pypi.python.org/pypi/nominally)
 [![Repo hosted on GitHub](https://img.shields.io/github/v/tag/vaneseltine/nominally?style=flat-square&label=github)](https://github.com/vaneseltine/nominally/releases)
-
 [![Builds at CircleCI](https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square)](https://circleci.com/gh/vaneseltine/nominally)
 [![Coverage at Coveralls](https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square)](https://coveralls.io/github/vaneseltine/nominally)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/nominally/latest?style=flat-square)](https://nominally.readthedocs.io/en/latest/)
@@ -21,20 +22,21 @@
 
 Run a quick name at the command line:
 ```
-  $ nominally "Jimmy Blankinsop"
-         raw: Jimmy Blankinsop
-     cleaned: jimmy blankinsop
-      parsed: blankinsop, jimmy
-        list: ['', 'jimmy', '', 'blankinsop', '', '']
-       title:
-       first: jimmy
-      middle:
-        last: blankinsop
-      suffix:
-    nickname:
+$ nominally "Jimmy Blankinsop"
+       raw: Jimmy Blankinsop
+   cleaned: jimmy blankinsop
+    parsed: blankinsop, jimmy
+      list: ['', 'jimmy', '', 'blankinsop', '', '']
+     title:
+     first: jimmy
+    middle:
+      last: blankinsop
+    suffix:
+  nickname:
 ```
 Pull out the major parts...
 ```
+$ python -q
 >>> from nominally import parse_name
 >>> parse_name("Blankinsop, Jr., Mr. James 'Jimmy'")
 {'title': 'mr', 'first': 'james', 'middle': '', 'last': 'blankinsop', 'suffix': 'jr', 'nickname': 'jimmy'}
@@ -92,20 +94,9 @@ Go from list...
 
 ### 🎓 Origins
 
-**nominally** grew from—and greatly benefits from the test bank of—the
-[python-nameparser](https://github.com/derek73/python-nameparser) package.
-The key difference is that **nominally** focuses relatively narrowly on lists of decently well-formed single name fields.
-Therefore, **nominally** does *not* support:
-
-- Mutability of Name
-- Easy customization of lists of name parts
-- Parsing multiple names from mingled fields
-- Most titles, profession names, and other name prefixes
-- Mononyms: raw names expected to output only a single field
-- Encoding other than UTF-8
-- Input from byte strings
-- Python 3.5 or lower
-
+**Nominally** grew from a fork of the
+[python-nameparser](https://github.com/derek73/python-nameparser) package, and
+has greatly benefitted from its test bank.
 
 ### 🧙‍ Author
 
