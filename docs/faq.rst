@@ -68,3 +68,11 @@ Library
 -------------------------------------
 
 The Name class creates immutable instances.
+
+
+See Also
+--------------------------------------
+More great Python packages in the record linkage community include:
+    - `Python Record Linkage Toolkit <https://github.com/J535D165/recordlinkage>`_ by Jonathan de Bruin
+    - `Dedupe Python Library <https://github.com/dedupeio/dedupe>`_ by Forest Gregg and Derek Eder
+    - `RLTK: Record Linkage ToolKit <https://github.com/usc-isi-i2/rltk>`_ by the USC Center on Knowledge Graphs
