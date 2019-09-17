@@ -102,3 +102,10 @@ https://github.com/vaneseltine/nominally-examples/
 [![https://twitter.com/vaneseltine](https://img.shields.io/badge/twitter-@vaneseltine-blue.svg?style=for-the-badge&logo=twitter&logoColor=fff&color=1da1f2)](https://twitter.com/vaneseltine)
 
 [![https://stackoverflow.com/users/7846185/matt-vaneseltine](https://img.shields.io/badge/stack_overflow-matt_vaneseltine-888.svg?style=for-the-badge&logo=stack-overflow&logoColor=fff&color=f48024)](https://stackoverflow.com/users/7846185/matt-vaneseltine)
+
+### 🎓 Beginnings
+
+**Nominally** started as a fork of the
+[python-nameparser](https://github.com/derek73/python-nameparser) package,
+and has benefitted considerably from this origin⸺especially the
+testing foundation.
