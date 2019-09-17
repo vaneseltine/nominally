@@ -5,21 +5,13 @@ Introduction
 
 **Nominally** simplifies and parses a personal name written in
 `Western name order <https://en.wikipedia.org/wiki/Personal_name#Name_order>`_
-into five core fields:
+into five core fields: title, first, middle, last, and suffix.
 
-1. Title
-2. First
-3. Middle
-4. Last
-5. Suffix
-
-If you're already looking for a way to parse personal names,
-these should be fairly self-explanatory, but do see :ref:`examples`.
-A command line tool is provided for convenient one-offs,
-but the expected use case involves parsing
-a list or
+Typically, **nominally** is used to parse entire lists or
 `pd.Series <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html>`_
-of names.
+of names en masse. This package includes a command line tool
+to parse a single name for convenient one-off testing and examples.
+
 
 Record Linkage
 --------------------------
@@ -30,19 +22,21 @@ noise and misrepresentation. For example, titles and suffixes are often
 inconsistently recorded, or not recorded at all. Prefixes of last names
 (e.g., "van" and "de la") are misplaced among middle names. First and
 middle name splits may be arbitrary. More than one last name may be
-partitioned into middle name. Names might or might not use accent and
+partitioned into middle name. Names might or might not use accents and
 other characters outside the standard ASCII table.
 
 **Nominally** is designed for the front end of data preprocessing for
-record linkage, aggressively cleaning and extracting features
-of personal names.
+record linkage, by :ref:`aggressively cleaning <cleaning>` and extracting
+the most linkable features of personal names.
 
-**Nominally** name parsing is
+**Nominally** is
 `idempotent <https://en.wikipedia.org/wiki/Idempotence>`_.
 Parsing and reparsing any name will not change the outcome, even when
-condensing its output to a single-field string representation.
+its output has been condensed to a single-field string representation.
 
-Other great Python packages targeting record linkage include:
+See Also
+--------------------------
+More great Python packages in the record linkage community include:
     - https://github.com/J535D165/recordlinkage
     - https://github.com/dedupeio/dedupe
     - https://github.com/usc-isi-i2/rltk

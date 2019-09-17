@@ -26,6 +26,9 @@ For ideas about how to use Nominally on a larger scale,
 to work with entire lists, DataFrames, files, or databases,
 see https://github.com/vaneseltine/nominally-examples/.
 
+
+.. _cleaning:
+
 Name cleaning
 -------------------------------------
 
