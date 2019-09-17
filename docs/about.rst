@@ -1,16 +1,16 @@
 .. toctree::
     :maxdepth: 2
 
-.. _copyright:
+.. about:
 
-Copyright
+About
 ================================
-
-GNU Affero General Public License
-----------------------------------
 
 **Nominally** is a program to separate commonly-used parts of
 personal names. Copyright (C) 2019 Matt VanEseltine.
+
+GNU Affero General Public License
+----------------------------------
 
 **Nominally** is free software: you can redistribute it and/or
 modify it under the terms of the GNU Affero General Public License

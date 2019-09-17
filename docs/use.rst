@@ -1,12 +1,43 @@
 .. toctree::
     :maxdepth: 2
 
+
+.. _use:
+
+Use
+======
+
 .. _installation:
 
 Installation
-============
+---------------
 
-Install via ``pip install nominally``.
+Install in the normal way:
+
+.. code-block::
+
+    pip install nominally
+
+Starting a new project
+`by creating a virtual environment <https://docs.python.org/3/tutorial/venv.html>`_
+first is highly recommended:
+
+.. code-block:: shell
+
+    # Create a virtual environment
+    python -m venv .venv
+
+    # Activate with one of the following shell-specific scripts.
+    # Note that Python for Windows creates ./Scripts/ rather than ./bin/
+    # . .venv/bin/activate.fish         # fish
+    # source ./.venv/bin/activate       # bash
+    # source ./.venv/bin/activate.csh   # csh
+    # .\.venv\Scripts\Activate.ps1      # PowerShell
+    # .venv\Scripts\Activate.bat        # cmd
+
+    # Install
+    pip install nominally
+
 
 Nominally requires Python 3.6 or higher and
 has one external dependency
@@ -14,10 +45,7 @@ has one external dependency
 
 .. _examples:
 
-Examples
-=========
-
-Import
+Via Import
 ---------------
 
 The :py:func:`nominally.api.parse_name` function
@@ -92,8 +120,8 @@ the :py:class:`nominally.parser.Name` class:
     }
 
 
-Console
----------------
+In the Console
+-------------------
 
 .. code-block::
 
@@ -109,8 +137,8 @@ Console
         suffix:
       nickname: nobby
 
-Extended
-----------
+Extended Examples
+-------------------
 
 See https://github.com/vaneseltine/nominally-examples/
 for detailed examples of nominally usage.

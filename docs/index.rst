@@ -35,11 +35,11 @@ Parsing and reparsing any name will not change the outcome, even when
 its output has been condensed to a single-field string representation.
 
 See Also
---------------------------
+~~~~~~~~~~~
 More great Python packages in the record linkage community include:
-    - https://github.com/J535D165/recordlinkage
-    - https://github.com/dedupeio/dedupe
-    - https://github.com/usc-isi-i2/rltk
+    - `Python Record Linkage Toolkit <https://github.com/J535D165/recordlinkage>`_ by Jonathan de Bruin
+    - `Dedupe Python Library <https://github.com/dedupeio/dedupe>`_ by Forest Gregg and Derek Eder
+    - `RLTK: Record Linkage ToolKit <https://github.com/usc-isi-i2/rltk>`_ by the USC Center on Knowledge Graphs
 
 
 Contents
@@ -49,10 +49,10 @@ Contents
     :maxdepth: 2
 
     self
-    basics
+    use
     faq
     sausage
-    copyright
+    about
 
 
 Indices and tables
