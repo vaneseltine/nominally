@@ -93,3 +93,12 @@ html_theme_options = {
     "show_relbars": True,
 }
 html_show_sphinx = False
+html_sidebars = {
+    "**": [
+        "about.html",
+        "navigation.html",
+        "relations.html",
+        "searchbox.html",
+        "donate.html",
+    ]
+}

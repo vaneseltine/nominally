@@ -1,5 +1,8 @@
 .. nominally documentation master file
 
+Introduction
+================================
+
 **Nominally** simplifies and parses a personal name written in
 `Western name order <https://en.wikipedia.org/wiki/Personal_name#Name_order>`_
 into five core fields:
@@ -51,6 +54,7 @@ Contents
 .. toctree::
     :maxdepth: 2
 
+    self
     basics
     faq
     sausage
