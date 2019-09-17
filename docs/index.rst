@@ -48,8 +48,9 @@ Other great Python packages targeting record linkage include:
     - https://github.com/dedupeio/dedupe
     - https://github.com/usc-isi-i2/rltk
 
+
 Contents
-=========
+----------------------------
 
 .. toctree::
     :maxdepth: 2
@@ -57,9 +58,11 @@ Contents
     basics
     faq
     sausage
+    copyright
+
 
 Indices and tables
-===================
+----------------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
