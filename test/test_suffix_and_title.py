@@ -204,3 +204,19 @@ def test_junior_with_gen_suffix(entry):
 def test_unit_grab_junior(pieceslist, grab_it):
     _, work = Name._grab_junior(pieceslist, defaultdict(list))
     assert ("junior" in work["generational"]) == grab_it
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {"raw": "j smith 4th", "last": "smith", "first": "j", "suffix": "4th"},
+        {"raw": "j smith 5th", "last": "smith", "first": "j", "suffix": "5th"},
+        {"raw": "j smith 6th", "last": "smith", "first": "j", "suffix": "6th"},
+        {"raw": "j smith 7th", "last": "smith", "first": "j", "suffix": "7th"},
+        {"raw": "j smith 8th", "last": "smith", "first": "j", "suffix": "8th"},
+        {"raw": "j smith 9th", "last": "smith", "first": "j", "suffix": "9th"},
+        {"raw": "j smith 10th", "last": "smith", "first": "j", "suffix": "10th"},
+    ],
+)
+def issue_31_allow_ordinals(entry):
+    dict_entry_test(Name, entry)
