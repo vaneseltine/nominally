@@ -42,7 +42,7 @@ def get_tagged():
 
 
 def get_module():
-    path = Path("./nominally/__init__.py")
+    path = Path("./nominally/api.py")
     pattern = '__version__[ ="]+?' + VERSION_PATTERN
     return read_n_grep(path, pattern)
 
