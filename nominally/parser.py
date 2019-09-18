@@ -177,11 +177,10 @@ class Name(MappingBase):
         cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
     ) -> T.Tuple[T.List[Pieces], T.DefaultDict[str, Pieces]]:
         checklist = flatten_once(pieceslist)
-        if "junior" not in checklist:
-            return pieceslist, work
-        if len(checklist) < 3:
-            return pieceslist, work
-        if work["generational"]:
+        no_junior_present = "junior" not in checklist
+        too_few_parts_remain = len(checklist) < 3
+        already_found_generational = bool(work["generational"])
+        if no_junior_present or too_few_parts_remain or already_found_generational:
             return pieceslist, work
 
         if pieceslist[-1][-1] == "junior":
