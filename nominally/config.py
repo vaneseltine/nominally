@@ -25,8 +25,9 @@ SUFFIX_PATTERNS = {
         (r"j\.?d\.?", False),
         (r"jr\.?", True),
         (r"sr\.?", True),
-        (r"ii?[iv]+?\.?", True),
-        (r"1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th", True),
+        (r"(ii|iii|iv)", True),
+        (r"1st|2nd|3rd|10th", True),
+        (r"[4-9]th", True),
     ]
 }
 

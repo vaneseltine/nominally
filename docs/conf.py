@@ -9,12 +9,6 @@ import alabaster
 project = "nominally"
 author = "Matt VanEseltine"
 copyright = "2019, Matt VanEseltine"
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-
 
 PROJECT_ROOT = Path("../").resolve()
 sys.path.insert(0, PROJECT_ROOT)
@@ -34,11 +28,6 @@ def get_module_version():
 release = get_module_version()
 
 
-# -- General configuration ---------------------------------------------------
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
@@ -46,16 +35,10 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
 ]
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 
+intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
 intersphinx_timeout = 10
 
-
-autodoc_default_options = {
-    "ignore-module-all": True,
-    "autodoc_member_order": "bysource",
-}
-# Does not appear to be working
 autodoc_member_order = "bysource"
 
 # Add any paths that contain templates here, relative to this directory.
