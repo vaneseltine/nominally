@@ -178,12 +178,12 @@ def deploy_to_pypi(session):
 def push_to_github(session):
     if not nox.options.stop_on_first_error:
         session.skip("Error-free run disabled")
-    if not AT_HOME:
-        session.skip("Auto-push only from home")
     git_output = subprocess.check_output(["git", "status", "--porcelain"])
     if git_output:
         print(git_output.decode("ascii").rstrip())
         session.skip("Local repo is not clean")
+    if not AT_HOME:
+        session.skip("Auto-push only from home")
     push_output = subprocess.check_output(["git", "push"])
     print(push_output.decode("utf8"))
 

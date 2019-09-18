@@ -10,12 +10,13 @@ def dict_entry_test(testclass, entry):
     n = testclass(entry["raw"])
     observed = dict(n)
     expected = {key: entry.get(key, "") for key in observed.keys()}
-    print("raw:", entry["raw"])
-    print("exp:", expected["suffix"])
-    print("obs:", observed["suffix"])
     expected["suffix"] = set(expected["suffix"])
     observed["suffix"] = set(observed["suffix"])
-    assert observed == expected
+    failing = entry.get("passing") == "false" or entry.get("failing") == "true"
+    if failing:
+        assert observed != expected
+    else:
+        assert observed == expected
 
 
 def load_bank(glob):

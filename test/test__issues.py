@@ -98,3 +98,26 @@ from .conftest import dict_entry_test
 )
 def issue_26_della_and_van_current_behavior(entry):
     dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "Johann Gambolputty de von Ausfern",
+            "first": "johann",
+            "middle": "gambolputty",
+            "last": "de von ausfern",
+        },
+        {
+            "raw": "Ausfern, Johann Gambolputty de von",
+            "first": "johann",
+            "middle": "gambolputty",
+            "last": "de von ausfern",
+            "failing": "true",
+        },
+    ],
+)
+def issue_37_retach_misplaced_prefixes(entry):
+
+    dict_entry_test(Name, entry)

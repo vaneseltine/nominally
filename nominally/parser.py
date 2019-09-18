@@ -200,6 +200,7 @@ class Name(MappingBase):
     def _lfm_from_list(
         cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
     ) -> T.DefaultDict[str, Pieces]:
+
         # Remove empties and finish if nothing of substance remains
         pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
