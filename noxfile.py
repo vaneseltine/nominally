@@ -19,14 +19,6 @@ nox.options.stop_on_first_error = True
 
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 
-CORE_COMMANDS = [
-    "nominally -h",
-    "nominally --help",
-    "nominally -V",
-    "nominally --version",
-    "nominally Vimes",
-]
-
 
 def get_versions_from_classifiers(deploy_file):
     versions = []
@@ -127,11 +119,10 @@ def lint_black(session):
 
 @nox.session(python=False)
 def lint_todos(session):
-    for lint_dir in ["nominally", "test"]:
-        for file in Path(lint_dir).glob("*.*"):
-            result = read_n_grep(file, "(TODO.*)")
-            if result:
-                print(result)
+    for file in Path(".").glob("*/*.py"):
+        result = read_n_grep(file, "((TODO|FIXME).*)")
+        if result:
+            print(file, result)
 
 
 @nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
@@ -144,8 +135,17 @@ def pytest(session):
 
 
 def run_various_invocations(session):
+
+    core_commands = [
+        "nominally -h",
+        "nominally --help",
+        "nominally -V",
+        "nominally --version",
+        "nominally Vimes",
+    ]
+
     for prefix in ["", "python -m "]:
-        for main_cmd in CORE_COMMANDS:
+        for main_cmd in core_commands:
             cmd = (prefix + main_cmd).split()
             session.run(*cmd, silent=True)
 
