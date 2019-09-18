@@ -220,3 +220,18 @@ def test_unit_grab_junior(pieceslist, grab_it):
 )
 def issue_31_allow_ordinals(entry):
     dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "bah loney, junior oni r q x",
+            "last": "bah loney",
+            "first": "junior",
+            "middle": "oni r q x",
+        }
+    ],
+)
+def test_last_names_and_junior_non_prefixed_(entry):
+    dict_entry_test(Name, entry)

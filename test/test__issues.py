@@ -98,18 +98,3 @@ from .conftest import dict_entry_test
 )
 def issue_26_della_and_van_current_behavior(entry):
     dict_entry_test(Name, entry)
-
-
-@pytest.mark.parametrize(
-    "entry",
-    [
-        {
-            "raw": "bah loney, junior oni r q x",
-            "last": "bah loney",
-            "first": "junior",
-            "middle": "oni r q x",
-        }
-    ],
-)
-def test_last_names_non_prefixed_try_for_coverage(entry):
-    dict_entry_test(Name, entry)
