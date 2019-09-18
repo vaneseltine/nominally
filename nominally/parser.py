@@ -243,10 +243,9 @@ class Name(MappingBase):
         return pieces
 
     @staticmethod
-    def _combine_conjunctions(words: Pieces) -> Pieces:
-
+    def _combine_conjunctions(pieces: Pieces) -> Pieces:
         result: Pieces = []
-        queued = deepcopy(words)  # avoid popping side effects
+        queued = deepcopy(pieces)  # avoid popping side effects
         while queued:
             word = queued.pop(-1)
             if word in config.CONJUNCTIONS and result and queued:
@@ -257,8 +256,6 @@ class Name(MappingBase):
 
     @staticmethod
     def _combine_rightmost_prefixes(pieces: Pieces) -> Pieces:
-        if len(pieces) < 3:
-            return pieces
         result: T.List[Pieces] = []
 
         for word in reversed(pieces):

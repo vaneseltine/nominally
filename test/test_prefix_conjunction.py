@@ -30,7 +30,8 @@ def test_prefix_combining(incoming, outgoing):
     ),
 )
 def test_prefix_avoid(static):
-    assert Name._combine_rightmost_prefixes(static) == static
+    raw = " ".join(static)
+    assert set(static) <= set(Name(raw).values())
 
 
 @pytest.mark.parametrize(
