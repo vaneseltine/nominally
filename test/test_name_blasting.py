@@ -13,5 +13,7 @@ def test_all_name_banks(entry):
 @pytest.mark.parametrize("entry", load_bank("*"), ids=make_ids)
 def test_idempotence(entry):
     name = Name(entry["raw"])
-    assert Name(name) == name
-    assert Name(Name(name)) == name
+    namename = Name(str(name))
+    print(name)
+    print(namename)
+    assert dict(name) == dict(namename)

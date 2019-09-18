@@ -1,7 +1,6 @@
 import re
 import typing as T
 from collections import abc, defaultdict
-from copy import deepcopy
 
 from unidecode import unidecode_expect_ascii  # type: ignore
 
@@ -217,6 +216,7 @@ class Name(MappingBase):
     def _extract_first(
         cls, pieceslist: T.List[Pieces]
     ) -> T.Tuple[T.List[Pieces], Pieces]:
+        """Remove and return the first name from a prepared list of pieces"""
         # If only one piece remains, take its leftmost word
         if len(pieceslist) == 1:
             first = [pieceslist[0].pop(0)]
@@ -229,6 +229,7 @@ class Name(MappingBase):
     def _extract_last(
         cls, pieceslist: T.List[Pieces]
     ) -> T.Tuple[T.List[Pieces], Pieces]:
+        """Remove and return the last name from a prepared list of pieces"""
         # First, move any partitioned last name into rightmost piece
         if len(pieceslist) > 1:
             partitioned_last = " ".join(pieceslist.pop(0))
@@ -247,26 +248,27 @@ class Name(MappingBase):
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        if len(pieces) >= 4:
-            pieces = cls._combine_conjunctions(pieces)
+        pieces = cls._combine_conjunctions(pieces)
         if len(pieces) >= 3:
             pieces = cls._combine_rightmost_prefixes(pieces)
         return pieces
 
     @staticmethod
     def _combine_conjunctions(pieces: Pieces) -> Pieces:
-        result: Pieces = []
-        queued = deepcopy(pieces)  # avoid popping side effects
-        while queued:
-            word = queued.pop(-1)
-            if word in config.CONJUNCTIONS and result and queued:
-                clause = [queued.pop(-1), word, result.pop(0)]
-                word = " ".join(clause)
-            result.insert(0, word)
-        return result
+        if len(pieces) < 4:
+            return pieces
+
+        if pieces[-2] not in config.CONJUNCTIONS:
+            return pieces
+
+        *new_pieces, last_one, conj, last_two = pieces
+        last_piece = " ".join((last_one, conj, last_two))
+        new_pieces.append(last_piece)
+        return new_pieces
 
     @staticmethod
     def _combine_rightmost_prefixes(pieces: Pieces) -> Pieces:
+        """Work right-to-left through pieces, joining up prefixes of rightmost"""
         result: T.List[Pieces] = []
 
         for word in reversed(pieces):
