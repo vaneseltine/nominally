@@ -13,11 +13,8 @@ import nox
 
 IN_CI = os.getenv("CI", "").lower() == "true"
 IN_WINDOWS = sys.platform.startswith("win")
-AT_HOME = (
-    not IN_CI
-    and os.getenv("HOME") == "/home/matt"
-    and os.getenv("DESKTOP_SESSION") == "i3"
-)
+AT_HOME = not IN_CI and not IN_WINDOWS
+
 nox.options.stop_on_first_error = True
 
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
@@ -172,11 +169,10 @@ def build_docs(session):
     if IN_CI:
         session.skip("Not building on CI")
     sphinx_options = "-q -a -E -n -W".split()
+    output_dir = "build/docs"
     session.run("python", "-m", "sphinx", "docs", "build/docs", *sphinx_options)
-    url = "./build/docs/index.html"
-    if IN_WINDOWS:
-        url = f"file://{Path(url).resolve()}"
-    webbrowser.open_new_tab(url)
+    index = Path(output_dir).resolve() / "index.html"
+    webbrowser.open_new_tab(f"file://{index}")
 
 
 @nox.session(python=False)
