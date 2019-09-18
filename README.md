@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://www.gnu.org/licenses/agpl-3.0"><img alt="License: AGPL 3.0+" src="https://img.shields.io/pypi/l/nominally.svg?style=flat-square&color=violet" /></a>
   <a href="https://pypi.python.org/pypi/nominally"><img alt="Package hosted on PyPI" src="https://img.shields.io/pypi/v/nominally?style=flat-square" /></a>
-  <img alt="Code Climate maintainability" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally?style=flat-square">
+  <a href="https://codeclimate.com/github/vaneseltine/nominally"><img alt="Code Climate maintainability" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally?style=flat-square"></a>
   <a href="https://circleci.com/gh/vaneseltine/nominally"><img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square" /></a>
   <a href="https://nominally.readthedocs.io/en/latest/"><img alt="Read the Docs (latest)" src="https://img.shields.io/readthedocs/nominally/latest?style=flat-square" /></a>
   <a href="https://github.com/vaneseltine/nominally"><img alt="Latest commit" src="https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square" /></a>
