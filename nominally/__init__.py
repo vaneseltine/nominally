@@ -10,20 +10,20 @@ __version__ = "1.0.0"
 
 
 def cli_parse(raw_name: T.Optional[str] = None) -> int:
-    if sys.argv:
-        sys.argv.pop(0)
-    if not raw_name and (not sys.argv or sys.argv[0] in ("--help", "-h", "help")):
+    if raw_name:
+        return report(raw_name, details=True)
+    if not sys.argv[1:] or (set(sys.argv) & {"--help", "-h", "help"}):
         return usage()
-    if sys.argv and sys.argv[0] in ("--version", "-V"):
+    if set(sys.argv) & {"--version", "-V"}:
         return version()
-    exit_code = report(raw_name or " ".join(sys.argv), details=True)
-    return exit_code
+    return report(" ".join(sys.argv[1:]), details=True)
 
 
 def usage() -> int:
     print("nominally CLI example:", "-" * 80, sep="\n")
-    print('> nominally "Mr. Eric (The Inspector) Praline"')
-    cli_parse("Mr. Eric (The Inspector) Praline")
+    example_name = "Mr. Arthur (Two Sheds) Jackson"
+    print(f'> nominally "{example_name}"')
+    cli_parse(example_name)
     print("-" * 80)
     return 0
 

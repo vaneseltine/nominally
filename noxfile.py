@@ -91,9 +91,8 @@ def make_clean_dir(s):
 
 @nox.session(python=False)
 def lint_flake8(session):
-    for lint_dir in ["nominally", "test", "."]:
-        cmd = f"python -m flake8 --show-source {lint_dir}/*.py".split()
-        session.run(*cmd)
+    cmd = f"flake8 .".split()
+    session.run(*cmd)
 
 
 @nox.session(python=False)
