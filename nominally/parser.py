@@ -22,11 +22,16 @@ class Name(MappingBase):
     _keys = ["title", "first", "middle", "last", "suffix", "nickname"]
 
     def __init__(self, raw: str = "") -> None:
+
         self._raw = raw
 
-        pieceslist, work = self._pre_process(self._raw)
-        self._cleaned = set(work["cleaned"])
-        self._final: T.Dict[str, Pieces] = self._process(pieceslist, work)
+        remaining, working_dict = self._pre_process(self._raw)
+
+        self._cleaned = set(working_dict["cleaned"])
+
+        near_final = self._process(remaining, working_dict)
+
+        self._final: T.Dict[str, Pieces] = self._post_process(near_final)
 
     @classmethod
     def _pre_process(
@@ -50,12 +55,18 @@ class Name(MappingBase):
 
     def _process(
         self, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
-    ) -> T.Dict[str, Pieces]:
+    ) -> T.DefaultDict[str, Pieces]:
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist = self._remove_numbers(pieceslist)
         pieceslist, work = self._grab_junior(pieceslist, work)
         work = self._lfm_from_list(pieceslist, work)
-        return self._get_final(work)
+        return work
+
+    @classmethod
+    def _post_process(cls, work: T.DefaultDict[str, Pieces]) -> T.Dict[str, Pieces]:
+        work["suffix"] += work["generational"]
+        final = {k: cls._final_name_part_clean(work[k]) for k in cls._keys}
+        return final
 
     @staticmethod
     def clean_input(s: str, condense: bool = False) -> str:
@@ -156,15 +167,10 @@ class Name(MappingBase):
         pieces = re.split(r"\s*,\s*", remaining)
         return [x.split() for x in pieces if x]
 
-    @classmethod
-    def _get_final(cls, work: T.DefaultDict[str, Pieces]) -> T.Dict[str, Pieces]:
-        work["suffix"] += work["generational"]
-        final: T.Dict[str, Pieces] = {k: cls._final_clean(work[k]) for k in cls._keys}
-        return final
-
     @staticmethod
-    def _final_clean(pieces: Pieces) -> Pieces:
-        return [s.replace(".", "") for s in pieces]
+    def _final_name_part_clean(pieces: Pieces) -> Pieces:
+        stripped = [s.replace(".", "").strip("").strip("-") for s in pieces]
+        return [s for s in stripped if s]
 
     @classmethod
     def _grab_junior(

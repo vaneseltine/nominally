@@ -196,8 +196,8 @@ def push_to_github(session):
         session.skip("Error-free run disabled")
     if not AT_HOME:
         session.skip("Auto-push only from home")
-    if subprocess.check_output(["git", "add", "-n", "--all"]):
-        session.skip("Uncommitted changes")
+    if subprocess.check_output(["git", "status", "--porcelain"]):
+        session.skip("Local repo is not clean")
     output = subprocess.check_output(["git", "push"])
     print(output.decode("utf8"))
 

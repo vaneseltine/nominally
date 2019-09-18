@@ -2,6 +2,8 @@ import pytest
 
 from nominally.parser import Name
 
+from .conftest import dict_entry_test
+
 
 class TestCleanName:
     @pytest.mark.parametrize(
@@ -106,3 +108,18 @@ def issue_4_clean_nicknames():
     name = Name("ang%ua (ba%%rky) uberwald")
     assert name.first == "angua"
     assert name.nickname == "barky"
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "alfred p. 2234-234-53294-1- howdidthatgetthere",
+            "last": "howdidthatgetthere",
+            "first": "alfred",
+            "middle": "p",
+        }
+    ],
+)
+def issue_32_strip_hyphens(entry):
+    dict_entry_test(Name, entry)

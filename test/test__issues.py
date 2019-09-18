@@ -113,34 +113,3 @@ def issue_26_della_and_van_current_behavior(entry):
 )
 def test_last_names_non_prefixed_try_for_coverage(entry):
     dict_entry_test(Name, entry)
-
-
-@pytest.mark.parametrize(
-    "entry",
-    [
-        {
-            "raw": "alfred p. 2234-234-53294-1- howdidthatgetthere",
-            "last": "howdidthatgetthere",
-            "first": "alfred",
-            "middle": "p",
-        }
-    ],
-)
-def issue_32_strip_hyphens(entry):
-    dict_entry_test(Name, entry)
-
-
-@pytest.mark.parametrize(
-    "entry",
-    [
-        {"raw": "j smith 4th", "last": "smith", "first": "j", "suffix": "4th"},
-        {"raw": "j smith 5th", "last": "smith", "first": "j", "suffix": "5th"},
-        {"raw": "j smith 6th", "last": "smith", "first": "j", "suffix": "6th"},
-        {"raw": "j smith 7th", "last": "smith", "first": "j", "suffix": "7th"},
-        {"raw": "j smith 8th", "last": "smith", "first": "j", "suffix": "8th"},
-        {"raw": "j smith 9th", "last": "smith", "first": "j", "suffix": "9th"},
-        {"raw": "j smith 10th", "last": "smith", "first": "j", "suffix": "10th"},
-    ],
-)
-def issue_31_allow_ordinals(entry):
-    dict_entry_test(Name, entry)
