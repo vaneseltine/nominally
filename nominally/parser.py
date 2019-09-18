@@ -6,7 +6,7 @@ from copy import deepcopy
 from unidecode import unidecode_expect_ascii  # type: ignore
 
 from nominally import config
-from nominally.utilities import flatten_once, remove_falsey
+from nominally.utilities import flatten_once, remove_falsy
 
 Pieces = T.List[str]
 
@@ -24,13 +24,9 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
 
         self._raw = raw
-
         remaining, working_dict = self._pre_process(self._raw)
-
         self._cleaned = set(working_dict["cleaned"])
-
         near_final = self._process(remaining, working_dict)
-
         self._final: T.Dict[str, Pieces] = self._post_process(near_final)
 
     @classmethod
@@ -59,6 +55,7 @@ class Name(MappingBase):
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist = self._remove_numbers(pieceslist)
         pieceslist, work = self._grab_junior(pieceslist, work)
+        pieceslist = remove_falsy(pieceslist)
         work = self._lfm_from_list(pieceslist, work)
         return work
 
@@ -160,12 +157,15 @@ class Name(MappingBase):
     @staticmethod
     def _remove_numbers(pieces: T.List[Pieces]) -> T.List[Pieces]:
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
-        return remove_falsey(no_numbers)
+        return remove_falsy(no_numbers)
 
     @staticmethod
     def _string_to_pieceslist(remaining: str) -> T.List[Pieces]:
         pieces = re.split(r"\s*,\s*", remaining)
-        return [x.split() for x in pieces if x]
+
+        result = [x.split() for x in pieces if x]
+
+        return result
 
     @staticmethod
     def _final_name_part_clean(pieces: Pieces) -> Pieces:
@@ -201,34 +201,44 @@ class Name(MappingBase):
         cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
     ) -> T.DefaultDict[str, Pieces]:
 
-        # Remove empties and finish if nothing of substance remains
-        pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
             return work  # return if empty
+        pieceslist, work["last"] = cls._extract_last(remove_falsy(pieceslist))
 
-        # If we have only one piece left, group words and take its rightmost cluster
-        if len(pieceslist) == 1:
-            pieceslist[0] = cls._cluster_words(pieceslist[0])
-            work["last"] = [pieceslist[0].pop(-1)]
-        # Otherwise, meaning multiple pieces remain: take its rightmost piece
-        else:
-            work["last"] = pieceslist.pop(0)
-
-        # Remove empties and finish if nothing of substance remains
-        pieceslist = remove_falsey(pieceslist)
         if not any(flatten_once(pieceslist)):
             return work
-
-        # If only one piece remains, take its leftmost word
-        if len(pieceslist) == 1:
-            work["first"] = [pieceslist[0].pop(0)]
-        # Otherwise, meaning multiple pieces remain: take its leftmost piece
-        else:
-            work["first"] = pieceslist.pop(0)
+        pieceslist, work["first"] = cls._extract_first(remove_falsy(pieceslist))
 
         # Everything remaining is a middle name
         work["middle"] = flatten_once(pieceslist)
         return work
+
+    @classmethod
+    def _extract_first(
+        cls, pieceslist: T.List[Pieces]
+    ) -> T.Tuple[T.List[Pieces], Pieces]:
+        # If only one piece remains, take its leftmost word
+        if len(pieceslist) == 1:
+            first = [pieceslist[0].pop(0)]
+        else:
+            first = pieceslist.pop(0)
+
+        return pieceslist, first
+
+    @classmethod
+    def _extract_last(
+        cls, pieceslist: T.List[Pieces]
+    ) -> T.Tuple[T.List[Pieces], Pieces]:
+        # First, move any partitioned last name into rightmost piece
+        if len(pieceslist) > 1:
+            partitioned_last = " ".join(pieceslist.pop(0))
+            pieceslist[-1].append(partitioned_last)
+
+        # Now group words of the rightmost piece and take the rightmost cluster
+        pieceslist[-1] = cls._cluster_words(pieceslist[-1])
+        last = [pieceslist[-1].pop(-1)]
+
+        return pieceslist, last
 
     @classmethod
     def _cluster_words(cls, pieces: Pieces) -> Pieces:

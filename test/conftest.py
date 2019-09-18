@@ -12,11 +12,7 @@ def dict_entry_test(testclass, entry):
     expected = {key: entry.get(key, "") for key in observed.keys()}
     expected["suffix"] = set(expected["suffix"])
     observed["suffix"] = set(observed["suffix"])
-    failing = entry.get("passing") == "false" or entry.get("failing") == "true"
-    if failing:
-        assert observed != expected
-    else:
-        assert observed == expected
+    assert observed == expected
 
 
 def load_bank(glob):
