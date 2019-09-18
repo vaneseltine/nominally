@@ -2,6 +2,7 @@
 """Invoke via `nox` or `python -m nox`"""
 
 import os
+import re
 import subprocess
 import sys
 import webbrowser
@@ -9,13 +10,75 @@ from pathlib import Path
 
 import nox
 
-from noxhelpers import SUPPORTED_PYTHONS, pypi_is_outdated, read_n_grep
-
 IN_CI = os.getenv("CI", "").lower() == "true"
 IN_WINDOWS = sys.platform.startswith("win")
 AT_HOME = not IN_CI and not IN_WINDOWS
 
 nox.options.stop_on_first_error = True
+
+# Helper functions below
+
+VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
+
+
+def supported_pythons(deploy_file="setup.cfg"):
+    if IN_WINDOWS:
+        return None
+    versions = []
+    lines = Path(deploy_file).read_text().splitlines()
+    for line in lines:
+        hit = re.match(r".*Python :: ([0-9.]+)\W*$", line)
+        if hit:
+            versions.append(hit.group(1))
+    return versions
+
+
+def pypi_is_outdated():
+    versions = {"__version__": get_module(), "git tag": get_tagged()}
+    the_version = {x or "ERROR" for x in versions.values()}
+    if len(the_version) != 1:
+        from pprint import pprint
+
+        print(f"Version inconsistency!")
+        pprint(versions, width=10)
+        return False
+    repo_v = the_version.pop()
+    pypi_v = get_pypi()
+    deployable = (repo_v != pypi_v) and "dev" not in repo_v
+    print(f"Local:         {versions['__version__']}")
+    print(f"Git tag:       {versions['git tag']}")
+    print(f"PyPI:          {pypi_v}")
+    print(f"Deployable:    {deployable}")
+    return deployable
+
+
+def get_tagged():
+    result = subprocess.run(
+        ["git", "describe", "--tags", "--abbrev=0"], stdout=subprocess.PIPE
+    )
+    return result.stdout.decode("utf-8").strip()
+
+
+def get_module():
+    path = Path("./nominally/api.py")
+    pattern = '__version__[ ="]+?' + VERSION_PATTERN
+    return read_n_grep(path, pattern)
+
+
+def read_n_grep(path, pattern):
+    text = Path(path).read_text("utf-8")
+    result = re.compile(pattern).search(text)
+    if not result:
+        return None
+    return result.group(1)
+
+
+def get_pypi():
+    result = subprocess.check_output(
+        ["python", "-m", "pip", "search", "nominally"]
+    ).decode("utf-8")
+    matc = re.compile(r"^nominally \(" + VERSION_PATTERN).search(result)
+    return matc.group(1)
 
 
 @nox.session(python=False)
@@ -53,7 +116,7 @@ def lint_todos(session):
             print(file, result)
 
 
-@nox.session(python=SUPPORTED_PYTHONS, reuse_venv=False)
+@nox.session(python=supported_pythons(), reuse_venv=False)
 def pytest(session):
     session.install("-r", "requirements/test.txt")
     session.install(".")
@@ -63,7 +126,6 @@ def pytest(session):
 
 
 def run_various_invocations(session):
-
     core_commands = [
         "nominally -h",
         "nominally --help",
@@ -71,7 +133,6 @@ def run_various_invocations(session):
         "nominally --version",
         "nominally Vimes",
     ]
-
     for prefix in ["", "python -m "]:
         for main_cmd in core_commands:
             cmd = (prefix + main_cmd).split()
@@ -123,11 +184,11 @@ def push_to_github(session):
     if git_output:
         print(git_output.decode("ascii").rstrip())
         session.skip("Local repo is not clean")
-    output = subprocess.check_output(["git", "push"])
-    print(output.decode("utf8"))
+    push_output = subprocess.check_output(["git", "push"])
+    print(push_output.decode("utf8"))
 
 
 if __name__ == "__main__":
-    print(f"Pythons supported: {SUPPORTED_PYTHONS}")
+    print(f"Pythons supported: {supported_pythons()}")
     pypi_is_outdated()
     print(f"Invoke {__file__} by running Nox.")
