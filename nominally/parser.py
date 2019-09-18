@@ -236,20 +236,14 @@ class Name(MappingBase):
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        out_pieces = cls._break_down_to_words(pieces)
-        out_pieces = cls._combine_conjunctions(out_pieces)
-        out_pieces = cls._combine_rightmost_prefixes(out_pieces)
-        return out_pieces
-
-    @staticmethod
-    def _break_down_to_words(parts: Pieces) -> Pieces:
-        result = parts
-        return result
+        if len(pieces) >= 4:
+            pieces = cls._combine_conjunctions(pieces)
+        if len(pieces) >= 3:
+            pieces = cls._combine_rightmost_prefixes(pieces)
+        return pieces
 
     @staticmethod
     def _combine_conjunctions(words: Pieces) -> Pieces:
-        if len(words) < 4:
-            return words
 
         result: Pieces = []
         queued = deepcopy(words)  # avoid popping side effects
@@ -271,10 +265,9 @@ class Name(MappingBase):
             if len(result) > 1 or word not in config.PREFIXES:
                 result.insert(0, [word])
                 continue
-            if result:
-                result[0].insert(0, word)
-            else:
-                result = [[word]]
+            if not result:
+                result = [[]]
+            result[0].insert(0, word)
 
         final_pieces: Pieces = [" ".join(piece) for piece in result if piece]
         return final_pieces

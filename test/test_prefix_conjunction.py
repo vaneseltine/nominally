@@ -47,8 +47,6 @@ def test_conjunction_combine(incoming, outgoing):
 @pytest.mark.parametrize(
     "static",
     (
-        ["joe", "y", "blow"],
-        ["joe", "blow", "y"],
         ["joe", "st.", "blow", "y"],
         ["y", "joe", "blow", "y"],
         ["y", "joe", "blow", "jr"],
