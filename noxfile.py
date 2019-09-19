@@ -212,8 +212,7 @@ def autopush_repo(session):
         session.skip("Local repo is not clean")
     if not AT_HOME:
         session.skip("Only from home")
-    push_output = subprocess.check_output(["git", "push"])
-    print(push_output.decode("utf8").strip())
+    subprocess.check_output(["git", "push"])
 
 
 if __name__ == "__main__":
