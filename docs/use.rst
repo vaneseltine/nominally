@@ -14,30 +14,25 @@ Installation
 
 Install in the normal way:
 
-.. code-block::
+::
 
-    pip install nominally
+    $ pip install nominally
 
 Starting a new project
 `by creating a virtual environment <https://docs.python.org/3/tutorial/venv.html>`_
 first is highly recommended:
 
-.. code-block:: shell
+::
 
-    # Create a virtual environment
-    python -m venv .venv
-
-    # Activate with one of the following shell-specific scripts.
-    # Note that Python for Windows creates ./Scripts/ rather than ./bin/
-    # . .venv/bin/activate.fish         # fish
-    # source ./.venv/bin/activate       # bash
-    # source ./.venv/bin/activate.csh   # csh
-    # .\.venv\Scripts\Activate.ps1      # PowerShell
-    # .venv\Scripts\Activate.bat        # cmd
-
-    # Install
-    pip install nominally
-
+    $ python3 -m venv .venv
+    $ source ./.venv/bin/activate
+    (.venv) $ pip install nominally
+    Collecting nominally
+      Downloading [...]/nominally-1.0.1-py3-none-any.whl
+    Collecting unidecode>=1.0 (from nominally)
+      Downloading [...]/Unidecode-1.1.1-py2.py3-none-any.whl
+    Installing collected packages: unidecode, nominally
+    Successfully installed nominally-1.0.1 unidecode-1.1.1
 
 Nominally requires Python 3.6 or higher and
 has one external dependency
