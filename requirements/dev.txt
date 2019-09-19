@@ -1,4 +1,5 @@
 -r common.txt
+-r docs.txt
 -r test.txt
 
 # Publish package
@@ -17,7 +18,3 @@ pylint==2.3.1
 nox==2019.8.20
 coveralls==1.8.1
 PyYAML==5.1.2
-
-# Build docs
-Sphinx==2.2.0
-doc8==0.8.0
