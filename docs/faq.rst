@@ -34,7 +34,7 @@ Nominally does not create or tag canonical names.
 
 Strings are *aggressively* cleaned.
 
-For specifics, see :py:func:`nominally.parser.Name.clean_input`
+For specifics, see :py:func:`nominally.parser.Name.clean`
 
 Name ordering
 -------------------------------------

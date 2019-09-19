@@ -54,58 +54,58 @@
         "raw": "brian andrew o'connor",
         "first": "brian",
         "middle": "andrew",
-        "last": "o'connor"
+        "last": "oconnor"
     },
     {
         "id": "single_quotes_on_both_name_not_treated_as_nickname",
         "raw": "la'tanya o'connor",
-        "first": "la'tanya",
-        "last": "o'connor"
+        "first": "latanya",
+        "last": "oconnor"
     },
     {
         "id": "single_quotes_on_end_of_last_name_not_treated_as_nickname",
         "raw": "mari' aube'",
-        "first": "mari'",
-        "last": "aube'"
+        "first": "mari",
+        "last": "aube"
     },
     {
         "id": "okina_inside_name_not_treated_as_nickname",
         "raw": "harrieta keōpūolani nāhiʻenaʻena",
         "first": "harrieta",
         "middle": "keopuolani",
-        "last": "nahi'ena'ena"
+        "last": "nahienaena"
     },
     {
         "id": "single_quotes_not_treated_as_nickname_hawaiian_example",
         "raw": "harietta keopuolani nahi'ena'ena",
         "first": "harietta",
         "middle": "keopuolani",
-        "last": "nahi'ena'ena"
+        "last": "nahienaena"
     },
     {
         "id": "backticks_like_single_quotes",
         "raw": "harietta keopuolani nahi`ena`ena",
         "first": "harietta",
         "middle": "keopuolani",
-        "last": "nahi'ena'ena"
+        "last": "nahienaena"
     },
     {
         "id": "single_quotes_not_treated_as_nickname_kenyan_example",
         "raw": "naomi wambui ng'ang'a",
         "first": "naomi",
         "middle": "wambui",
-        "last": "ng'ang'a"
+        "last": "nganga"
     },
     {
         "id": "single_quotes_not_treated_as_nickname_samoan_example",
         "raw": "va'apu'u vitale",
-        "first": "va'apu'u",
+        "first": "vaapuu",
         "last": "vitale"
     },
     {
-        "id": "nickname_and_last_name",
+        "id": "need more than one name for a nickname",
         "raw": "\"rick\" edmonds",
-        "last": "edmonds",
-        "nickname": "rick"
+        "first": "rick",
+        "last": "edmonds"
     }
 ]

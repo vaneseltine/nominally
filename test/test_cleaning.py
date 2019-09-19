@@ -10,7 +10,7 @@ class TestCleanName:
         "raw", ["DINSDALE", "Dinsdale", "dINSDALE", "dinsdale", "DiNsDaLe"]
     )
     def t_force_lower(self, raw):
-        assert Name.clean_input(raw) == "dinsdale"
+        assert Name.clean(raw) == "dinsdale"
 
     @pytest.mark.parametrize(
         "raw",
@@ -22,12 +22,12 @@ class TestCleanName:
         ],
     )
     def t_drop_emoji(self, raw):
-        assert Name.clean_input(raw) == "spiny norman"
+        assert Name.clean(raw) == "spiny norman"
 
     @pytest.mark.parametrize("raw", ["Mr Εric Πραλiñé"])
     def t_convert_unicode(self, raw):
         """This is handled by unidecode and should not be extensively tested"""
-        assert Name.clean_input(raw) == "mr eric praline"
+        assert Name.clean(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw",
@@ -45,7 +45,7 @@ class TestCleanName:
         ],
     )
     def t_drop_spacing(self, raw):
-        assert Name.clean_input(raw) == "mr eric praline"
+        assert Name.clean(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw",
@@ -61,7 +61,7 @@ class TestCleanName:
         ],
     )
     def t_colons_and_commas(self, raw):
-        assert Name.clean_input(raw) == "praline, mr eric"
+        assert Name.clean(raw) == "praline, mr eric"
 
     @pytest.mark.parametrize(
         "raw",
@@ -75,7 +75,7 @@ class TestCleanName:
         ],
     )
     def t_ignore_most_symbols(self, raw):
-        assert Name.clean_input(raw) == "mr eric praline"
+        assert Name.clean(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw, cooked",
@@ -90,7 +90,7 @@ class TestCleanName:
         ],
     )
     def t_handle_certain_symbols(self, raw, cooked):
-        assert Name.clean_input(raw) == cooked
+        assert Name.clean(raw) == cooked
 
     @pytest.mark.parametrize(
         "raw, cooked",
@@ -101,7 +101,7 @@ class TestCleanName:
         ],
     )
     def t_strip_margin_hyphens(self, raw, cooked):
-        assert Name.clean_input(raw) == cooked
+        assert Name.clean(raw) == cooked
 
 
 def issue_4_clean_nicknames():

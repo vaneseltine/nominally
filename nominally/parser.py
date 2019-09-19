@@ -37,9 +37,15 @@ class Name(MappingBase):
         )
 
         s = str(s).lower()
-        s, working = cls._sweep_nicknames(s, working)
-        s, working = cls._sweep_suffixes(s, working)
-        s = cls.clean_input(s)
+        s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
+        if s.count(" ") > 1:
+            s, working = cls._sweep_nicknames(s, working)
+        # condense now that these aren't needed for nicknames
+        s = s.replace("'", "")
+        if s.count(" ") > 1:
+            s, working = cls._sweep_suffixes(s, working)
+        s, working = cls._sweep_junior(s, working)
+        s = cls.clean(s)
 
         pieceslist = cls._string_to_pieceslist(s)
         working["cleaned"] = [s]
@@ -61,11 +67,11 @@ class Name(MappingBase):
     @classmethod
     def _post_process(cls, work: T.DefaultDict[str, Pieces]) -> T.Dict[str, Pieces]:
         work["suffix"] += work["generational"]
-        final = {k: cls._final_name_part_clean(work[k]) for k in cls._keys}
+        final = {k: cls._final_pieces_clean(work[k]) for k in cls._keys}
         return final
 
     @staticmethod
-    def clean_input(s: str, condense: bool = False) -> str:
+    def clean(s: str, condense: bool = False) -> str:
         """Clean this string to the simplest possible representation (but no simpler).
 
         .. note::
@@ -81,7 +87,7 @@ class Name(MappingBase):
         s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
         s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all excluding - ' , .
         s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
-        s = s.strip("- ")  # drop leading/trailing hyphens and spaces
+        s = s.strip(",- ")  # drop leading/trailing hyphens, spaces, commas
         if condense:
             s = s.replace(" ", "")
         return s
@@ -93,15 +99,12 @@ class Name(MappingBase):
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
                 continue
-            new_suffix = [cls.clean_input(x, condense=True) for x in pat.findall(s)]
+            new_suffix = [cls.clean(x, condense=True) for x in pat.findall(s)]
             if generational:
                 working["generational"] += new_suffix
             else:
                 working["suffix"] += new_suffix
             s = pat.sub("", s)
-        # Remove any comma-bracketed 'junior's
-        s, working = cls._sweep_junior(s, working)
-        s = cls.clean_input(s)
         return s, working
 
     @classmethod
@@ -135,7 +138,7 @@ class Name(MappingBase):
 
         for pattern in config.NICKNAME_PATTERNS:
             if pattern.search(s):
-                working["nickname"] += [cls.clean_input(x) for x in pattern.findall(s)]
+                working["nickname"] += [cls.clean(x) for x in pattern.findall(s)]
                 s = pattern.sub("", s)
         return s, working
 
@@ -166,10 +169,19 @@ class Name(MappingBase):
 
         return result
 
-    @staticmethod
-    def _final_name_part_clean(pieces: Pieces) -> Pieces:
-        stripped = [s.replace(".", "").strip("").strip("-") for s in pieces]
+    @classmethod
+    def _final_pieces_clean(cls, pieces: Pieces) -> Pieces:
+        stripped = [cls._final_string_clean(s) for s in pieces]
         return [s for s in stripped if s]
+
+    @staticmethod
+    def _final_string_clean(s: str) -> str:
+        s = s.replace(".", "")
+        s = s.replace("'", "")
+        s = s.strip("- ")
+        if not re.search("[a-z]", s):
+            return ""
+        return s
 
     @classmethod
     def _grab_junior(
@@ -318,12 +330,14 @@ class Name(MappingBase):
             f"{self.last},",
             self.title,
             self.first,
-            f"({self.nickname})" if self.nickname else "",
             self.middle,
             self.suffix,
         ]
         joined = " ".join(p for p in string_parts if p)
-        return re.sub(r"\s+", " ", joined).strip()
+        prepared = self.clean(joined)
+        if self.nickname:
+            prepared += f" ({self.nickname})"
+        return prepared
 
     # API
 
