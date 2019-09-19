@@ -10,7 +10,7 @@ import pytest
 from nominally.parser import Name
 
 MAX_EXAMPLES = 1000
-DEADLINE = 2000
+DEADLINE = None
 
 # Surrogate character \udd9b will be ignored. You might be using a narrow Python build.
 UNIDECODE_SURROGATE_WARNING = "ignore:Surrogate character '"

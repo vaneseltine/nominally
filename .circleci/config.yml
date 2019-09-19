@@ -12,7 +12,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20190916
+            - dependencies-20190919
       - run:
           name: Prepare environment
           command: |
@@ -21,13 +21,11 @@ jobs:
             python3 -m pip install -q -U pip
             python3 -m pip install -q -r requirements/dev.txt
             python3 -m pip --version
-            ls -lah ~/.cache/pip
+            ls -lah ~/.venv/lib/site-packages
       - save_cache:
           paths:
-            - ".venv"
-            - ".nox"
             - "~/.cache/pip"
-          key: dependencies-20190916
+          key: dependencies-20190919
       - run:
           name: Run the nox gauntlet
           command: |

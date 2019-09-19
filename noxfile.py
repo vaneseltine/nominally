@@ -42,7 +42,7 @@ def supported_pythons(classifiers_in="setup.cfg"):
     return versions
 
 
-def pypi_report():
+def pypi_needs_new_version():
     """
     Compare (and report) the version of the package:
         - as reported by package.__version__
@@ -193,11 +193,11 @@ def build_docs(session):
 
 @nox.session(python=False)
 def deploy_to_pypi(session):
-    if pypi_report():
+    if not pypi_needs_new_version():
         session.skip("PyPI already up to date")
+    print("Current version is ready to deploy to PyPI.")
     if not IN_CI:
-        session.skip("Deploy only from CI")
-    print("Current version is more recent than PyPI. DEPLOY!")
+        session.skip("Only deploying from CI")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
     session.run("python", "-m", "twine", "upload", "dist/*")
 
@@ -218,5 +218,5 @@ def autopush_repo(session):
 
 if __name__ == "__main__":
     print(f"Pythons supported: {supported_pythons()}")
-    pypi_report()
+    pypi_needs_new_version()
     print(f"Invoke {__file__} by running Nox.")
