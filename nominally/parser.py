@@ -54,54 +54,47 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
 
         self._raw = raw
-        remaining, working_dict = self._pre_process(self._raw)
-        self._cleaned = set(working_dict["cleaned"])
-        near_final = self._process(remaining, working_dict)
-        self._final: T.Dict[str, Pieces] = self._post_process(near_final)
-
-    @classmethod
-    def _pre_process(
-        cls, s: str
-    ) -> T.Tuple[T.List[Pieces], T.DefaultDict[str, Pieces]]:
-        working: T.DefaultDict[str, Pieces] = defaultdict(
-            list, {k: [] for k in cls._keys}
+        self.work: T.DefaultDict[str, Pieces] = defaultdict(
+            list, {k: [] for k in self._keys}
         )
+        remaining = self._pre_process(self.raw)
+        self._process(remaining)
+        self._post_process()
+        self._final = self.work
+
+    def _pre_process(self, s: str):
 
         s = str(s).lower()
         s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
         if s.count(" ") > 1:
-            s, working = cls._sweep_nicknames(s, working)
+            s = self._sweep_nicknames(s)
         # condense now that these aren't needed for nicknames
         s = s.replace("'", "")
         if s.count(" ") > 1:
-            s, working = cls._sweep_suffixes(s, working)
-        s, working = cls._sweep_junior(s, working)
-        s = cls.clean(s)
+            s = self._sweep_suffixes(s)
+        s = self._sweep_junior(s)
+        s = self.clean(s)
 
-        pieceslist = cls._string_to_pieceslist(s)
-        working["cleaned"] = [s]
-        for k in [*cls._keys, "generational"]:
-            if working[k]:
-                working["cleaned"] += working[k]
-        return pieceslist, working
+        pieceslist = self._string_to_pieceslist(s)
+        cleaned = [s]
+        for k in [*self._keys, "generational"]:
+            if self.work[k]:
+                cleaned += self.work[k]
 
-    def _process(
-        self, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
-    ) -> T.DefaultDict[str, Pieces]:
-        pieceslist, work["title"] = self._extract_title(pieceslist)
+        self._cleaned = set(cleaned)
+
+        return pieceslist
+
+    def _process(self, pieceslist: T.List[Pieces]) -> None:
+        pieceslist = self._extract_title(pieceslist)
         pieceslist = self._remove_numbers(pieceslist)
-        print("pre-jun", pieceslist)
-        pieceslist, work = self._grab_junior(pieceslist, work)
-        print("post-jun", pieceslist)
+        pieceslist = self._grab_junior(pieceslist)
         pieceslist = remove_falsy(pieceslist)
-        work = self._lfm_from_list(pieceslist, work)
-        return work
+        self._lfm_from_list(pieceslist)
 
-    @classmethod
-    def _post_process(cls, work: T.DefaultDict[str, Pieces]) -> T.Dict[str, Pieces]:
-        work["suffix"] += work["generational"]
-        final = {k: cls._final_pieces_clean(work[k]) for k in cls._keys}
-        return final
+    def _post_process(self) -> None:
+        self.work["suffix"] += self.work["generational"]
+        self.work = {k: self._final_pieces_clean(self.work[k]) for k in self._keys}
 
     @staticmethod
     def clean(s: str, condense: bool = False) -> str:
@@ -125,41 +118,32 @@ class Name(MappingBase):
             s = s.replace(" ", "")
         return s
 
-    @classmethod
-    def _sweep_suffixes(
-        cls, s: str, working: T.DefaultDict[str, Pieces]
-    ) -> T.Tuple[str, T.DefaultDict[str, Pieces]]:
+    def _sweep_suffixes(self, s: str) -> str:
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
                 continue
-            new_suffix = [cls.clean(x, condense=True) for x in pat.findall(s)]
+            new_suffix = [self.clean(x, condense=True) for x in pat.findall(s)]
             if generational:
-                working["generational"] += new_suffix
+                self.work["generational"] += new_suffix
             else:
-                working["suffix"] += new_suffix
+                self.work["suffix"] += new_suffix
             s = pat.sub("", s)
-        return s, working
+        return s
 
-    @classmethod
-    def _sweep_junior(
-        cls, s: str, working: T.DefaultDict[str, Pieces]
-    ) -> T.Tuple[str, T.DefaultDict[str, Pieces]]:
-        if working["generational"]:
-            return s, working
+    def _sweep_junior(self, s: str) -> str:
+        if self.work["generational"]:
+            return s
         if not config.JUNIOR_PATTERN.findall(s):
-            return s, working
+            return s
         if len(config.WORD_FINDER.findall(s)) < 3:
-            return s, working
+            return s
 
         s = config.JUNIOR_PATTERN.sub(", ", s)
-        working["generational"].insert(0, "junior")
+        self.work["generational"].insert(0, "junior")
 
-        return s, working
+        return s
 
-    @classmethod
-    def _sweep_nicknames(
-        cls, s: str, working: T.DefaultDict[str, Pieces]
-    ) -> T.Tuple[str, T.DefaultDict[str, Pieces]]:
+    def _sweep_nicknames(self, s: str) -> str:
         """
         The content of parenthesis or quotes in the name will be added to the
         nicknames list. This happens before any other processing of the name.
@@ -171,12 +155,11 @@ class Name(MappingBase):
 
         for pattern in config.NICKNAME_PATTERNS:
             if pattern.search(s):
-                working["nickname"] += [cls.clean(x) for x in pattern.findall(s)]
+                self.work["nickname"] += [self.clean(x) for x in pattern.findall(s)]
                 s = pattern.sub("", s)
-        return s, working
+        return s
 
-    @staticmethod
-    def _extract_title(pieceslist: T.List[Pieces]) -> T.Tuple[T.List[Pieces], Pieces]:
+    def _extract_title(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
         outgoing: T.List[Pieces] = []
         while pieceslist:
             next_cluster = pieceslist.pop(0)
@@ -184,10 +167,12 @@ class Name(MappingBase):
             first_word, *remainder = next_cluster
             if first_word in config.TITLES:
                 outgoing = outgoing + [remainder] + pieceslist
-                return outgoing, [first_word]
+                self.work["title"] = [first_word]
+                return outgoing
 
             outgoing.append(next_cluster)
-        return outgoing, []
+        self.work["title"] = []
+        return outgoing
 
     @staticmethod
     def _remove_numbers(pieces: T.List[Pieces]) -> T.List[Pieces]:
@@ -197,10 +182,7 @@ class Name(MappingBase):
     @staticmethod
     def _string_to_pieceslist(remaining: str) -> T.List[Pieces]:
         pieces = re.split(r"\s*,\s*", remaining)
-
-        result = [x.split() for x in pieces if x]
-
-        return result
+        return [x.split() for x in pieces if x]
 
     @classmethod
     def _final_pieces_clean(cls, pieces: Pieces) -> Pieces:
@@ -216,50 +198,42 @@ class Name(MappingBase):
             return ""
         return s
 
-    @classmethod
     @word_count_bouncer(minimum=3)
-    def _grab_junior(
-        cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
-    ) -> T.Tuple[T.List[Pieces], T.DefaultDict[str, Pieces]]:
+    def _grab_junior(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
         checklist = flatten_once(pieceslist)
         no_junior_present = "junior" not in checklist
-        already_found_generational = bool(work["generational"])
+        already_found_generational = bool(self.work["generational"])
         if no_junior_present or already_found_generational:
-            return pieceslist, work
+            return pieceslist
 
         if pieceslist[-1][-1] == "junior":
             pieceslist[-1].remove("junior")
-            work["generational"].insert(0, "junior")
-            return pieceslist, work
+            self.work["generational"].insert(0, "junior")
+            return pieceslist
         first_name_cluster_index = 0 if len(pieceslist) == 1 else 1
 
         junior_index = pieceslist[first_name_cluster_index].index("junior")
         if junior_index:
             pieceslist[first_name_cluster_index].remove("junior")
-            work["generational"].insert(0, "junior")
+            self.work["generational"].insert(0, "junior")
 
-        return pieceslist, work
+        return pieceslist
 
-    @classmethod
-    def _lfm_from_list(
-        cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
-    ) -> T.DefaultDict[str, Pieces]:
+    def _lfm_from_list(self, pieceslist: T.List[Pieces]):
 
         if not any(flatten_once(pieceslist)):
-            return work  # return if empty
-        pieceslist, work["last"] = cls._extract_last(remove_falsy(pieceslist))
+            return  # return if empty
+        pieceslist = self._extract_last(remove_falsy(pieceslist))
 
         if not any(flatten_once(pieceslist)):
-            return work
-        pieceslist, work["first"] = cls._extract_first(remove_falsy(pieceslist))
+            return
+        pieceslist = self._extract_first(remove_falsy(pieceslist))
 
         # Everything remaining is a middle name
-        work["middle"] = flatten_once(pieceslist)
-        return work
+        self.work["middle"] = flatten_once(pieceslist)
 
-    @classmethod
     def _extract_first(
-        cls, pieceslist: T.List[Pieces]
+        self, pieceslist: T.List[Pieces]
     ) -> T.Tuple[T.List[Pieces], Pieces]:
         """
         Remove and return the first name from a prepared list of pieces
@@ -268,13 +242,12 @@ class Name(MappingBase):
         if more than one, take the leftmost piece.
         """
         if len(pieceslist) == 1:
-            return pieceslist, [pieceslist[0].pop(0)]
-        return pieceslist, pieceslist.pop(0)
+            self.work["first"] = [pieceslist[0].pop(0)]
+            return pieceslist
+        self.work["first"] = pieceslist.pop(0)
+        return pieceslist
 
-    @classmethod
-    def _extract_last(
-        cls, pieceslist: T.List[Pieces]
-    ) -> T.Tuple[T.List[Pieces], Pieces]:
+    def _extract_last(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
         """Remove and return the last name from a prepared list of pieces"""
         # First, move any partitioned last name into rightmost piece
         if len(pieceslist) > 1:
@@ -282,8 +255,9 @@ class Name(MappingBase):
             pieceslist[-1].append(partitioned_last)
 
         # Now group words of the rightmost piece and take the rightmost cluster
-        pieceslist[-1] = cls._cluster_words(pieceslist[-1])
-        return pieceslist, [pieceslist[-1].pop(-1)]
+        pieceslist[-1] = self._cluster_words(pieceslist[-1])
+        self.work["last"] = [pieceslist[-1].pop(-1)]
+        return pieceslist
 
     @classmethod
     def _cluster_words(cls, pieces: Pieces) -> Pieces:
@@ -292,9 +266,7 @@ class Name(MappingBase):
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        print("_cluster_words", pieces)
         pieces = cls._combine_conjunctions(pieces)
-        print("_cluster_words", pieces)
         pieces = cls._combine_rightmost_prefixes(pieces)
         return pieces
 

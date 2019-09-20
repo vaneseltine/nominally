@@ -124,6 +124,7 @@ def lint_pylint(session):
 
 @nox.session(python=False)
 def lint_typing(session, subfolder=PACKAGE_NAME):
+    session.skip("Suspending type checking")
     session.run("python", "-m", "mypy", "--strict", PACKAGE_NAME)
 
 
