@@ -10,18 +10,22 @@ project = "nominally"
 author = "Matt VanEseltine"
 copyright = "2019, Matt VanEseltine"
 
-PROJECT_ROOT = Path("../").resolve()
+PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, PROJECT_ROOT)
 
 
 def get_module_version():
-    path = PROJECT_ROOT / "nominally/__init__.py"
-    VERSION_PATTERN = r'__version__[ ="]+?(\d+\.\d+\.[0-9a-z_-]+)'
+    path = PROJECT_ROOT / "nominally/api.py"
+    VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
+    VERSION_FINDER = r'__version__[ ="]+?' + VERSION_PATTERN
     text = Path(path).read_text()
-    result = re.search(VERSION_PATTERN, text)
+    result = re.search(VERSION_FINDER, text)
     if not result:
-        return f"Failed to find version in {path}"
-    return result.group(1)
+        raise RuntimeError(f"Failed to find version in {path}")
+    version = result.group(1)
+    if not re.match(VERSION_PATTERN, version):
+        raise RuntimeError(f"Malformed version number", repr(version))
+    return version
 
 
 # The full version, including alpha/beta/rc tags

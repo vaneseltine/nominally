@@ -55,6 +55,7 @@ def pypi_needs_new_version():
     """
     versions = {
         "__version__": get_package_version(MODULE_DEFINING_VERSION),
+        "docs": get_docs_version(),
         "git tag": get_tagged_version(),
     }
     the_version = {x or "ERROR" for x in versions.values()}
@@ -67,7 +68,8 @@ def pypi_needs_new_version():
     repo_v = the_version.pop()
     pypi_v = get_pypi_version()
     deployable = (repo_v != pypi_v) and "dev" not in repo_v
-    print(f"Local:         {versions['__version__']}")
+    print(f"Internal:      {versions['__version__']}")
+    print(f"Documentation: {versions['docs']}")
     print(f"Git tag:       {versions['git tag']}")
     print(f"PyPI:          {pypi_v}")
     print(f"Deployable:    {deployable}")
@@ -87,6 +89,12 @@ def get_package_version(defined_in):
     path = Path(defined_in)
     pattern = '__version__[ ="]+?' + VERSION_PATTERN
     return search_in_file(path, pattern)
+
+
+def get_docs_version():
+    from docs import conf
+
+    return conf.release
 
 
 def search_in_file(path, pattern, encoding="utf-8"):
