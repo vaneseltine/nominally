@@ -1,6 +1,6 @@
 .. nominally documentation master file
 
-Introduction
+Nominally
 ================================
 
 *Nominally* simplifies and parses a personal name written in
@@ -13,7 +13,7 @@ of names en masse. This package includes a command line tool
 to parse a single name for convenient one-off testing and examples.
 
 
-Design Goals
+For Record Linkage
 --------------------------
 
 *Nominally* is designed to assist at the front end of record linkage, during
@@ -33,27 +33,42 @@ We observe this by-no-means-exhaustive list:
 
 
 In attempting to match someone named Ramsay Jackson Canning across data,
-one may uncover "R.J. CANNING," "Canning, Ramsay J.," "Ramsay "R.J." Jackson
-Canning," "Dr. Ramsay Jackson Canning, M.D.," "canning, jr., dr. ramsay"—and
-so on.
+one may uncover
 
-*Nominally* can't fix all these data problems (sorry).
+    - R.J. CANNING JUNIOR
+    - Canning, Ramsay J.
+    - Ramsay "R.J." Jackson Canning
+    - Dr. Ramsay Jackson Canning, M.D.
+    - Ramsay J. Canning, Jr.
+    - canning, jr., dr. ramsay
+
+—and so on.
+
+*Nominally* can't fix *all* of your data problems (sorry).
 
 But it can help by **consistently extracting the most useful features of
 personal names** under the highly restrictive case of a single string name
 field. *Nominally* :ref:`aggressively cleans <cleaning>`, scrapes titles,
 nicknames, and suffixes, and parses apart first, middle, and last names.
+In the list above (and many, many variations beyond), *nominally* correctly
+captures each Canning as a last name, each R(amsay) as a first, both types
+of suffix, and so forth.
+
+Idempotence
+--------------------------
 
 The process of converting input to output in *nominally* is
-`idempotent <https://en.wikipedia.org/wiki/Idempotence>`_.
-Parsing and reparsing any name will not change the outcome, even when
-its output has been condensed to a single-field string representation.
-In other words, for all *x*:
+`idempotent <https://en.wikipedia.org/wiki/Idempotence>`_. For all *x*:
 
 .. math::
 
-   Name(Name(x)) = Name(x)
+   Name(Name(x)) == Name(x)
 
+In other words, parsing and reparsing any name will not change the outcome.
+This holds true even when its output has been condensed to a single-field
+string representation.
+Managing a data pipeline is hard enough without worrying about keeping
+track of the correct number of times to preprocess a feature.
 
 Contents
 ----------------------------
@@ -61,7 +76,6 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    self
     use
     faq
     sausage
