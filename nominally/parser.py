@@ -57,16 +57,17 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
 
         self._raw = raw
-        self.work: T.DefaultDict[str, Pieces] = defaultdict(
-            list, {k: [] for k in self._keys}
-        )
+        self.detail: T.Dict[str, Pieces] = {k: [] for k in self._keys}
+        self._has_generational = False
         preprocessed_str = self._pre_process(self.raw)
         self._reserve_cleaned(preprocessed_str)
 
         pieceslist = self._string_to_pieceslist(preprocessed_str)
         self._process(pieceslist)
         self._post_process()
-        self._final = {k: self._final_pieces_clean(self.work[k]) for k in self._keys}
+        print(self.detail)
+        self._final = {k: self._final_pieces_clean(self.detail[k]) for k in self._keys}
+        print(self._final)
 
     def _pre_process(self, s: str) -> str:
 
@@ -82,7 +83,7 @@ class Name(MappingBase):
         return s
 
     def _reserve_cleaned(self, s: str) -> None:
-        observed = [" ".join(x) for x in self.work.values() if x] + [s]
+        observed = [" ".join(x) for x in self.detail.values() if x] + [s]
         self._cleaned = set(observed)
 
     def _process(self, pieceslist: PiecesList) -> None:
@@ -93,7 +94,7 @@ class Name(MappingBase):
         self._extract_last_first_middle(pieceslist)
 
     def _post_process(self) -> None:
-        self.work["suffix"] += self.work["generational"]
+        self.detail["suffix"].sort()
 
     @staticmethod
     def clean(s: str, condense: bool = False) -> str:
@@ -122,25 +123,21 @@ class Name(MappingBase):
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
                 continue
-            new_suffix = [self.clean(x, condense=True) for x in pat.findall(s)]
+            new_suffixes = [self.clean(x, condense=True) for x in pat.findall(s)]
             if generational:
-                self.work["generational"] += new_suffix
-            else:
-                self.work["suffix"] += new_suffix
+                self._has_generational = True
+            self.detail["suffix"].extend(new_suffixes)
             s = pat.sub("", s)
         return s
 
     @word_count_bouncer(minimum=3)
     def _sweep_junior(self, s: str) -> str:
-        if self.work["generational"]:
+        if self._has_generational:
             return s
-        if not config.JUNIOR_PATTERN.findall(s):
-            return s
-
-        s = config.JUNIOR_PATTERN.sub(", ", s)
-        self.work["generational"].insert(0, "junior")
-
-        return s
+        new_s = config.JUNIOR_PATTERN.sub(", ", s)
+        if new_s != s:
+            self.detail["suffix"].append("junior")
+        return new_s
 
     @word_count_bouncer(minimum=3)
     def _sweep_nicknames(self, s: str) -> str:
@@ -155,7 +152,7 @@ class Name(MappingBase):
 
         for pattern in config.NICKNAME_PATTERNS:
             if pattern.search(s):
-                self.work["nickname"] += [self.clean(x) for x in pattern.findall(s)]
+                self.detail["nickname"] += [self.clean(x) for x in pattern.findall(s)]
                 s = pattern.sub("", s)
         return s
 
@@ -167,11 +164,11 @@ class Name(MappingBase):
             first_word, *remainder = next_cluster
             if first_word in config.TITLES:
                 outgoing = outgoing + [remainder] + pieceslist
-                self.work["title"] = [first_word]
+                self.detail["title"] = [first_word]
                 return outgoing
 
             outgoing.append(next_cluster)
-        self.work["title"] = []
+        self.detail["title"] = []
         return outgoing
 
     @staticmethod
@@ -200,29 +197,28 @@ class Name(MappingBase):
 
     @word_count_bouncer(minimum=3)
     def _grab_junior(self, pieceslist: PiecesList) -> PiecesList:
-        checklist = flatten_once(pieceslist)
-        no_junior_present = "junior" not in checklist
-        already_found_generational = bool(self.work["generational"])
-        if no_junior_present or already_found_generational:
+        if self._has_generational:
+            return pieceslist
+        if "junior" not in flatten_once(pieceslist):
             return pieceslist
 
         if pieceslist[-1][-1] == "junior":
             pieceslist[-1].remove("junior")
-            self.work["generational"].insert(0, "junior")
+            self.detail["suffix"].insert(0, "junior")
             return pieceslist
         first_name_cluster_index = 0 if len(pieceslist) == 1 else 1
 
         junior_index = pieceslist[first_name_cluster_index].index("junior")
         if junior_index:
             pieceslist[first_name_cluster_index].remove("junior")
-            self.work["generational"].insert(0, "junior")
+            self.detail["suffix"].insert(0, "junior")
 
         return pieceslist
 
     def _extract_last_first_middle(self, pieceslist: PiecesList) -> None:
         pieceslist = self._extract_last(remove_falsy(pieceslist))
         pieceslist = self._extract_first(remove_falsy(pieceslist))
-        self.work["middle"] = flatten_once(pieceslist)
+        self.detail["middle"] = flatten_once(pieceslist)
 
     @word_count_bouncer(1)
     def _extract_first(self, pieceslist: PiecesList) -> PiecesList:
@@ -233,9 +229,9 @@ class Name(MappingBase):
         if more than one, take the leftmost piece.
         """
         if len(pieceslist) == 1:
-            self.work["first"] = [pieceslist[0].pop(0)]
+            self.detail["first"] = [pieceslist[0].pop(0)]
             return pieceslist
-        self.work["first"] = pieceslist.pop(0)
+        self.detail["first"] = pieceslist.pop(0)
         return pieceslist
 
     @word_count_bouncer(1)
@@ -246,7 +242,7 @@ class Name(MappingBase):
             pieceslist = self.flip_last_name_to_right(pieceslist)
         # Now group words of the rightmost piece and take the rightmost cluster
         pieceslist[-1] = self._cluster_words(pieceslist[-1])
-        self.work["last"] = [pieceslist[-1].pop(-1)]
+        self.detail["last"] = [pieceslist[-1].pop(-1)]
         return pieceslist
 
     @classmethod
@@ -292,8 +288,7 @@ class Name(MappingBase):
                 result = [[]]
             result[0].insert(0, word)
 
-        final_pieces: Pieces = [" ".join(piece) for piece in result if piece]
-        return final_pieces
+        return [" ".join(piece) for piece in result if piece]
 
     def __eq__(self, other: T.Any) -> bool:
         try:

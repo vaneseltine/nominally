@@ -14,6 +14,4 @@ def test_all_name_banks(entry):
 def test_idempotence(entry):
     name = Name(entry["raw"])
     namename = Name(str(name))
-    print(name)
-    print(namename)
-    assert dict(name) == dict(namename)
+    assert name == namename
