@@ -57,14 +57,14 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
 
         self._raw = raw
-        self.detail: T.Dict[str, Pieces] = {k: [] for k in self._keys}
+        self._cleaned: T.Set[str] = set()
         self._has_generational = False
-        preprocessed_str = self._pre_process(self.raw)
-        self._reserve_cleaned(preprocessed_str)
+        self.detail: T.Dict[str, Pieces] = {k: [] for k in self._keys}
 
-        pieceslist = self._string_to_pieceslist(preprocessed_str)
-        self._process(pieceslist)
+        preprocessed_str = self._pre_process(self.raw)
+        self._process(preprocessed_str)
         self._post_process()
+
         self._final = {k: self._final_pieces_clean(self.detail[k]) for k in self._keys}
 
     def _pre_process(self, s: str) -> str:
@@ -78,17 +78,23 @@ class Name(MappingBase):
         s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
         s = self.clean(s)
+        self._archive_cleaned(s)
         return s
 
-    def _reserve_cleaned(self, s: str) -> None:
-        observed = [" ".join(x) for x in self.detail.values() if x] + [s]
-        self._cleaned = set(observed)
+    def _archive_cleaned(self, s: str) -> None:
+        self._cleaned.add(s)
+        self._cleaned.update(" ".join(x) for x in self.detail.values() if x)
 
-    def _process(self, pieceslist: PiecesList) -> None:
+    @staticmethod
+    def _string_to_pieceslist(remaining: str) -> PiecesList:
+        pieces = re.split(r"\s*,\s*", remaining)
+        return [x.split() for x in pieces if x]
+
+    def _process(self, preprocessed_str: str) -> None:
+        pieceslist = self._string_to_pieceslist(preprocessed_str)
         pieceslist = self._extract_title(pieceslist)
         pieceslist = self._remove_numbers(pieceslist)
         pieceslist = self._grab_junior(pieceslist)
-        pieceslist = remove_falsy(pieceslist)
         self._extract_last_first_middle(pieceslist)
 
     def _post_process(self) -> None:
@@ -174,11 +180,6 @@ class Name(MappingBase):
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
         return remove_falsy(no_numbers)
 
-    @staticmethod
-    def _string_to_pieceslist(remaining: str) -> PiecesList:
-        pieces = re.split(r"\s*,\s*", remaining)
-        return [x.split() for x in pieces if x]
-
     @classmethod
     def _final_pieces_clean(cls, pieces: Pieces) -> Pieces:
         stripped = [cls._final_string_clean(s) for s in pieces]
@@ -205,19 +206,22 @@ class Name(MappingBase):
                  take as suffix 'jake smith, junior'
         """
 
-        if self._has_generational or "junior" not in flatten_once(pieceslist):
+        if self._has_generational:
             return pieceslist
 
-        if len(pieceslist) == 1 and pieceslist[0][0] == "junior":
-            # It's the first word of the only pieces
+        if "junior" not in flatten_once(pieceslist):
             return pieceslist
 
-        if (
+        first_word_only_cluster = len(pieceslist) == 1 and pieceslist[0][0] == "junior"
+        if first_word_only_cluster:
+            return pieceslist
+
+        first_word_in_likely_first_name = (
             len(pieceslist) == 2
             and len(pieceslist[1]) > 1
             and pieceslist[1][0] == "junior"
-        ):
-            # It's the first word of a multi-word multi-piece first/mid cluster
+        )
+        if first_word_in_likely_first_name:
             return pieceslist
 
         self.detail["suffix"].append("junior")
