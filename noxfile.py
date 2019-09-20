@@ -144,7 +144,7 @@ def lint_todos(session):
 @nox.session(python=supported_pythons(), reuse_venv=False)
 def pytest(session):
     session.install("-r", "requirements/test.txt")
-    session.install(".")
+    session.install("-e", ".")
     session.run("python", "-m", "coverage", "run", "-m", "pytest")
     session.run("python", "-m", "coverage", "report")
     run_various_invocations(session, cmds=BASIC_COMMANDS)
@@ -163,6 +163,8 @@ def coverage(session):
         session.run("coveralls")
         return
     session.run("python", "-m", "coverage", "html")
+    output = Path("build/coverage/index.html").resolve()
+    print(f"Coverage at {output}")
 
 
 @nox.session(python=False)

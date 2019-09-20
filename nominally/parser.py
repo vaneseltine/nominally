@@ -9,6 +9,8 @@ from nominally import config
 from nominally.utilities import flatten_once, remove_falsy
 
 Pieces = T.List[str]
+PiecesList = T.List[Pieces]
+WordCountable = T.Union[str, Pieces, PiecesList]
 
 if T.TYPE_CHECKING:
     MappingBase = T.Mapping[str, str]
@@ -16,32 +18,31 @@ else:
     MappingBase = abc.Mapping
 
 
-def word_count_bouncer(minimum):
+def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
     """
     Decorate only class/instance methods, enforce word count on first real arg.
 
     If there are too few (less than minimum) words, return the arguments.
     """
 
-    def decorator_bouncer(func):
+    def decorator_bouncer(
+        func: T.Callable[[T.Any, WordCountable], WordCountable]
+    ) -> T.Callable[[T.Any, WordCountable], WordCountable]:
         @functools.wraps(func)
-        def wrapper_bouncer(obj: T.Any, pieces: T.List[Pieces], *args, **kwargs):
-            def bounce():
-                if args:
-                    return (pieces, *args)
-                return pieces
+        def wrapper_bouncer(obj: T.Any, countable: WordCountable) -> WordCountable:
 
-            if not pieces:
-                return bounce()
-            if isinstance(pieces, str):
-                checklist = pieces.split()
-            elif isinstance(pieces[0], str):
-                checklist = pieces
+            checklist: T.List[T.Any]
+            if not countable:
+                return countable
+            if isinstance(countable, str):
+                checklist = countable.split()
+            elif isinstance(countable[0], str):
+                checklist = countable
             else:
-                checklist = flatten_once(pieces)
+                checklist = flatten_once(countable)
             if len(checklist) < minimum:
-                return bounce()
-            return func(obj, pieces, *args, **kwargs)
+                return countable
+            return func(obj, countable)
 
         return wrapper_bouncer
 
@@ -59,13 +60,13 @@ class Name(MappingBase):
         self.work: T.DefaultDict[str, Pieces] = defaultdict(
             list, {k: [] for k in self._keys}
         )
-        remaining_str = self._pre_process(self.raw)
-        self._cleaned = self._reserve_cleaned(remaining_str)
+        preprocessed_str = self._pre_process(self.raw)
+        self._reserve_cleaned(preprocessed_str)
 
-        remaining_pieces = self._string_to_pieceslist(remaining_str)
-        self._process(remaining_pieces)
+        pieceslist = self._string_to_pieceslist(preprocessed_str)
+        self._process(pieceslist)
         self._post_process()
-        self._final = self.work
+        self._final = {k: self._final_pieces_clean(self.work[k]) for k in self._keys}
 
     def _pre_process(self, s: str) -> str:
 
@@ -80,20 +81,19 @@ class Name(MappingBase):
         s = self.clean(s)
         return s
 
-    def _reserve_cleaned(self, s: str):
+    def _reserve_cleaned(self, s: str) -> None:
         observed = [" ".join(x) for x in self.work.values() if x] + [s]
         self._cleaned = set(observed)
 
-    def _process(self, pieceslist: T.List[Pieces]) -> None:
+    def _process(self, pieceslist: PiecesList) -> None:
         pieceslist = self._extract_title(pieceslist)
         pieceslist = self._remove_numbers(pieceslist)
         pieceslist = self._grab_junior(pieceslist)
         pieceslist = remove_falsy(pieceslist)
-        self._lfm_from_list(pieceslist)
+        self._extract_last_first_middle(pieceslist)
 
     def _post_process(self) -> None:
         self.work["suffix"] += self.work["generational"]
-        self.work = {k: self._final_pieces_clean(self.work[k]) for k in self._keys}
 
     @staticmethod
     def clean(s: str, condense: bool = False) -> str:
@@ -159,8 +159,8 @@ class Name(MappingBase):
                 s = pattern.sub("", s)
         return s
 
-    def _extract_title(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
-        outgoing: T.List[Pieces] = []
+    def _extract_title(self, pieceslist: PiecesList) -> PiecesList:
+        outgoing: PiecesList = []
         while pieceslist:
             next_cluster = pieceslist.pop(0)
 
@@ -175,12 +175,12 @@ class Name(MappingBase):
         return outgoing
 
     @staticmethod
-    def _remove_numbers(pieces: T.List[Pieces]) -> T.List[Pieces]:
+    def _remove_numbers(pieces: PiecesList) -> PiecesList:
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
         return remove_falsy(no_numbers)
 
     @staticmethod
-    def _string_to_pieceslist(remaining: str) -> T.List[Pieces]:
+    def _string_to_pieceslist(remaining: str) -> PiecesList:
         pieces = re.split(r"\s*,\s*", remaining)
         return [x.split() for x in pieces if x]
 
@@ -199,7 +199,7 @@ class Name(MappingBase):
         return s
 
     @word_count_bouncer(minimum=3)
-    def _grab_junior(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
+    def _grab_junior(self, pieceslist: PiecesList) -> PiecesList:
         checklist = flatten_once(pieceslist)
         no_junior_present = "junior" not in checklist
         already_found_generational = bool(self.work["generational"])
@@ -219,13 +219,13 @@ class Name(MappingBase):
 
         return pieceslist
 
-    def _lfm_from_list(self, pieceslist: T.List[Pieces]):
+    def _extract_last_first_middle(self, pieceslist: PiecesList) -> None:
         pieceslist = self._extract_last(remove_falsy(pieceslist))
         pieceslist = self._extract_first(remove_falsy(pieceslist))
         self.work["middle"] = flatten_once(pieceslist)
 
     @word_count_bouncer(1)
-    def _extract_first(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
+    def _extract_first(self, pieceslist: PiecesList) -> PiecesList:
         """
         Remove and return the first name from a prepared list of pieces
 
@@ -239,7 +239,7 @@ class Name(MappingBase):
         return pieceslist
 
     @word_count_bouncer(1)
-    def _extract_last(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
+    def _extract_last(self, pieceslist: PiecesList) -> PiecesList:
         """Remove and return the last name from a prepared list of pieces"""
         # First, move any partitioned last name into rightmost piece
         if len(pieceslist) > 1:
@@ -250,7 +250,7 @@ class Name(MappingBase):
         return pieceslist
 
     @classmethod
-    def flip_last_name_to_right(cls, pieceslist) -> T.List[Pieces]:
+    def flip_last_name_to_right(cls, pieceslist: PiecesList) -> PiecesList:
         partitioned_last = " ".join(pieceslist.pop(0))
         pieceslist[-1].append(partitioned_last)
         return pieceslist
@@ -269,19 +269,20 @@ class Name(MappingBase):
     @classmethod
     @word_count_bouncer(minimum=4)
     def _combine_conjunctions(cls, pieces: Pieces) -> Pieces:
-        if pieces[-2] not in config.CONJUNCTIONS:
+        *new_pieces, last_name_one, conj, last_name_two = pieces
+
+        if conj not in config.CONJUNCTIONS:
             return pieces
 
-        *new_pieces, last_one, conj, last_two = pieces
-        last_piece = " ".join((last_one, conj, last_two))
-        new_pieces.append(last_piece)
+        rightmost = " ".join((last_name_one, conj, last_name_two))
+        new_pieces.append(rightmost)
         return new_pieces
 
     @classmethod
     @word_count_bouncer(minimum=3)
     def _combine_rightmost_prefixes(cls, pieces: Pieces) -> Pieces:
         """Work right-to-left through pieces, joining up prefixes of rightmost"""
-        result: T.List[Pieces] = []
+        result: PiecesList = []
 
         for word in reversed(pieces):
             if len(result) > 1 or word not in config.PREFIXES:
