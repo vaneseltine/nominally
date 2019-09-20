@@ -769,5 +769,11 @@
         "first": "benjamin",
         "last": "franklin",
         "nickname": "big ben"
+    },
+    {
+        "raw": "Bob Junior McNugget",
+        "first": "bob",
+        "last": "mcnugget",
+        "suffix": "junior"
     }
 ]

@@ -7,11 +7,10 @@ TEST_DATA_DIRECTORY = Path(__file__).parent / "names"
 
 
 def dict_entry_test(testclass, entry):
-    n = testclass(entry["raw"])
-    observed = dict(n)
+    observed = dict(testclass(entry["raw"]))
     expected = {key: entry.get(key, "") for key in observed.keys()}
-    expected["suffix"] = set(expected["suffix"])
-    observed["suffix"] = set(observed["suffix"])
+    expected["suffix"] = set(expected["suffix"].split())
+    observed["suffix"] = set(observed["suffix"].split())
     assert observed == expected
 
 

@@ -1,7 +1,7 @@
 import functools
 import re
 import typing as T
-from collections import abc, defaultdict
+from collections import abc
 
 from unidecode import unidecode_expect_ascii  # type: ignore
 
@@ -65,9 +65,7 @@ class Name(MappingBase):
         pieceslist = self._string_to_pieceslist(preprocessed_str)
         self._process(pieceslist)
         self._post_process()
-        print(self.detail)
         self._final = {k: self._final_pieces_clean(self.detail[k]) for k in self._keys}
-        print(self._final)
 
     def _pre_process(self, s: str) -> str:
 
@@ -197,23 +195,37 @@ class Name(MappingBase):
 
     @word_count_bouncer(minimum=3)
     def _grab_junior(self, pieceslist: PiecesList) -> PiecesList:
-        if self._has_generational:
-            return pieceslist
-        if "junior" not in flatten_once(pieceslist):
+        """
+        Extract "junior" as suffix unless
+        - there is already a generational suffix
+        - junior is the first word of the only piece (e.g. 'junior x. smith')
+        - junior is the first word of a multi-part multi-piece
+            e.g. leave as first 'smith, junior x'
+                 leave as first 'barnes-smith, junior james'
+                 take as suffix 'jake smith, junior'
+        """
+
+        if self._has_generational or "junior" not in flatten_once(pieceslist):
             return pieceslist
 
-        if pieceslist[-1][-1] == "junior":
-            pieceslist[-1].remove("junior")
-            self.detail["suffix"].insert(0, "junior")
+        if len(pieceslist) == 1 and pieceslist[0][0] == "junior":
+            # It's the first word of the only pieces
             return pieceslist
-        first_name_cluster_index = 0 if len(pieceslist) == 1 else 1
 
-        junior_index = pieceslist[first_name_cluster_index].index("junior")
-        if junior_index:
-            pieceslist[first_name_cluster_index].remove("junior")
-            self.detail["suffix"].insert(0, "junior")
+        if (
+            len(pieceslist) == 2
+            and len(pieceslist[1]) > 1
+            and pieceslist[1][0] == "junior"
+        ):
+            # It's the first word of a multi-word multi-piece first/mid cluster
+            return pieceslist
 
-        return pieceslist
+        self.detail["suffix"].append("junior")
+        return self._remove_from_pieceslist(pieceslist, "junior")
+
+    @staticmethod
+    def _remove_from_pieceslist(pieceslist: PiecesList, s: str) -> PiecesList:
+        return [[x for x in piece if x != s] for piece in pieceslist]
 
     def _extract_last_first_middle(self, pieceslist: PiecesList) -> None:
         pieceslist = self._extract_last(remove_falsy(pieceslist))

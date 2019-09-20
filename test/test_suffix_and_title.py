@@ -12,19 +12,20 @@ def fake_working(**kwargs):
     return defaultdict(list, {**kwargs, **fresh})
 
 
+# @pytest.mark.xfail(reason="Breaking unit tests")
 @pytest.mark.parametrize(
-    "args, outs, outwork",
+    "incoming, outs, outwork",
     [
-        [("bob", fake_working()), "bob", []],
-        [("bob ph.d.", fake_working()), "bob", ["phd"]],
-        [("bob ph.d.", fake_working()), "bob", ["phd"]],
+        ["bob b. bob", "bob b. bob", []],
+        ["bob b. bob ph.d.", "bob b. bob", ["phd"]],
+        ["bob b. bob ph.d.", "bob b. bob", ["phd"]],
     ],
 )
-@pytest.mark.xfail(reason="Breaking unit tests")
-def test_sweep_suffixes(args, outs, outwork):
-    observed_string, observed_working = Name._sweep_suffixes(*args)
+def test_sweep_suffixes(incoming, outs, outwork):
+    bob = Name()
+    observed_string = bob._sweep_suffixes(incoming)
     assert observed_string.strip() == outs
-    assert observed_working["suffix"] == outwork
+    assert bob.detail["suffix"] == outwork
 
 
 def correct_loose_ordering(pre, post):
@@ -191,21 +192,32 @@ def test_junior_with_gen_suffix(entry):
 
 
 @pytest.mark.parametrize(
-    "pieceslist, grab_it",
+    "pieceslist",
     [
-        ([["junior", "vimes"]], False),
-        ([["junior", "sam", "vimes"]], False),
-        ([["junior", "sam", "vimes"]], False),
-        ([["junior", "sam", "vimes"]], False),
-        ([["junior", "sam", "vimes"]], False),
-        ([["sam", "vimes", "junior"]], True),
-        ([["sam", "junior", "vimes"]], True),
+        [["sam", "vimes", "junior"]],
+        [["sam", "junior", "vimes"]],
+        [["sam", "junior", "vimes"]],
+        [["junior", "vimes"], ["sam"]],
+        [["vimes", "junior"], ["sam"]],
+        [["vimes"], ["junior"], ["sam"]],
+        [["junior"], ["vimes"], ["sam"]],
+        [["vimes"], ["sam"], ["junior"]],
     ],
 )
-@pytest.mark.xfail(reason="Breaking unit tests")
-def test_unit_grab_junior(pieceslist, grab_it):
-    _, work = Name._grab_junior(pieceslist, defaultdict(list))
-    assert ("junior" in work["generational"]) == grab_it
+def test_unit_grab_junior(pieceslist):
+    blank = Name()
+    _ = blank._grab_junior(pieceslist)
+    assert "junior" in blank.detail["suffix"]
+
+
+@pytest.mark.parametrize(
+    "pieceslist",
+    [[["junior", "vimes"]], [["junior", "sam", "vimes"]], [["junior"], ["vimes"]]],
+)
+def test_unit_do_not_grab_junior(pieceslist):
+    blank = Name()
+    _ = blank._grab_junior(pieceslist)
+    assert "junior" not in blank.detail["suffix"]
 
 
 @pytest.mark.parametrize(
