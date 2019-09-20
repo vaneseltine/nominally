@@ -54,25 +54,26 @@ def pypi_needs_new_version():
     Return true if the current version is consistent, non-dev, ahead of PyPI.
     """
     versions = {
-        "__version__": get_package_version(MODULE_DEFINING_VERSION),
-        "docs": get_docs_version(),
-        "git tag": get_tagged_version(),
+        "Internal": get_package_version(MODULE_DEFINING_VERSION),
+        "Git tag": get_tagged_version(),
     }
-    the_version = {x or "ERROR" for x in versions.values()}
-    if len(the_version) != 1:
-        from pprint import pprint
+    if not IN_CI:
+        versions["Documentation"] = get_docs_version()
 
-        print(f"Version inconsistency!")
-        pprint(versions, width=10)
-        return False
-    repo_v = the_version.pop()
-    pypi_v = get_pypi_version()
-    deployable = (repo_v != pypi_v) and "dev" not in repo_v
-    print(f"Internal:      {versions['__version__']}")
-    print(f"Documentation: {versions['docs']}")
-    print(f"Git tag:       {versions['git tag']}")
-    print(f"PyPI:          {pypi_v}")
-    print(f"Deployable:    {deployable}")
+    the_version = {x or "ERROR" for x in versions.values()}
+    broken = len(the_version) > 1
+
+    versions["PyPI"] = get_pypi_version()
+    if broken:
+        print(f"\nVersion inconsistency!\n")
+        deployable = False
+    else:
+        repo_v = the_version.pop()
+        deployable = (repo_v != versions["PyPI"]) and "dev" not in repo_v
+
+    versions["Deployable"] = deployable
+    for k, v in versions.items():
+        print(f"{k:<15}: {v}")
     return deployable
 
 
