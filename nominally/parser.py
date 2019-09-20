@@ -1,3 +1,4 @@
+import functools
 import re
 import typing as T
 from collections import abc, defaultdict
@@ -13,6 +14,36 @@ if T.TYPE_CHECKING:
     MappingBase = T.Mapping[str, str]
 else:
     MappingBase = abc.Mapping
+
+
+def word_count_bouncer(minimum):
+    """
+    Decorate only class/instance methods, enforce word count on first real arg.
+
+    If there are too few (less than minimum) words, return the arguments.
+    """
+
+    def decorator_bouncer(func):
+        @functools.wraps(func)
+        def wrapper_bouncer(obj: T.Any, pieces: T.List[Pieces], *args, **kwargs):
+            def bounce():
+                if args:
+                    return (pieces, *args)
+                return pieces
+
+            if not pieces:
+                return bounce()
+            if isinstance(pieces[0], str):
+                checklist = pieces
+            else:
+                checklist = flatten_once(pieces)
+            if len(checklist) < minimum:
+                return bounce()
+            return func(obj, pieces, *args, **kwargs)
+
+        return wrapper_bouncer
+
+    return decorator_bouncer
 
 
 class Name(MappingBase):
@@ -59,7 +90,9 @@ class Name(MappingBase):
     ) -> T.DefaultDict[str, Pieces]:
         pieceslist, work["title"] = self._extract_title(pieceslist)
         pieceslist = self._remove_numbers(pieceslist)
+        print("pre-jun", pieceslist)
         pieceslist, work = self._grab_junior(pieceslist, work)
+        print("post-jun", pieceslist)
         pieceslist = remove_falsy(pieceslist)
         work = self._lfm_from_list(pieceslist, work)
         return work
@@ -184,14 +217,14 @@ class Name(MappingBase):
         return s
 
     @classmethod
+    @word_count_bouncer(minimum=3)
     def _grab_junior(
         cls, pieceslist: T.List[Pieces], work: T.DefaultDict[str, Pieces]
     ) -> T.Tuple[T.List[Pieces], T.DefaultDict[str, Pieces]]:
         checklist = flatten_once(pieceslist)
         no_junior_present = "junior" not in checklist
-        too_few_parts_remain = len(checklist) < 3
         already_found_generational = bool(work["generational"])
-        if no_junior_present or too_few_parts_remain or already_found_generational:
+        if no_junior_present or already_found_generational:
             return pieceslist, work
 
         if pieceslist[-1][-1] == "junior":
@@ -228,14 +261,15 @@ class Name(MappingBase):
     def _extract_first(
         cls, pieceslist: T.List[Pieces]
     ) -> T.Tuple[T.List[Pieces], Pieces]:
-        """Remove and return the first name from a prepared list of pieces"""
-        # If only one piece remains, take its leftmost word
-        if len(pieceslist) == 1:
-            first = [pieceslist[0].pop(0)]
-        else:
-            first = pieceslist.pop(0)
+        """
+        Remove and return the first name from a prepared list of pieces
 
-        return pieceslist, first
+        If only one piece remains, take its leftmost word;
+        if more than one, take the leftmost piece.
+        """
+        if len(pieceslist) == 1:
+            return pieceslist, [pieceslist[0].pop(0)]
+        return pieceslist, pieceslist.pop(0)
 
     @classmethod
     def _extract_last(
@@ -249,9 +283,7 @@ class Name(MappingBase):
 
         # Now group words of the rightmost piece and take the rightmost cluster
         pieceslist[-1] = cls._cluster_words(pieceslist[-1])
-        last = [pieceslist[-1].pop(-1)]
-
-        return pieceslist, last
+        return pieceslist, [pieceslist[-1].pop(-1)]
 
     @classmethod
     def _cluster_words(cls, pieces: Pieces) -> Pieces:
@@ -260,16 +292,15 @@ class Name(MappingBase):
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
+        print("_cluster_words", pieces)
         pieces = cls._combine_conjunctions(pieces)
-        if len(pieces) >= 3:
-            pieces = cls._combine_rightmost_prefixes(pieces)
+        print("_cluster_words", pieces)
+        pieces = cls._combine_rightmost_prefixes(pieces)
         return pieces
 
-    @staticmethod
-    def _combine_conjunctions(pieces: Pieces) -> Pieces:
-        if len(pieces) < 4:
-            return pieces
-
+    @classmethod
+    @word_count_bouncer(minimum=4)
+    def _combine_conjunctions(cls, pieces: Pieces) -> Pieces:
         if pieces[-2] not in config.CONJUNCTIONS:
             return pieces
 
@@ -278,8 +309,9 @@ class Name(MappingBase):
         new_pieces.append(last_piece)
         return new_pieces
 
-    @staticmethod
-    def _combine_rightmost_prefixes(pieces: Pieces) -> Pieces:
+    @classmethod
+    @word_count_bouncer(minimum=3)
+    def _combine_rightmost_prefixes(cls, pieces: Pieces) -> Pieces:
         """Work right-to-left through pieces, joining up prefixes of rightmost"""
         result: T.List[Pieces] = []
 
@@ -313,7 +345,7 @@ class Name(MappingBase):
         return " ".join(self._final[key]) or ""
 
     def __len__(self) -> int:
-        return len(self._final)
+        return len(self._keys)
 
     def __iter__(self) -> T.Iterator[str]:
         return iter(self._keys)
