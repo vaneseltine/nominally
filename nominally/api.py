@@ -4,7 +4,7 @@ import typing as T
 from nominally.parser import Name
 from nominally.utilities import prettier_print
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 
 def parse_name(s: str) -> T.Dict[str, T.Any]:

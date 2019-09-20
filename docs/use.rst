@@ -28,11 +28,11 @@ first is highly recommended:
     $ source ./.venv/bin/activate
     (.venv) $ pip install nominally
     Collecting nominally
-      Downloading [...]/nominally-1.0.1-py3-none-any.whl
+      Downloading [...]/nominally-1.0.2-py3-none-any.whl
     Collecting unidecode>=1.0 (from nominally)
       Downloading [...]/Unidecode-1.1.1-py2.py3-none-any.whl
     Installing collected packages: unidecode, nominally
-    Successfully installed nominally-1.0.1 unidecode-1.1.1
+    Successfully installed nominally-1.0.2 unidecode-1.1.1
 
 Nominally requires Python 3.6 or higher and
 has one external dependency
