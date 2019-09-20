@@ -10,15 +10,15 @@ class TestCleanName:
         "raw", ["DINSDALE", "Dinsdale", "dINSDALE", "dinsdale", "DiNsDaLe"]
     )
     def t_force_lower(self, raw):
-        assert Name.clean(raw) == "dinsdale"
+        assert Name._pre_process(Name(), raw) == "dinsdale"
 
     @pytest.mark.parametrize(
         "raw",
         [
-            " ❤  Spiny Norman ",
-            "Spiny Norman != 🐈 ",
-            "Spiny Norman != 🐱 ",
-            "Spiny Norman == 🐾 ",
+            " ❤  spiny norman ",
+            "spiny norman != 🐈 ",
+            "spiny norman != 🐱 ",
+            "spiny norman == 🐾 ",
         ],
     )
     def t_drop_emoji(self, raw):
@@ -27,21 +27,21 @@ class TestCleanName:
     @pytest.mark.parametrize("raw", ["Mr Εric Πραλiñé"])
     def t_convert_unicode(self, raw):
         """This is handled by unidecode and should not be extensively tested"""
-        assert Name.clean(raw) == "mr eric praline"
+        assert Name._pre_process(Name(), raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw",
         [
-            "Mr Eric Praline",
-            "Mr Eric Praline ",
-            " Mr Eric Praline",
-            "Mr  Eric Praline",
-            "Mr   Eric   Praline",
-            "  Mr  Eric  Praline  ",
-            "Mr Eric Praline \t",
-            " \n Mr Eric Praline",
-            "Mr Eric Praline \r",
-            "Mr \r\n Eric Praline ",
+            "mr eric praline",
+            "mr eric praline ",
+            " mr eric praline",
+            "mr  eric praline",
+            "mr   eric   praline",
+            "  mr  eric  praline  ",
+            "mr eric praline \t",
+            " \n mr eric praline",
+            "mr eric praline \r",
+            "mr \r\n eric praline ",
         ],
     )
     def t_drop_spacing(self, raw):
@@ -66,12 +66,12 @@ class TestCleanName:
     @pytest.mark.parametrize(
         "raw",
         [
-            r"!M!r Eri!c Praline!!",
-            r"//Mr Eric Praline",
-            r"Mr Eric Praline_____",
-            r"Mr Eric Praline",
-            r"/Mr Eric Praline",
-            r"Mr% Eric Pr#ali&ne",
+            r"!m!r eri!c praline!!",
+            r"//mr eric praline",
+            r"mr eric praline_____",
+            r"mr eric praline",
+            r"/mr eric praline",
+            r"mr% eric pr#ali&ne",
         ],
     )
     def t_ignore_most_symbols(self, raw):
@@ -80,13 +80,13 @@ class TestCleanName:
     @pytest.mark.parametrize(
         "raw, cooked",
         [
-            ("Dinsdale", "dinsdale"),
-            ("(Dinsdale)", "dinsdale"),
-            ("Dins-dale-", "dins-dale"),
-            ("Dins/dale-", "dins-dale"),
-            ("Dins_dale-", "dins-dale"),
-            ("Dins'dale", "dins'dale"),
-            ("'Dinsdale'", "'dinsdale'"),
+            ("dinsdale", "dinsdale"),
+            ("(dinsdale)", "dinsdale"),
+            ("'dinsdale'", "dinsdale"),
+            ("dins'dale", "dinsdale"),
+            ("dins-dale-", "dins-dale"),
+            ("dins/dale-", "dins-dale"),
+            ("dins_dale-", "dins-dale"),
         ],
     )
     def t_handle_certain_symbols(self, raw, cooked):
@@ -95,9 +95,9 @@ class TestCleanName:
     @pytest.mark.parametrize(
         "raw, cooked",
         [
-            ("Dinsdale-", "dinsdale"),
-            ("--Dinsdale--", "dinsdale"),
-            ("---Dinsdale-", "dinsdale"),
+            ("dinsdale-", "dinsdale"),
+            ("--dinsdale--", "dinsdale"),
+            ("---dinsdale-", "dinsdale"),
         ],
     )
     def t_strip_margin_hyphens(self, raw, cooked):

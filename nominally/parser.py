@@ -61,25 +61,27 @@ class Name(MappingBase):
         self._has_generational = False
         self.detail: T.Dict[str, Pieces] = {k: [] for k in self._keys}
 
-        preprocessed_str = self._pre_process(self.raw)
-        self._process(preprocessed_str)
+        s = self._pre_process(self.raw)
+        self._process(s)
         self._post_process()
 
         self._final = {k: self._final_pieces_clean(self.detail[k]) for k in self._keys}
 
     def _pre_process(self, s: str) -> str:
 
-        s = str(s).lower()
-        s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
-        s = self._sweep_nicknames(s)
+        s = str(s)
+        s = unidecode_expect_ascii(s)
+        s = s.lower()
 
         # remove, now that these aren't needed for nicknames
-        s = re.sub(r"[\"'\(\)]", "", s)
 
+        s = self._sweep_nicknames(s)
         s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
+
         s = self.clean(s)
         self._archive_cleaned(s)
+
         return s
 
     def _archive_cleaned(self, s: str) -> None:
@@ -111,13 +113,16 @@ class Name(MappingBase):
             along with anything else that would depend on special
             characters (other than commas).
         """
-        s = unidecode_expect_ascii(s).lower()
-        s = re.sub(r'"|`', "'", s)  # convert all quotes/ticks to single quotes
-        s = re.sub(r"(\s*(;|:|,))+", ", ", s)  # convert : ; , to , with spacing
-        s = re.sub(r"\.\s*", ". ", s)  # reduce/add space after each .
-        s = re.sub(r"[-_/\\:]+", "-", s)  # convert _ / \ - : to single hyphen
-        s = re.sub(r"[^-\sa-z0-9',]+", "", s)  # drop most all excluding - ' , .
-        s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
+        cleaning_subs = [
+            (r"(\s*(;|:|,))+", ", "),  # convert : ; , to , with spacing
+            (r"\.\s*", ". "),  # reduce/add space after each .
+            (r"[-_/\\:]+", "-"),  # convert _ / \ - : to single hyphen
+            (r"[^-\sa-z0-9,]+", ""),  # drop most all excluding -  , .
+            (r"\s+", " "),  # condense all whitespace groups to a single space
+        ]
+        for pattern, repl in cleaning_subs:
+            s = re.sub(pattern, repl, s)
+
         s = s.strip(",- ")  # drop leading/trailing hyphens, spaces, commas
         if condense:
             s = s.replace(" ", "")

@@ -55,3 +55,8 @@ def test_failures_found_by_hypothesis(raw):
 def issue_42_keeping_quote_in_cleaned():
     name = Name('",A,A"')
     assert str(name) == str(Name(str(name)))
+
+
+def issue_40_smart_quotes():
+    name = Name("Bergholt “BSJ” Johnson")
+    assert name.nickname

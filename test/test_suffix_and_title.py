@@ -17,7 +17,7 @@ def fake_working(**kwargs):
     "incoming, outs, outwork",
     [
         ["bob b. bob", "bob b. bob", []],
-        ["bob b. bob ph.d.", "bob b. bob", ["phd"]],
+        ["bob b. bob phd", "bob b. bob", ["phd"]],
         ["bob b. bob ph.d.", "bob b. bob", ["phd"]],
     ],
 )
