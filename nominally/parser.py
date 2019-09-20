@@ -72,8 +72,9 @@ class Name(MappingBase):
         s = str(s).lower()
         s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
         s = self._sweep_nicknames(s)
-        # condense now that these aren't needed for nicknames
-        s = s.replace("'", "")
+
+        # remove, now that these aren't needed for nicknames
+        s = re.sub(r"[\"'\(\)]", "", s)
 
         s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
