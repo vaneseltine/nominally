@@ -15,7 +15,6 @@ NICKNAME_PATTERNS = [
 ]
 
 JUNIOR_PATTERN = re.compile(r",\s*junior\s*,")  # pylint: disable invalid-name
-WORD_FINDER = re.compile(r"\w+")  # pylint: disable invalid-name
 
 SUFFIX_PATTERNS = {
     re.compile(NO_WORD_BEHIND + s + NO_WORD_AHEAD): generational

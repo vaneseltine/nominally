@@ -33,7 +33,9 @@ def word_count_bouncer(minimum):
 
             if not pieces:
                 return bounce()
-            if isinstance(pieces[0], str):
+            if isinstance(pieces, str):
+                checklist = pieces.split()
+            elif isinstance(pieces[0], str):
                 checklist = pieces
             else:
                 checklist = flatten_once(pieces)
@@ -57,33 +59,30 @@ class Name(MappingBase):
         self.work: T.DefaultDict[str, Pieces] = defaultdict(
             list, {k: [] for k in self._keys}
         )
-        remaining = self._pre_process(self.raw)
-        self._process(remaining)
+        remaining_str = self._pre_process(self.raw)
+        self._cleaned = self._reserve_cleaned(remaining_str)
+
+        remaining_pieces = self._string_to_pieceslist(remaining_str)
+        self._process(remaining_pieces)
         self._post_process()
         self._final = self.work
 
-    def _pre_process(self, s: str):
+    def _pre_process(self, s: str) -> str:
 
         s = str(s).lower()
         s = re.sub(r"\s+", " ", s)  # condense all whitespace groups to a single space
-        if s.count(" ") > 1:
-            s = self._sweep_nicknames(s)
+        s = self._sweep_nicknames(s)
         # condense now that these aren't needed for nicknames
         s = s.replace("'", "")
-        if s.count(" ") > 1:
-            s = self._sweep_suffixes(s)
+
+        s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
         s = self.clean(s)
+        return s
 
-        pieceslist = self._string_to_pieceslist(s)
-        cleaned = [s]
-        for k in [*self._keys, "generational"]:
-            if self.work[k]:
-                cleaned += self.work[k]
-
-        self._cleaned = set(cleaned)
-
-        return pieceslist
+    def _reserve_cleaned(self, s: str):
+        observed = [" ".join(x) for x in self.work.values() if x] + [s]
+        self._cleaned = set(observed)
 
     def _process(self, pieceslist: T.List[Pieces]) -> None:
         pieceslist = self._extract_title(pieceslist)
@@ -118,6 +117,7 @@ class Name(MappingBase):
             s = s.replace(" ", "")
         return s
 
+    @word_count_bouncer(minimum=3)
     def _sweep_suffixes(self, s: str) -> str:
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
@@ -130,12 +130,11 @@ class Name(MappingBase):
             s = pat.sub("", s)
         return s
 
+    @word_count_bouncer(minimum=3)
     def _sweep_junior(self, s: str) -> str:
         if self.work["generational"]:
             return s
         if not config.JUNIOR_PATTERN.findall(s):
-            return s
-        if len(config.WORD_FINDER.findall(s)) < 3:
             return s
 
         s = config.JUNIOR_PATTERN.sub(", ", s)
@@ -143,6 +142,7 @@ class Name(MappingBase):
 
         return s
 
+    @word_count_bouncer(minimum=3)
     def _sweep_nicknames(self, s: str) -> str:
         """
         The content of parenthesis or quotes in the name will be added to the
@@ -220,21 +220,12 @@ class Name(MappingBase):
         return pieceslist
 
     def _lfm_from_list(self, pieceslist: T.List[Pieces]):
-
-        if not any(flatten_once(pieceslist)):
-            return  # return if empty
         pieceslist = self._extract_last(remove_falsy(pieceslist))
-
-        if not any(flatten_once(pieceslist)):
-            return
         pieceslist = self._extract_first(remove_falsy(pieceslist))
-
-        # Everything remaining is a middle name
         self.work["middle"] = flatten_once(pieceslist)
 
-    def _extract_first(
-        self, pieceslist: T.List[Pieces]
-    ) -> T.Tuple[T.List[Pieces], Pieces]:
+    @word_count_bouncer(1)
+    def _extract_first(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
         """
         Remove and return the first name from a prepared list of pieces
 
@@ -247,16 +238,21 @@ class Name(MappingBase):
         self.work["first"] = pieceslist.pop(0)
         return pieceslist
 
+    @word_count_bouncer(1)
     def _extract_last(self, pieceslist: T.List[Pieces]) -> T.List[Pieces]:
         """Remove and return the last name from a prepared list of pieces"""
         # First, move any partitioned last name into rightmost piece
         if len(pieceslist) > 1:
-            partitioned_last = " ".join(pieceslist.pop(0))
-            pieceslist[-1].append(partitioned_last)
-
+            pieceslist = self.flip_last_name_to_right(pieceslist)
         # Now group words of the rightmost piece and take the rightmost cluster
         pieceslist[-1] = self._cluster_words(pieceslist[-1])
         self.work["last"] = [pieceslist[-1].pop(-1)]
+        return pieceslist
+
+    @classmethod
+    def flip_last_name_to_right(cls, pieceslist) -> T.List[Pieces]:
+        partitioned_last = " ".join(pieceslist.pop(0))
+        pieceslist[-1].append(partitioned_last)
         return pieceslist
 
     @classmethod
