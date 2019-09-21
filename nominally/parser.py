@@ -67,8 +67,7 @@ class Name(MappingBase):
         self._cleaned = self._archive_cleaned(s)
         self._process(s)
         self._post_process()
-
-        self._final = self._clean_final_dict()
+        self._final = self._post_clean()
 
     @staticmethod
     def _pre_clean(s: str) -> str:
@@ -76,14 +75,10 @@ class Name(MappingBase):
 
     def _pre_process(self, s: str) -> str:
         s = self._sweep_nicknames(s)
-        self.detail["nickname"] = [
-            self.clean(x, condense=False) for x in self.detail["nickname"]
-        ]
         s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
-        self.detail["suffix"] = [
-            self.clean(x, condense=True) for x in self.detail["suffix"]
-        ]
+        self.detail["nickname"] = self._clean_pieces(self.detail["nickname"])
+        self.detail["suffix"] = self._clean_pieces(self.detail["suffix"], condense=True)
         return s
 
     def _archive_cleaned(self, s: str) -> T.Set[str]:
@@ -170,7 +165,7 @@ class Name(MappingBase):
         for pattern in config.NICKNAME_PATTERNS:
             hit = pattern.findall(s)
             if hit:
-                self.detail["nickname"] += [self.clean(x) for x in hit]
+                self.detail["nickname"] += hit
                 s = pattern.sub("", s)
         return s
 
@@ -194,13 +189,13 @@ class Name(MappingBase):
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
         return remove_falsy(no_numbers)
 
-    def _clean_final_dict(self) -> T.Dict[str, Pieces]:
-        return {k: self._final_pieces_clean(self.detail[k]) for k in self._keys}
+    def _post_clean(self) -> T.Dict[str, Pieces]:
+        return {k: self._clean_pieces(self.detail[k]) for k in self._keys}
 
     @classmethod
-    def _final_pieces_clean(cls, pieces: Pieces) -> Pieces:
-        stripped = [cls.clean(s, final=True) for s in pieces]
-        return [s for s in stripped if s]
+    def _clean_pieces(cls, pieces: Pieces, condense: bool = False) -> Pieces:
+        cleaned = [cls.clean(s, condense=condense, final=True) for s in pieces]
+        return [s for s in cleaned if s]
 
     @word_count_bouncer(minimum=3)
     def _grab_junior(self, pieceslist: PiecesList) -> PiecesList:
