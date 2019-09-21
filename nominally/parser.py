@@ -40,7 +40,8 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
                 checklist = countable
             else:
                 checklist = flatten_once(countable)
-            if len(checklist) < minimum:
+            wordlist = [s for s in checklist if re.search("[a-z]", s)]
+            if len(wordlist) < minimum:
                 return countable
             return func(obj, countable)
 
@@ -57,36 +58,38 @@ class Name(MappingBase):
     def __init__(self, raw: str = "") -> None:
 
         self._raw = raw
-        self._cleaned: T.Set[str] = set()
         self._has_generational = False
         self.detail: T.Dict[str, Pieces] = {k: [] for k in self._keys}
 
-        s = self._pre_process(self.raw)
+        s = self._pre_clean(self.raw)
+        s = self._pre_process(s)
+        s = self.clean(s)
+        self._cleaned = self._archive_cleaned(s)
         self._process(s)
         self._post_process()
 
-        self._final = {k: self._final_pieces_clean(self.detail[k]) for k in self._keys}
+        self._final = self._clean_final_dict()
+
+    @staticmethod
+    def _pre_clean(s: str) -> str:
+        return unidecode_expect_ascii(str(s)).lower()  # type: ignore
 
     def _pre_process(self, s: str) -> str:
-
-        s = str(s)
-        s = unidecode_expect_ascii(s)
-        s = s.lower()
-
-        # remove, now that these aren't needed for nicknames
-
         s = self._sweep_nicknames(s)
+        self.detail["nickname"] = [
+            self.clean(x, condense=False) for x in self.detail["nickname"]
+        ]
         s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
-
-        s = self.clean(s)
-        self._archive_cleaned(s)
-
+        self.detail["suffix"] = [
+            self.clean(x, condense=True) for x in self.detail["suffix"]
+        ]
         return s
 
-    def _archive_cleaned(self, s: str) -> None:
-        self._cleaned.add(s)
-        self._cleaned.update(" ".join(x) for x in self.detail.values() if x)
+    def _archive_cleaned(self, s: str) -> T.Set[str]:
+        result = {s}
+        result.update(*(tuple(x) for x in self.detail.values() if x))
+        return result
 
     @staticmethod
     def _string_to_pieceslist(remaining: str) -> PiecesList:
@@ -104,7 +107,7 @@ class Name(MappingBase):
         self.detail["suffix"].sort()
 
     @staticmethod
-    def clean(s: str, condense: bool = False) -> str:
+    def clean(s: str, *, condense: bool = False, final: bool = False) -> str:
         """Clean this string to the simplest possible representation (but no simpler).
 
         .. note::
@@ -113,19 +116,23 @@ class Name(MappingBase):
             along with anything else that would depend on special
             characters (other than commas).
         """
+        whitespace_out = "" if condense else " "
         cleaning_subs = [
             (r"(\s*(;|:|,))+", ", "),  # convert : ; , to , with spacing
             (r"\.\s*", ". "),  # reduce/add space after each .
             (r"[-_/\\:]+", "-"),  # convert _ / \ - : to single hyphen
             (r"[^-\sa-z0-9,]+", ""),  # drop most all excluding -  , .
-            (r"\s+", " "),  # condense all whitespace groups to a single space
+            (r"\s+", whitespace_out),  # condense all whitespace groups
+            (r"^[-, ]+", ""),  # lstrip hyphens, spaces, commas
+            (r"[-, ]+$", ""),  # rstrip hyphens, spaces, commas
         ]
+        if final:
+            cleaning_subs.append((r"[^a-z0-9- \)\()]", ""))
         for pattern, repl in cleaning_subs:
             s = re.sub(pattern, repl, s)
 
-        s = s.strip(",- ")  # drop leading/trailing hyphens, spaces, commas
-        if condense:
-            s = s.replace(" ", "")
+        if not re.search(r"[a-z]", s):
+            return ""
         return s
 
     @word_count_bouncer(minimum=3)
@@ -133,10 +140,10 @@ class Name(MappingBase):
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
                 continue
-            new_suffixes = [self.clean(x, condense=True) for x in pat.findall(s)]
+            new_suffixes = pat.findall(s)
             if generational:
                 self._has_generational = True
-            self.detail["suffix"].extend(new_suffixes)
+            self.detail["suffix"] += new_suffixes
             s = pat.sub("", s)
         return s
 
@@ -146,7 +153,7 @@ class Name(MappingBase):
             return s
         new_s = config.JUNIOR_PATTERN.sub(", ", s)
         if new_s != s:
-            self.detail["suffix"].append("junior")
+            self.detail["suffix"].append("jr")
         return new_s
 
     @word_count_bouncer(minimum=3)
@@ -161,8 +168,9 @@ class Name(MappingBase):
         """
 
         for pattern in config.NICKNAME_PATTERNS:
-            if pattern.search(s):
-                self.detail["nickname"] += [self.clean(x) for x in pattern.findall(s)]
+            hit = pattern.findall(s)
+            if hit:
+                self.detail["nickname"] += [self.clean(x) for x in hit]
                 s = pattern.sub("", s)
         return s
 
@@ -186,19 +194,13 @@ class Name(MappingBase):
         no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
         return remove_falsy(no_numbers)
 
+    def _clean_final_dict(self) -> T.Dict[str, Pieces]:
+        return {k: self._final_pieces_clean(self.detail[k]) for k in self._keys}
+
     @classmethod
     def _final_pieces_clean(cls, pieces: Pieces) -> Pieces:
-        stripped = [cls._final_string_clean(s) for s in pieces]
+        stripped = [cls.clean(s, final=True) for s in pieces]
         return [s for s in stripped if s]
-
-    @staticmethod
-    def _final_string_clean(s: str) -> str:
-        s = s.replace(".", "")
-        s = s.replace("'", "")
-        s = s.strip("- ")
-        if not re.search("[a-z]", s):
-            return ""
-        return s
 
     @word_count_bouncer(minimum=3)
     def _grab_junior(self, pieceslist: PiecesList) -> PiecesList:
@@ -230,7 +232,7 @@ class Name(MappingBase):
         if first_word_in_likely_first_name:
             return pieceslist
 
-        self.detail["suffix"].append("junior")
+        self.detail["suffix"].append("jr")
         return self._remove_from_pieceslist(pieceslist, "junior")
 
     @staticmethod

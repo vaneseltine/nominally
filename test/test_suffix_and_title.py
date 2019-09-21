@@ -18,7 +18,7 @@ def fake_working(**kwargs):
     [
         ["bob b. bob", "bob b. bob", []],
         ["bob b. bob phd", "bob b. bob", ["phd"]],
-        ["bob b. bob ph.d.", "bob b. bob", ["phd"]],
+        ["bob b. bob ph.d.", "bob b. bob", ["ph.d."]],
     ],
 )
 def test_sweep_suffixes(incoming, outs, outwork):
@@ -207,7 +207,7 @@ def test_junior_with_gen_suffix(entry):
 def test_unit_grab_junior(pieceslist):
     blank = Name()
     _ = blank._grab_junior(pieceslist)
-    assert "junior" in blank.detail["suffix"]
+    assert "jr" in blank.detail["suffix"]
 
 
 @pytest.mark.parametrize(
@@ -217,7 +217,7 @@ def test_unit_grab_junior(pieceslist):
 def test_unit_do_not_grab_junior(pieceslist):
     blank = Name()
     _ = blank._grab_junior(pieceslist)
-    assert "junior" not in blank.detail["suffix"]
+    assert "jr" not in blank.detail["suffix"]
 
 
 @pytest.mark.parametrize(

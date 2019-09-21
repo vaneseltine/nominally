@@ -10,7 +10,7 @@ class TestCleanName:
         "raw", ["DINSDALE", "Dinsdale", "dINSDALE", "dinsdale", "DiNsDaLe"]
     )
     def t_force_lower(self, raw):
-        assert Name._pre_process(Name(), raw) == "dinsdale"
+        assert Name._pre_clean(raw) == "dinsdale"
 
     @pytest.mark.parametrize(
         "raw",
@@ -22,12 +22,13 @@ class TestCleanName:
         ],
     )
     def t_drop_emoji(self, raw):
-        assert Name.clean(raw) == "spiny norman"
+        name = Name()
+        assert name.clean(name._pre_clean(raw)) == "spiny norman"
 
     @pytest.mark.parametrize("raw", ["Mr Εric Πραλiñé"])
     def t_convert_unicode(self, raw):
         """This is handled by unidecode and should not be extensively tested"""
-        assert Name._pre_process(Name(), raw) == "mr eric praline"
+        assert Name._pre_clean(raw) == "mr eric praline"
 
     @pytest.mark.parametrize(
         "raw",

@@ -46,7 +46,9 @@ def test_idempotence_madness_for_breakage(raw1, raw2, raw3):
     assert str(name) == str(Name(str(name)))
 
 
-@pytest.mark.parametrize("raw", ["0,/,A", "0,',\"", "sr, a", "',A,A", '",A,A'])
+@pytest.mark.parametrize(
+    "raw", ["0,/,A", "0,',\"", "sr, a", "a, sr", "',A,A", '",A,A', "㈠,㈪,0"]
+)
 def test_failures_found_by_hypothesis(raw):
     name = Name(raw)
     assert str(name) == str(Name(str(name)))
