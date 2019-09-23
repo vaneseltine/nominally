@@ -1,3 +1,5 @@
+-r common.txt
+
 # Build docs
 Sphinx==2.2.0
 sphinx-autorun==1.1.0
