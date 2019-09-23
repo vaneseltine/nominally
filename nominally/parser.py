@@ -54,6 +54,8 @@ class Name(MappingBase):
     """A personal name, separated and simplified into component parts."""
 
     _keys = ["title", "first", "middle", "last", "suffix", "nickname"]
+    # https://github.com/vaneseltine/nominally/issues/47
+    __slots__ = _keys + ["_raw", "_has_generational", "detail", "_final", "_cleaned"]
 
     def __init__(self, raw: str = "") -> None:
 

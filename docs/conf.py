@@ -11,7 +11,7 @@ author = "Matt VanEseltine"
 copyright = "2019, Matt VanEseltine"
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
-sys.path.insert(0, PROJECT_ROOT)
+sys.path.insert(0, str(PROJECT_ROOT))
 
 
 def get_module_version():
