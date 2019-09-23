@@ -10,7 +10,7 @@
   <a href="https://codeclimate.com/github/vaneseltine/nominally"><img alt="Code Climate maintainability" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally?style=flat-square"></a>
   <a href="https://circleci.com/gh/vaneseltine/nominally"><img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square" /></a>
   <a href="https://nominally.readthedocs.io/en/latest/"><img alt="Read the Docs (latest)" src="https://img.shields.io/readthedocs/nominally/latest?style=flat-square" /></a>
-  <a href="https://github.com/vaneseltine/nominally"><img alt="Latest commit" src="https://img.shields.io/github/last-commit/vaneseltine/nominally.svg?style=flat-square" /></a>
+  <a href="https://github.com/vaneseltine/nominally"><img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/w/vaneseltine/nominally?style=flat-square" /></a>
 </p>
 
 ### 🖥️ Examples
