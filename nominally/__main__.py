@@ -1,3 +1,3 @@
-from nominally.api import cli_parse
+from nominally.api import cli
 
-cli_parse()
+cli()

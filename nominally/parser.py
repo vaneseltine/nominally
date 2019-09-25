@@ -262,14 +262,14 @@ class Name(MappingBase):
         """Remove and return the last name from a prepared list of pieces"""
         # First, move any partitioned last name into rightmost piece
         if len(pieceslist) > 1:
-            pieceslist = self.flip_last_name_to_right(pieceslist)
+            pieceslist = self._flip_last_name_to_right(pieceslist)
         # Now group words of the rightmost piece and take the rightmost cluster
         pieceslist[-1] = self._cluster_words(pieceslist[-1])
         self.detail["last"] = [pieceslist[-1].pop(-1)]
         return pieceslist
 
     @classmethod
-    def flip_last_name_to_right(cls, pieceslist: PiecesList) -> PiecesList:
+    def _flip_last_name_to_right(cls, pieceslist: PiecesList) -> PiecesList:
         """Set up extraction by moving a last name to rightmost position"""
         partitioned_last = " ".join(pieceslist.pop(0))
         pieceslist[-1].append(partitioned_last)
@@ -316,7 +316,7 @@ class Name(MappingBase):
         return [" ".join(piece) for piece in result if piece]
 
     def __eq__(self, other: T.Any) -> bool:
-        """Identical dicts of parsable names are equal"""
+        """If Name is parsable and object dicts are identical, consider it equal."""
         try:
             return dict(self) == dict(other) and self.parsable
         except (ValueError, TypeError):
@@ -351,7 +351,15 @@ class Name(MappingBase):
         return f"{self.__class__.__name__}({text})"
 
     def __str__(self) -> str:
-        """Format `johns, dr john j, md (j j)`"""
+        """Output format: "last, title first middle suffix (nickname)"
+
+        - "organs, mr harry x, jr (snapper)"
+        - "organs, mr harry x, jr"
+        - "organs, mr harry x"
+        - "organs, harry x"
+        - "organs, harry"
+        - etc.
+        """
         string_parts = [
             f"{self.last},",
             self.title,
@@ -369,19 +377,21 @@ class Name(MappingBase):
 
     @property
     def parsable(self) -> bool:
-        """Was this parsable = were any name values created?"""
+        """Return true if any valid name values were created."""
         return any(x for x in self.values() if x)
 
     @property
     def raw(self) -> str:
+        """Return the original input string."""
         return self._raw
 
     @property
     def cleaned(self) -> T.Set[str]:
+        """Return some set of cleaned string parts."""
         return self._cleaned
 
     def report(self) -> T.Dict[str, T.Any]:
-        """Return a more-or-less complete parsing dict"""
+        """Return a more-or-less complete parsing dict."""
         return {
             "raw": self.raw,
             "cleaned": self.cleaned,

@@ -2,7 +2,7 @@ from string import ascii_lowercase
 
 import pytest
 
-from nominally.api import parse_name, report
+from nominally.api import parse_name, cli_report
 from nominally.parser import Name
 
 SAMPLE_RAW = "Johnson, Jr., Dr. Bergholt (Bloody Stupid) stuttley"
@@ -28,8 +28,8 @@ def test_parse_name_is_quiet(capsys):
     "substrings",
     very_rough_clean(SAMPLE_RAW).split() + Name._keys + ["raw", "cleaned", "parsed"],
 )
-def test_report_has_keys(capsys, substrings):
-    report(SAMPLE_RAW)
+def test_cli_report_has_keys(capsys, substrings):
+    cli_report(SAMPLE_RAW)
     captured = capsys.readouterr()
     for subs in substrings:
         assert subs in captured.out

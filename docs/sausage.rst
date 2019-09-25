@@ -6,17 +6,19 @@
 Reference
 =====================================
 
-Name Class
-------------------------
+Herein find documentation for the gory details of *nominally*.
 
-.. autoclass:: nominally.parser.Name
-    :members:
-    :special-members: __str__, __getattr__, __getitem__, __eq__
-    :undoc-members:
-
-Functions
+API
 -------------------------
 
 .. automodule:: nominally.api
     :members:
+    :undoc-members:
+
+Name
+------------------------
+
+.. autoclass:: nominally.parser.Name
+    :members:
+    :special-members: __str__, __eq__
     :undoc-members:

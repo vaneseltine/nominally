@@ -8,40 +8,49 @@ __version__ = "1.0.3"
 
 
 def parse_name(s: str) -> T.Dict[str, T.Any]:
-    """ Return the core name attributes as a dict. """
+    """Parse into Name, return core name attributes as a dict.
+
+    This is the simplest function interface to *nominally*.
+    """
     return dict(Name(s))
 
 
-def report(raw_name: str, details: bool = True) -> int:
-    """ Output name attributes to stdout. """
+def cli(raw_name: T.Optional[str] = None) -> int:
+    """Simple CLI with a minimal set of options.
+
+        1. Report of a single name (parse into details).
+        2. Help via usage information. [help, -h, --help]
+        3. Version information. [-V, --version]
+    """
+    if raw_name:
+        return cli_report(raw_name, details=True)
+    if not sys.argv[1:] or (set(sys.argv) & {"--help", "-h", "help"}):
+        return cli_help()
+    if set(sys.argv) & {"--version", "-V"}:
+        return cli_version()
+    return cli_report(" ".join(sys.argv[1:]), details=True)
+
+
+def cli_report(raw_name: str, details: bool = True) -> int:
+    """Parse into Name, output (core or report) attributes."""
     name = Name(raw_name)
     output = name.report() if details else dict(name)
     prettier_print(output)
     return 0
 
 
-def cli_parse(raw_name: T.Optional[str] = None) -> int:
-    """Simple CLI"""
-    if raw_name:
-        return report(raw_name, details=True)
-    if not sys.argv[1:] or (set(sys.argv) & {"--help", "-h", "help"}):
-        return usage()
-    if set(sys.argv) & {"--version", "-V"}:
-        return version()
-    return report(" ".join(sys.argv[1:]), details=True)
-
-
-def usage() -> int:
+def cli_help() -> int:
     """Output help for command line usage"""
-    print("nominally CLI example:", "-" * 80, sep="\n")
+    horizontal_line = "-" * 80
+    print("nominally CLI example:", horizontal_line, sep="\n")
     example_name = "Mr. Arthur (Two Sheds) Jackson"
     print(f'> nominally "{example_name}"')
-    cli_parse(example_name)
-    print("-" * 80)
+    cli(example_name)
+    print(horizontal_line)
     return 0
 
 
-def version() -> int:
+def cli_version() -> int:
     """Output version info and script location"""
     print(
         f"nominally {__version__} running on "
