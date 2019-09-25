@@ -28,9 +28,10 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
     def decorator_bouncer(
         func: T.Callable[[T.Any, WordCountable], WordCountable]
     ) -> T.Callable[[T.Any, WordCountable], WordCountable]:
+        """Return countable instead of func(countable) if too few words."""
+
         @functools.wraps(func)
         def wrapper_bouncer(obj: T.Any, countable: WordCountable) -> WordCountable:
-
             checklist: T.List[T.Any]
             if not countable:
                 return countable
