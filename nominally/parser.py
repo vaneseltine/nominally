@@ -234,9 +234,11 @@ class Name(MappingBase):
 
     @staticmethod
     def _remove_from_pieceslist(pieceslist: PiecesList, s: str) -> PiecesList:
+        """Drop all strings from pieceslist that are equal to s"""
         return [[x for x in piece if x != s] for piece in pieceslist]
 
     def _extract_last_first_middle(self, pieceslist: PiecesList) -> None:
+        """Sequentially remove last name, first name, and collapse to middles"""
         pieceslist = self._extract_last(remove_falsy(pieceslist))
         pieceslist = self._extract_first(remove_falsy(pieceslist))
         self.detail["middle"] = flatten_once(pieceslist)
@@ -268,6 +270,7 @@ class Name(MappingBase):
 
     @classmethod
     def flip_last_name_to_right(cls, pieceslist: PiecesList) -> PiecesList:
+        """Set up extraction by moving a last name to rightmost position"""
         partitioned_last = " ".join(pieceslist.pop(0))
         pieceslist[-1].append(partitioned_last)
         return pieceslist
@@ -286,6 +289,7 @@ class Name(MappingBase):
     @classmethod
     @word_count_bouncer(minimum=4)
     def _combine_conjunctions(cls, pieces: Pieces) -> Pieces:
+        """Accept one conjunction at the end: `bob|steve|cortez y costa`"""
         *new_pieces, last_name_one, conj, last_name_two = pieces
 
         if conj not in config.CONJUNCTIONS:
@@ -312,6 +316,7 @@ class Name(MappingBase):
         return [" ".join(piece) for piece in result if piece]
 
     def __eq__(self, other: T.Any) -> bool:
+        """Identical dicts of parsable names are equal"""
         try:
             return dict(self) == dict(other) and self.parsable
         except (ValueError, TypeError):
@@ -327,12 +332,15 @@ class Name(MappingBase):
         return self.__getattribute__(name)
 
     def __getitem__(self, key: str) -> T.Any:
+        """Implement Name dict to return strings"""
         return " ".join(self._final[key]) or ""
 
     def __len__(self) -> int:
+        """Implement Name dict to return strings"""
         return len(self._keys)
 
     def __iter__(self) -> T.Iterator[str]:
+        """Implement Name dict to return strings"""
         return iter(self._keys)
 
     def __repr__(self) -> str:
@@ -343,6 +351,7 @@ class Name(MappingBase):
         return f"{self.__class__.__name__}({text})"
 
     def __str__(self) -> str:
+        """Format `johns, dr john j, md (j j)`"""
         string_parts = [
             f"{self.last},",
             self.title,
@@ -360,6 +369,7 @@ class Name(MappingBase):
 
     @property
     def parsable(self) -> bool:
+        """Was this parsable = were any name values created?"""
         return any(x for x in self.values() if x)
 
     @property
@@ -371,6 +381,7 @@ class Name(MappingBase):
         return self._cleaned
 
     def report(self) -> T.Dict[str, T.Any]:
+        """Return a more-or-less complete parsing dict"""
         return {
             "raw": self.raw,
             "cleaned": self.cleaned,

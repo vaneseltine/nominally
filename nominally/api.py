@@ -13,7 +13,7 @@ def parse_name(s: str) -> T.Dict[str, T.Any]:
 
 
 def report(raw_name: str, details: bool = True) -> int:
-    """ Print name attributes to stdout. """
+    """ Output name attributes to stdout. """
     name = Name(raw_name)
     output = name.report() if details else dict(name)
     prettier_print(output)
@@ -21,6 +21,7 @@ def report(raw_name: str, details: bool = True) -> int:
 
 
 def cli_parse(raw_name: T.Optional[str] = None) -> int:
+    """Simple CLI"""
     if raw_name:
         return report(raw_name, details=True)
     if not sys.argv[1:] or (set(sys.argv) & {"--help", "-h", "help"}):
@@ -31,6 +32,7 @@ def cli_parse(raw_name: T.Optional[str] = None) -> int:
 
 
 def usage() -> int:
+    """Output help for command line usage"""
     print("nominally CLI example:", "-" * 80, sep="\n")
     example_name = "Mr. Arthur (Two Sheds) Jackson"
     print(f'> nominally "{example_name}"')
@@ -40,6 +42,7 @@ def usage() -> int:
 
 
 def version() -> int:
+    """Output version info and script location"""
     print(
         f"nominally {__version__} running on "
         f"Python {sys.version.split(' ')[0]} ({sys.executable})"
