@@ -33,3 +33,5 @@ jobs:
             python3 -m pip freeze
             nox -l
             nox
+      - store_test_results:
+          path: build/pytest

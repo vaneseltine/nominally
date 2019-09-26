@@ -28,7 +28,7 @@ AT_HOME = not IN_CI and not IN_WINDOWS
 
 def supported_pythons(classifiers_in="setup.cfg"):
     """
-    In Windows, return None (to just use the current interpreter)
+    In Windows, return None (to create a single using the current interpreter)
     In other contexts, pull all supported Python classifiers from setup.cfg
     """
     if IN_WINDOWS:
@@ -153,12 +153,15 @@ def lint_todos(session):
 def pytest(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
-    session.run("python", "-m", "coverage", "run", "-m", "pytest")
+    cmd = ["python", "-m", "coverage", "run", "-m", "pytest"]
+    if IN_CI:
+        cmd.append("--junit-xml=build/pytest/results.xml")
+    session.run(*cmd)
     session.run("python", "-m", "coverage", "report")
-    run_various_invocations(session, cmds=BASIC_COMMANDS)
+    make_sure_various_cli_invocations_do_not_crash(session, cmds=BASIC_COMMANDS)
 
 
-def run_various_invocations(session, cmds):
+def make_sure_various_cli_invocations_do_not_crash(session, cmds):
     for prefix in ["", "python -m "]:
         for core_cmd in cmds:
             complete_cmd = (prefix + core_cmd).split()
