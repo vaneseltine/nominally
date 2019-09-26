@@ -40,7 +40,7 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 'bartkowicz, dr peaches'
 
 ```
-...the dict, or a more elaborate set of attributes...
+...or the dict, or a more elaborate set of attributes...
 ```
 >>> dict(n)
 {
@@ -67,7 +67,7 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 >>> list(n.values())
 ['dr', 'peaches', '', 'bartkowicz', '', '']
 ```
-...individual attributes, and so on.
+...or individual attributes.
 ```
 >>> n.first
 'peaches'
@@ -96,11 +96,11 @@ $ nominally "DR. PEACHES BARTKOWICZ"
 
 ### 🔬 Worked Examples
 
-Binder hosts Jupyter notebooks with detailed Nominally examples:
+Binder hosts live Jupyter notebooks walking through examples of nominally:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![csv.ipynb on mybinder.org](https://img.shields.io/badge/launch_binder-csv_parse-888.svg?style=for-the-badge&logo=jupyter&logoColor=fff&color=ff4785)](https://mybinder.org/v2/gh/vaneseltine/nominally-examples/master?filepath=notebooks%2Fcsv.ipynb)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![csv.ipynb on mybinder.org](https://img.shields.io/badge/launch_notebook-csv_parse-888.svg?style=for-the-badge&logo=jupyter&logoColor=fff&color=ff4785)](https://mybinder.org/v2/gh/vaneseltine/nominally-examples/master?filepath=notebooks%2Fcsv.ipynb)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![pandas_simple.ipynb on mybinder.org](https://img.shields.io/badge/launch%20binder-pandas_apply-888.svg?style=for-the-badge&logo=jupyter&logoColor=fff&color=ff4785)](https://mybinder.org/v2/gh/vaneseltine/nominally-examples/master?filepath=notebooks%2Fpandas_simple.ipynb)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![pandas_simple.ipynb on mybinder.org](https://img.shields.io/badge/launch_notebook-pandas_apply-888.svg?style=for-the-badge&logo=jupyter&logoColor=fff&color=ff4785)](https://mybinder.org/v2/gh/vaneseltine/nominally-examples/master?filepath=notebooks%2Fpandas_simple.ipynb)
 
 These notebooks and more worked examples [reside in the Nominally Examples repository](https://github.com/vaneseltine/nominally-examples/).
 
