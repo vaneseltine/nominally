@@ -2,5 +2,6 @@
 
 # Build docs
 Sphinx==2.2.0
-sphinx-autorun==1.1.0
+# sphinx-autorun==1.1.0
+-e git://github.com/WhyNotHugo/sphinx-autorun.git@d30476cd8b3d280b1c8a6d0707056fafc7b3f840#egg=sphinx-autorun
 doc8==0.8.0
