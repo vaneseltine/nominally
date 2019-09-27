@@ -192,7 +192,7 @@ def test_junior_with_gen_suffix(entry):
 
 
 @pytest.mark.parametrize(
-    "pieceslist",
+    "clusters",
     [
         [["sam", "vimes", "junior"]],
         [["sam", "junior", "vimes"]],
@@ -204,19 +204,19 @@ def test_junior_with_gen_suffix(entry):
         [["vimes"], ["sam"], ["junior"]],
     ],
 )
-def test_unit_grab_junior(pieceslist):
+def test_unit_grab_junior(clusters):
     blank = Name()
-    _ = blank._grab_junior(pieceslist)
+    _ = blank._grab_junior(clusters)
     assert "jr" in blank.detail["suffix"]
 
 
 @pytest.mark.parametrize(
-    "pieceslist",
+    "clusters",
     [[["junior", "vimes"]], [["junior", "sam", "vimes"]], [["junior"], ["vimes"]]],
 )
-def test_unit_do_not_grab_junior(pieceslist):
+def test_unit_do_not_grab_junior(clusters):
     blank = Name()
-    _ = blank._grab_junior(pieceslist)
+    _ = blank._grab_junior(clusters)
     assert "jr" not in blank.detail["suffix"]
 
 

@@ -31,7 +31,7 @@ SUFFIX_PATTERNS = {
 }
 
 
-# Pieces that should join to their neighboring pieces, e.g. "and", "y" and "&".
+# Tokens that should join to their neighboring tokens, e.g. "and", "y" and "&".
 # "of" and "the" are also include to facilitate joining multiple titles,
 # e.g. "President of the United States".
 # Previously included: "&", "and", "et", "e", "of", "the", "und"
@@ -40,8 +40,8 @@ CONJUNCTIONS = {"y"}
 # Cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
-# Name pieces that appear before a last name. Prefixes join to the piece
-# that follows them to make one new piece. They can be chained together, e.g
+# Name tokens that appear before a last name. Prefixes join to the token
+# that follows them to make one new token. They can be chained together, e.g
 # "von der" and "de la".
 PREFIXES = {
     "abu",

@@ -8,9 +8,9 @@ from unidecode import unidecode_expect_ascii  # type: ignore
 from nominally import config
 from nominally.utilities import flatten_once, remove_falsy
 
-Pieces = T.List[str]
-PiecesList = T.List[Pieces]
-WordCountable = T.Union[str, Pieces, PiecesList]
+Cluster = T.List[str]
+ClusterList = T.List[Cluster]
+WordContainer = T.Union[str, Cluster, ClusterList]
 
 if T.TYPE_CHECKING:
     MappingBase = T.Mapping[str, str]
@@ -26,12 +26,12 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
     """
 
     def decorator_bouncer(
-        func: T.Callable[[T.Any, WordCountable], WordCountable]
-    ) -> T.Callable[[T.Any, WordCountable], WordCountable]:
+        func: T.Callable[[T.Any, WordContainer], WordContainer]
+    ) -> T.Callable[[T.Any, WordContainer], WordContainer]:
         """Return countable instead of func(countable) if too few words."""
 
         @functools.wraps(func)
-        def wrapper_bouncer(obj: T.Any, countable: WordCountable) -> WordCountable:
+        def wrapper_bouncer(obj: T.Any, countable: WordContainer) -> WordContainer:
             checklist: T.List[T.Any]
             if not countable:
                 return countable
@@ -62,7 +62,7 @@ class Name(MappingBase):
 
         self._raw = raw
         self._has_generational = False
-        self.detail: T.Dict[str, Pieces] = {k: [] for k in self._keys}
+        self.detail: T.Dict[str, Cluster] = {k: [] for k in self._keys}
 
         s = self._pre_clean(self.raw)
         s = self._pre_process(s)
@@ -80,8 +80,10 @@ class Name(MappingBase):
         s = self._sweep_nicknames(s)
         s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
-        self.detail["nickname"] = self._clean_pieces(self.detail["nickname"])
-        self.detail["suffix"] = self._clean_pieces(self.detail["suffix"], condense=True)
+        self.detail["nickname"] = self._clean_cluster(self.detail["nickname"])
+        self.detail["suffix"] = self._clean_cluster(
+            self.detail["suffix"], condense=True
+        )
         return s
 
     def _archive_cleaned(self, s: str) -> T.Set[str]:
@@ -90,16 +92,16 @@ class Name(MappingBase):
         return result
 
     @staticmethod
-    def _string_to_pieceslist(remaining: str) -> PiecesList:
-        pieces = re.split(r"\s*,\s*", remaining)
-        return [x.split() for x in pieces if x]
+    def _string_to_clusterlist(remaining: str) -> ClusterList:
+        cluster = re.split(r"\s*,\s*", remaining)
+        return [x.split() for x in cluster if x]
 
     def _process(self, preprocessed_str: str) -> None:
-        pieceslist = self._string_to_pieceslist(preprocessed_str)
-        pieceslist = self._extract_title(pieceslist)
-        pieceslist = self._remove_numbers(pieceslist)
-        pieceslist = self._grab_junior(pieceslist)
-        self._extract_last_first_middle(pieceslist)
+        clusterlist = self._string_to_clusterlist(preprocessed_str)
+        clusterlist = self._extract_title(clusterlist)
+        clusterlist = self._remove_numbers(clusterlist)
+        clusterlist = self._grab_junior(clusterlist)
+        self._extract_last_first_middle(clusterlist)
 
     def _post_process(self) -> None:
         self.detail["suffix"].sort()
@@ -172,14 +174,14 @@ class Name(MappingBase):
                 s = pattern.sub("", s)
         return s
 
-    def _extract_title(self, pieceslist: PiecesList) -> PiecesList:
-        outgoing: PiecesList = []
-        while pieceslist:
-            next_cluster = pieceslist.pop(0)
+    def _extract_title(self, clusterlist: ClusterList) -> ClusterList:
+        outgoing: ClusterList = []
+        while clusterlist:
+            next_cluster = clusterlist.pop(0)
 
             first_word, *remainder = next_cluster
             if first_word in config.TITLES:
-                outgoing = outgoing + [remainder] + pieceslist
+                outgoing = outgoing + [remainder] + clusterlist
                 self.detail["title"] = [first_word]
                 return outgoing
 
@@ -188,125 +190,127 @@ class Name(MappingBase):
         return outgoing
 
     @staticmethod
-    def _remove_numbers(pieces: PiecesList) -> PiecesList:
-        no_numbers = [[re.sub(r"\d", "", x) for x in piece] for piece in pieces]
+    def _remove_numbers(cluster: ClusterList) -> ClusterList:
+        no_numbers = [[re.sub(r"\d", "", x) for x in word] for word in cluster]
         return remove_falsy(no_numbers)
 
-    def _post_clean(self) -> T.Dict[str, Pieces]:
-        return {k: self._clean_pieces(self.detail[k]) for k in self._keys}
+    def _post_clean(self) -> T.Dict[str, Cluster]:
+        return {k: self._clean_cluster(self.detail[k]) for k in self._keys}
 
     @classmethod
-    def _clean_pieces(cls, pieces: Pieces, condense: bool = False) -> Pieces:
-        cleaned = [cls.clean(s, condense=condense, final=True) for s in pieces]
+    def _clean_cluster(cls, cluster: Cluster, condense: bool = False) -> Cluster:
+        cleaned = [cls.clean(s, condense=condense, final=True) for s in cluster]
         return [s for s in cleaned if s]
 
     @word_count_bouncer(minimum=3)
-    def _grab_junior(self, pieceslist: PiecesList) -> PiecesList:
+    def _grab_junior(self, clusterlist: ClusterList) -> ClusterList:
         """
         Extract "junior" as suffix unless
         - there is already a generational suffix
-        - junior is the first word of the only piece (e.g. 'junior x. smith')
-        - junior is the first word of a multi-part multi-piece
+        - junior is the first word of the only cluster (e.g. 'junior x. smith')
+        - junior is the first word of a multi-token multi-cluster
             e.g. leave as first 'smith, junior x'
                  leave as first 'barnes-smith, junior james'
                  take as suffix 'jake smith, junior'
         """
 
         if self._has_generational:
-            return pieceslist
+            return clusterlist
 
-        if "junior" not in flatten_once(pieceslist):
-            return pieceslist
+        if "junior" not in flatten_once(clusterlist):
+            return clusterlist
 
-        first_word_only_cluster = len(pieceslist) == 1 and pieceslist[0][0] == "junior"
+        first_word_only_cluster = (
+            len(clusterlist) == 1 and clusterlist[0][0] == "junior"
+        )
         if first_word_only_cluster:
-            return pieceslist
+            return clusterlist
 
         first_word_in_likely_first_name = (
-            len(pieceslist) == 2
-            and len(pieceslist[1]) > 1
-            and pieceslist[1][0] == "junior"
+            len(clusterlist) == 2
+            and len(clusterlist[1]) > 1
+            and clusterlist[1][0] == "junior"
         )
         if first_word_in_likely_first_name:
-            return pieceslist
+            return clusterlist
 
         self.detail["suffix"].append("jr")
-        return self._remove_from_pieceslist(pieceslist, "junior")
+        return self._remove_from_clusterlist(clusterlist, "junior")
 
     @staticmethod
-    def _remove_from_pieceslist(pieceslist: PiecesList, s: str) -> PiecesList:
-        """Drop all strings from pieceslist that are equal to s"""
-        return [[x for x in piece if x != s] for piece in pieceslist]
+    def _remove_from_clusterlist(clusterlist: ClusterList, s: str) -> ClusterList:
+        """Drop all strings from clusterlist that are equal to s"""
+        return [[x for x in cluster if x != s] for cluster in clusterlist]
 
-    def _extract_last_first_middle(self, pieceslist: PiecesList) -> None:
+    def _extract_last_first_middle(self, clusterlist: ClusterList) -> None:
         """Sequentially remove last name, first name, and collapse to middles"""
-        pieceslist = self._extract_last(remove_falsy(pieceslist))
-        pieceslist = self._extract_first(remove_falsy(pieceslist))
-        self.detail["middle"] = flatten_once(pieceslist)
+        clusterlist = self._extract_last(remove_falsy(clusterlist))
+        clusterlist = self._extract_first(remove_falsy(clusterlist))
+        self.detail["middle"] = flatten_once(clusterlist)
 
     @word_count_bouncer(1)
-    def _extract_first(self, pieceslist: PiecesList) -> PiecesList:
+    def _extract_first(self, clusterlist: ClusterList) -> ClusterList:
         """
-        Remove and return the first name from a prepared list of pieces
+        Remove and return the first name from a prepared list of cluster
 
-        If only one piece remains, take its leftmost word;
-        if more than one, take the leftmost piece.
+        If only one cluster remains, take its leftmost word;
+        if more than one, take the leftmost cluster.
         """
-        if len(pieceslist) == 1:
-            self.detail["first"] = [pieceslist[0].pop(0)]
-            return pieceslist
-        self.detail["first"] = pieceslist.pop(0)
-        return pieceslist
+        if len(clusterlist) == 1:
+            self.detail["first"] = [clusterlist[0].pop(0)]
+            return clusterlist
+        self.detail["first"] = clusterlist.pop(0)
+        return clusterlist
 
     @word_count_bouncer(1)
-    def _extract_last(self, pieceslist: PiecesList) -> PiecesList:
-        """Remove and return the last name from a prepared list of pieces"""
-        # First, move any partitioned last name into rightmost piece
-        if len(pieceslist) > 1:
-            pieceslist = self._flip_last_name_to_right(pieceslist)
-        # Now group words of the rightmost piece and take the rightmost cluster
-        pieceslist[-1] = self._cluster_words(pieceslist[-1])
-        self.detail["last"] = [pieceslist[-1].pop(-1)]
-        return pieceslist
+    def _extract_last(self, clusterlist: ClusterList) -> ClusterList:
+        """Remove and return the last name from a prepared list of cluster"""
+        # First, move any partitioned last name into rightmost cluster
+        if len(clusterlist) > 1:
+            clusterlist = self._flip_last_name_to_right(clusterlist)
+        # Now group words of the rightmost cluster and take the rightmost word
+        clusterlist[-1] = self._cluster_words(clusterlist[-1])
+        self.detail["last"] = [clusterlist[-1].pop(-1)]
+        return clusterlist
 
     @classmethod
-    def _flip_last_name_to_right(cls, pieceslist: PiecesList) -> PiecesList:
+    def _flip_last_name_to_right(cls, clusterlist: ClusterList) -> ClusterList:
         """Set up extraction by moving a last name to rightmost position"""
-        partitioned_last = " ".join(pieceslist.pop(0))
-        pieceslist[-1].append(partitioned_last)
-        return pieceslist
+        partitioned_last = " ".join(clusterlist.pop(0))
+        clusterlist[-1].append(partitioned_last)
+        return clusterlist
 
     @classmethod
-    def _cluster_words(cls, pieces: Pieces) -> Pieces:
+    def _cluster_words(cls, cluster: Cluster) -> Cluster:
         """
-        Split list of pieces down to individual words and
+        Split list of cluster down to individual words and
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        pieces = cls._combine_conjunctions(pieces)
-        pieces = cls._combine_rightmost_prefixes(pieces)
-        return pieces
+        cluster = cls._combine_conjunctions(cluster)
+        cluster = cls._combine_rightmost_prefixes(cluster)
+        return cluster
 
     @classmethod
     @word_count_bouncer(minimum=4)
-    def _combine_conjunctions(cls, pieces: Pieces) -> Pieces:
+    def _combine_conjunctions(cls, cluster: Cluster) -> Cluster:
         """Accept one conjunction at the end: `bob|steve|cortez y costa`"""
-        *new_pieces, last_name_one, conj, last_name_two = pieces
+        *new_cluster, last_name_one, conj, last_name_two = cluster
 
         if conj not in config.CONJUNCTIONS:
-            return pieces
+            return cluster
 
         rightmost = " ".join((last_name_one, conj, last_name_two))
-        new_pieces.append(rightmost)
-        return new_pieces
+        new_cluster.append(rightmost)
+        return new_cluster
 
     @classmethod
     @word_count_bouncer(minimum=3)
-    def _combine_rightmost_prefixes(cls, pieces: Pieces) -> Pieces:
-        """Work right-to-left through pieces, joining up prefixes of rightmost"""
-        result: PiecesList = []
+    def _combine_rightmost_prefixes(cls, cluster: Cluster) -> Cluster:
+        """Work right-to-left through cluster, joining up prefixes of rightmost"""
+        result: ClusterList = []
 
-        for word in reversed(pieces):
+        for word in reversed(cluster):
             if len(result) > 1 or word not in config.PREFIXES:
                 result.insert(0, [word])
                 continue
@@ -314,7 +318,7 @@ class Name(MappingBase):
                 result = [[]]
             result[0].insert(0, word)
 
-        return [" ".join(piece) for piece in result if piece]
+        return [" ".join(cluster) for cluster in result if cluster]
 
     def __eq__(self, other: T.Any) -> bool:
         """If Name is parsable and object dicts are identical, consider it equal."""
