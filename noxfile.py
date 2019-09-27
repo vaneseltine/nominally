@@ -170,6 +170,7 @@ def make_sure_various_cli_invocations_do_not_crash(session, cmds):
 
 @nox.session(python=False)
 def coverage(session):
+    session.run("coveralls", success_codes=[0, 1])
     session.run("python", "-m", "coverage", "html")
     output = Path("build/coverage/index.html").resolve()
     print(f"Coverage at {output}")

@@ -12,7 +12,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20190927b
+            - dependencies-20190927c
       - run:
           name: Prepare environment
           command: |
@@ -24,7 +24,7 @@ jobs:
       - save_cache:
           paths:
             - "~/.cache/pip"
-          key: dependencies-20190927b
+          key: dependencies-20190927c
       - run:
           name: Run the nox gauntlet
           command: |
