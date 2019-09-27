@@ -35,3 +35,5 @@ jobs:
             nox
       - store_test_results:
           path: build/pytest
+      - store_artifacts:
+          path: build
