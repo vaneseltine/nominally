@@ -171,8 +171,7 @@ def make_sure_various_cli_invocations_do_not_crash(session, cmds):
 @nox.session(python=False)
 def coverage(session):
     if IN_CI:
-        session.run("coveralls")
-        return
+        session.skip("Not building html in CI")
     session.run("python", "-m", "coverage", "html")
     output = Path("build/coverage/index.html").resolve()
     print(f"Coverage at {output}")
