@@ -133,7 +133,7 @@ def lint_pylint(session):
 
 @nox.session(python=False)
 def lint_typing(session, subfolder=PACKAGE_NAME):
-    session.run("python", "-m", "mypy", "--strict", PACKAGE_NAME)
+    session.run("python", "-m", "mypy", "--strict", subfolder)
 
 
 @nox.session(python=False)
@@ -142,7 +142,7 @@ def lint_black(session):
 
 
 @nox.session(python=False)
-def lint_todos(session):
+def lint_todos(_):
     for file in Path(".").glob("*/*.py"):
         result = search_in_file(file, "((TODO|FIXME).*)")
         if result:
