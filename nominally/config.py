@@ -1,3 +1,8 @@
+"""Constants and config for nominally.
+
+Primarily includes regex patterns and raw sets of particular name parts.
+"""
+
 import re
 
 NO_WORD_BEHIND = r"(?<!\w)\s*"
@@ -30,14 +35,10 @@ SUFFIX_PATTERNS = {
     ]
 }
 
-
 # Tokens that should join to their neighboring tokens, e.g. "and", "y" and "&".
-# "of" and "the" are also include to facilitate joining multiple titles,
-# e.g. "President of the United States".
-# Previously included: "&", "and", "et", "e", "of", "the", "und"
 CONJUNCTIONS = {"y"}
 
-# Cannot include things that could also be first names
+# Titles: cannot include things that could also be first names
 TITLES = {"dr", "mr", "mrs", "ms"}
 
 # Name tokens that appear before a last name. Prefixes join to the token

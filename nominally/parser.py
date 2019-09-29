@@ -74,9 +74,17 @@ class Name(MappingBase):
 
     @staticmethod
     def _pre_clean(s: str) -> str:
-        return unidecode_expect_ascii(str(s)).lower()  # type: ignore
+        """Minimal possible pre-clean
+
+        Still, e.g., allowing nickname extraction.
+        """
+        s = str(s)
+        s = unidecode_expect_ascii(s)
+        s = s.lower()
+        return s
 
     def _pre_process(self, s: str) -> str:
+        """Pull pieces that need to/can be processed from a string first."""
         s = self._sweep_nicknames(s)
         s = self._sweep_suffixes(s)
         s = self._sweep_junior(s)
@@ -85,26 +93,6 @@ class Name(MappingBase):
             self.detail["suffix"], condense=True
         )
         return s
-
-    def _archive_cleaned(self, s: str) -> T.Set[str]:
-        result = {s}
-        result.update(*(tuple(x) for x in self.detail.values() if x))
-        return result
-
-    @staticmethod
-    def _string_to_clusters(remaining: str) -> Clusters:
-        cluster = re.split(r"\s*,\s*", remaining)
-        return [x.split() for x in cluster if x]
-
-    def _process(self, preprocessed_str: str) -> None:
-        clusters = self._string_to_clusters(preprocessed_str)
-        clusters = self._extract_title(clusters)
-        clusters = self._remove_numbers(clusters)
-        clusters = self._grab_junior(clusters)
-        self._extract_last_first_middle(clusters)
-
-    def _post_process(self) -> None:
-        self.detail["suffix"].sort()
 
     @staticmethod
     def clean(s: str, *, condense: bool = False, final: bool = False) -> str:
@@ -135,8 +123,27 @@ class Name(MappingBase):
             return ""
         return s
 
+    def _archive_cleaned(self, s: str) -> T.Set[str]:
+        """Return a handy representation of cleaned string(s) as a set."""
+        result = {s}
+        result.update(*(tuple(x) for x in self.detail.values() if x))
+        return result
+
+    def _process(self, preprocessed_str: str) -> None:
+        """Primary processing of clusters into extracted name parts."""
+        clusters = self._string_to_clusters(preprocessed_str)
+        clusters = self._extract_title(clusters)
+        clusters = self._remove_numbers(clusters)
+        clusters = self._grab_junior(clusters)
+        self._extract_last_first_middle(clusters)
+
+    def _post_process(self) -> None:
+        """Any followup processes once all name parts have been extracted."""
+        self.detail["suffix"].sort()
+
     @word_count_bouncer(minimum=3)
     def _sweep_suffixes(self, s: str) -> str:
+        """Extract all possible (most) suffixes."""
         for pat, generational in config.SUFFIX_PATTERNS.items():
             if not pat.search(s):
                 continue
@@ -149,6 +156,7 @@ class Name(MappingBase):
 
     @word_count_bouncer(minimum=3)
     def _sweep_junior(self, s: str) -> str:
+        """First pass at 'junior' via regex from string."""
         if self._has_generational:
             return s
         new_s = config.JUNIOR_PATTERN.sub(", ", s)
@@ -174,6 +182,15 @@ class Name(MappingBase):
                 s = pattern.sub("", s)
         return s
 
+    @staticmethod
+    def _string_to_clusters(remaining: str) -> Clusters:
+        """Break a string into clusters by commas.
+
+        I.e., 'piranha, dinsdale j' ->  [['piranha'], ['dinsdale', 'j']]
+        """
+        cluster = re.split(r"\s*,\s*", remaining)
+        return [x.split() for x in cluster if x]
+
     def _extract_title(self, clusters: Clusters) -> Clusters:
         outgoing: Clusters = []
         while clusters:
@@ -191,6 +208,10 @@ class Name(MappingBase):
 
     @staticmethod
     def _remove_numbers(cluster: Clusters) -> Clusters:
+        """Clear out all numbers.
+
+        Intended to be applied following primary generational suffix extraction.
+        """
         no_numbers = [[re.sub(r"\d", "", x) for x in word] for word in cluster]
         return remove_falsy(no_numbers)
 
@@ -199,6 +220,7 @@ class Name(MappingBase):
 
     @classmethod
     def _clean_cluster(cls, cluster: Cluster, condense: bool = False) -> Cluster:
+        """Clean the string of each token in a cluster."""
         cleaned = [cls.clean(s, condense=condense, final=True) for s in cluster]
         return [s for s in cleaned if s]
 
