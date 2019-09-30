@@ -5,7 +5,7 @@ Nominally
 
 *Nominally* simplifies and parses a personal name written in
 `Western name order <https://en.wikipedia.org/wiki/Personal_name#Name_order>`_
-into five core fields: title, first, middle, last, and suffix.
+into six core fields: title, first, middle, last, suffix, and nickname.
 
 Typically, *nominally* is used to parse entire lists or
 `pd.Series <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html>`_
