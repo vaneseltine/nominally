@@ -94,8 +94,8 @@ class Name(MappingBase):
         )
         return s
 
-    @staticmethod
-    def clean(s: str, *, condense: bool = False, final: bool = False) -> str:
+    @classmethod
+    def clean(cls, s: str, *, condense: bool = False, final: bool = False) -> str:
         """Clean this string to the simplest possible representation (but no simpler).
 
         .. note::
@@ -111,17 +111,20 @@ class Name(MappingBase):
             (r"[-_/\\:]+", "-"),  # convert _ / \ - : to single hyphen
             (r"[^-\sa-z0-9,]+", ""),  # drop most all excluding -  , .
             (r"\s+", whitespace_out),  # condense all whitespace groups
-            (r"^[-, ]+", ""),  # lstrip hyphens, spaces, commas
-            (r"[-, ]+$", ""),  # rstrip hyphens, spaces, commas
         ]
         if final:
             cleaning_subs.append((r"[^a-z0-9- \)\()]", ""))
         for pattern, repl in cleaning_subs:
             s = re.sub(pattern, repl, s)
+        s = cls.strip_pointlessness(s)
 
         if not re.search(r"[a-z]", s):
             return ""
         return s
+
+    @staticmethod
+    def strip_pointlessness(s: str) -> str:
+        return s.strip("-, |")
 
     def _archive_cleaned(self, s: str) -> T.Set[str]:
         """Return a handy representation of cleaned string(s) as a set."""
@@ -387,14 +390,12 @@ class Name(MappingBase):
             f"{self.last},",
             self.title,
             self.first,
+            f"({self.nickname})" if self.nickname else "",
             self.middle,
             self.suffix,
         ]
         joined = " ".join(p for p in string_parts if p)
-        prepared = self.clean(joined)
-        if self.nickname:
-            prepared += f" ({self.nickname})"
-        return prepared
+        return self.strip_pointlessness(joined)
 
     # API
 

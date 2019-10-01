@@ -13,7 +13,7 @@ BLANKINSOPS = [
 def test_string_output():
     raw = "Blankinsop, Jr., Mr. James Juju (Jimmy)"
     n = Name(raw)
-    assert str(n) == "blankinsop, mr james juju jr (jimmy)"
+    assert str(n) == "blankinsop, mr james (jimmy) juju jr"
 
 
 def test_repr_output():
