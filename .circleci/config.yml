@@ -8,6 +8,8 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6
+        environment:
+          MYPYPATH: "./stubs"
     steps:
       - checkout
       - restore_cache:
