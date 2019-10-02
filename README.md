@@ -5,17 +5,30 @@
 <h2 align="center">nominally: a maximum-strength name parser for record linkage</h2>
 
 <p align="center">
-  <a href="https://www.gnu.org/licenses/agpl-3.0"><img alt="License: AGPL 3.0+" src="https://img.shields.io/badge/license-AGPL-009999.svg?style=flat-square" /></a>
-  <a href="https://pypi.python.org/pypi/nominally"><img alt="Package hosted on PyPI" src="https://img.shields.io/pypi/v/nominally?style=flat-square&color=009999" /></a>
-  <a href="https://codeclimate.com/github/vaneseltine/nominally"><img alt="Code Climate maintainability" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally?style=flat-square"></a>
-  <a href="https://circleci.com/gh/vaneseltine/nominally"><img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square" /></a>
-  <a href="https://coveralls.io/github/vaneseltine/nominally"><img alt="Coveralls test coverage" src="https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square" /></a>
-  <a href="https://nominally.readthedocs.io/en/latest/"><img alt="Read the Docs (latest)" src="https://img.shields.io/readthedocs/nominally/latest?style=flat-square" /></a>
-  <a href="https://github.com/vaneseltine/nominally"><img alt="GitHub commit activity" src="https://img.shields.io/github/last-commit/vaneseltine/nominally?style=flat-square" /></a>
+  <a href="https://www.gnu.org/licenses/agpl-3.0">
+    <img alt="License: AGPL 3.0+" src="https://img.shields.io/badge/license-AGPL-009999.svg?style=flat-square" />
+  </a>
+  <a href="https://pypi.python.org/pypi/nominally">
+    <img alt="Distributed via PyPI" src="https://img.shields.io/pypi/v/nominally?style=flat-square&color=009999" />
+  </a>
+  <a href="https://codeclimate.com/github/vaneseltine/nominally">
+    <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally?style=flat-square">
+  </a>
+  <a href="https://circleci.com/gh/vaneseltine/nominally">
+    <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square" />
+  </a>
+  <a href="https://coveralls.io/github/vaneseltine/nominally">
+    <img alt="Test coverage at Coveralls" src="https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square" />
+  </a>
+  <a href="https://nominally.readthedocs.io/en/latest/">
+    <img alt="Documentation at Read the Docs" src="https://img.shields.io/readthedocs/nominally/latest?style=flat-square" />
+  </a>
+  <a href="https://github.com/vaneseltine/nominally">
+    <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally?style=flat-square" />
+  </a>
 </p>
 
-### 🤷‍ What?
-
+### 🔗 Names
 
 *Nominally* simplifies and parses a personal name written in
 [Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
@@ -29,7 +42,7 @@ to parse a single name for convenient one-off testing and examples.
 *Nominally* produces fields primarily suitable for comparisons across or within datasets. As such, names come out formatted for data without regard to human syntactic preference: `de von ausfern, mr johann g` rather than
 `Mr. Johann G. de von Ausfern`.
 
-### 🖥️ Getting Started
+### 📓 Getting Started
 
 Call `parse_name()` to parse out the six core fields:
 ```
@@ -97,7 +110,8 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 'DR. PEACHES BARTKOWICZ'
 
 ```
-🐆 Command Line
+
+### 🖥️ Command Line
 
 For a quick report, invoke the `nominally` command line tool:
 ```
@@ -124,17 +138,13 @@ Binder hosts live Jupyter notebooks walking through examples of *nominally*.
 
 These notebooks and additional examples reside [in the Nominally Examples repository](https://github.com/vaneseltine/nominally-examples/).
 
-
 ### 🧙‍ Author
 
 [![Matt VanEseltine](https://img.shields.io/badge/name-matt_vaneseltine-888.svg?style=for-the-badge&logo=linux&logoColor=fff&color=violet)](https://vaneseltine.github.io)
 
 [![https://pypi.org/user/matvan/](https://img.shields.io/badge/pypi-matvan-888.svg?style=for-the-badge&logo=python&logoColor=fff&color=0073b7)](https://pypi.org/user/matvan/)
 
-
-
 [![matvan@umich.edu](https://img.shields.io/badge/email-matvan@umich.edu-888.svg?style=for-the-badge&logo=gmail&logoColor=fff&color=00274c)](mailto:matvan@umich.edu)
-
 
 [![https://github.com/vaneseltine](https://img.shields.io/badge/github-vaneseltine-888.svg?style=for-the-badge&logo=github&logoColor=fff&color=2b3137)](https://github.com/vaneseltine)
 
@@ -142,8 +152,7 @@ These notebooks and additional examples reside [in the Nominally Examples reposi
 
 [![https://stackoverflow.com/users/7846185/matt-vaneseltine](https://img.shields.io/badge/stack_overflow-matt_vaneseltine-888.svg?style=for-the-badge&logo=stack-overflow&logoColor=fff&color=f48024)](https://stackoverflow.com/users/7846185/matt-vaneseltine)
 
-
-### 🎓 Acknowledgements
+### 💡 Acknowledgements
 
 **Nominally** started as a fork of the
 [python-nameparser](https://github.com/derek73/python-nameparser) package,
