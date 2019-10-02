@@ -10,7 +10,6 @@ from nominally.utilities import flatten_once, remove_falsy
 
 Cluster = T.List[str]
 Clusters = T.List[Cluster]
-WordContainer = T.Union[str, Cluster, Clusters]
 
 if T.TYPE_CHECKING:
     MappingBase = T.Mapping[str, str]
@@ -24,6 +23,8 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
 
     If there are too few (less than minimum) words, return the arguments.
     """
+
+    WordContainer = T.Union[str, Cluster, Clusters]
 
     def decorator_bouncer(
         func: T.Callable[[T.Any, WordContainer], WordContainer]
