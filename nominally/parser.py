@@ -3,7 +3,7 @@ import re
 import typing as T
 from collections import abc
 
-from unidecode import unidecode_expect_ascii  # type: ignore
+from unidecode import unidecode_expect_ascii
 
 from nominally import config
 from nominally.utilities import flatten_once, remove_falsy
