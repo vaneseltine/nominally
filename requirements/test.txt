@@ -2,6 +2,7 @@
 
 # This file contains the minimum to run the test suite
 coverage==4.5.4
-hypothesis==4.36.0
-pytest==5.1.2
+hypothesis==4.41.3
+pytest==5.2.2
 pytest-randomly==3.1.0
+
