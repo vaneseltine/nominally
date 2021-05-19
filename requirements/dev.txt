@@ -17,3 +17,5 @@ pylint==2.8.2
 # Runners
 nox==2020.12.31
 coveralls==3.0.1
+# required for coveralls
+PyYAML==5.4
