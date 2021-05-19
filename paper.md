@@ -13,7 +13,7 @@ authors:
 affiliations:
   - name: Institute for Social Research, University of Michigan
     index: 1
-date: May 2021
+date: 21 May 2021
 bibliography: paper.bib
 ---
 
