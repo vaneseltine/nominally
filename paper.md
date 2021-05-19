@@ -38,7 +38,7 @@ parse large lists of names.
 It is independent of any specific data science framework
 and requires minimal dependencies.
 The `nominally` API provides simple command-line, function, and class access
-and easily integrates with the `pandas` [@pandas] data analysis library.
+and easily integrates with the `pandas` [@McKinney2010] data analysis library.
 The aim is to be able to parse
 thousands or millions of strings
 into name parts for record linkage
@@ -68,7 +68,6 @@ where only a single string name field is available.
 `Nominally` aggressively cleans input;
 scrapes titles, nicknames, and suffixes;
 and parses apart first, middle, and last names.
-Not all errors can be corrected, but many variations can be aligned.
 
 In its simplest application,
 `nominally` parses one name string into a dictionary of segmented name fields:
@@ -123,6 +122,16 @@ capture of multiple names, politicians, or companies.
 By narrowing the scope to single human names,
 `nominally` loses the broader applications of these packages
 but gains accuracy in its core capacity.
+
+Large-scale data systems tend to impose a great many assumptions
+about the form and features of human names [@McKenzie2010].
+As part of linking such systems together, `nominally` necessarily
+works within some such assumptions.
+`Nominally` does not attempt to identify a correct or ideal name,
+but rather to generate useful features of names using Western name order.
+Not all names can be accurately captured,
+and not all errors can be corrected,
+but many variations can be productively aligned.
 
 # Acknowledgements
 
