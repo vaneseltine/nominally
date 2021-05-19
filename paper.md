@@ -127,7 +127,7 @@ but gains accuracy in its core capacity.
 # Acknowledgements
 
 Special thanks go to IRIS staff at the University of Michigan,
-who have run `nominally` at scale and provided bug reports.
+who have run `nominally` at scale, provided feedback, and reported bugs.
 `Nominally` is indebted to the foundation of the
 `python-nameparser` project;
 its base of tests and name lists have been
