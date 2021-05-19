@@ -27,19 +27,21 @@ as the same individual as "Matt Van Eseltine" in another
 and "Vaneseltine, M PhD" in a third.
 `Nominally` is designed to assist in the initial stages of record linkage across datasets,
 during cleaning and preprocessing.
-`Nominally` uses a rule-based process [@Christen2012]
+It uses a rule-based process [@Christen2012]
 to simplify and parse a single-string personal name of
 [Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
 into six core fields: title, first, middle, last, suffix, and nickname.
-Typically, `nominally` is used to parse entire lists or of names en masse.
+The typical use case of `nominally` is parsing entire lists of names en masse.
 
 # Statement of Need
 
 `Nominally` is a user-friendly Python package designed for name parsing
-independent of any website or data science framework.
+independent of any specific data science framework or website
+and requiring minimal dependencies.
 Its API provides simple command-line, function, and class access
 and easily integrates with the [Pandas](https://pandas.pydata.org/) data analysis library.
 
+Human names can be difficult to work with in data.
 Varying quality and practices across institutions and datasets introduce noise
 into data and cause misrepresentation. This increases the challenges of
 deduplicating rows within data and and linking names across multiple datasets.
@@ -52,22 +54,23 @@ Errors and discrepencies easily include (and this list is by no means exhaustive
 - Inconsistent capture of accents and other non-ASCII characters.
 - Single name fields arbitrarily concatenating name parts.
 
-Cumulative variations and errors combine to make
-the seemingly straightforward job of finding first and last names difficult.
+Cumulative variations and errors can combine to make
+the seemingly straightforward job of simply identifying first and last names rather difficult.
 `Nominally` is designed to consistently extract the most useful features of personal names
-under the highly restrictive case where only a single string name field is available,
-and it will also perform well if name fields are concatenated.
+without assuming any prior differentiation between name fields.
+That is, it works under the highly restrictive case where only a single string name field is available,
+and it will thereby perform well if existing name fields are concatenated.
 `Nominally` aggressively cleans input;
 scrapes titles, nicknames, and suffixes;
 and parses apart first, middle, and last names.
 
-`Nominally` is designed for large-scale work, and it is employed in the construction of the UMETRICS dataset [@UMETRICS2020], where millions of employee, principal investigator, and author name records are processed. This multi-university administrative dataset which has been used by over two hundred social science researchers [@IRIS2021].
+`Nominally` is designed for large-scale work, and it is employed in the construction of UMETRICS data [@UMETRICS2020], where millions of employee, principal investigator, and author name records are processed. UMETRICS is a multi-university administrative dataset which has been used by over two hundred social science researchers in recent years [@IRIS2021].
 
 TODO: Comparisons
 
 # Examples
 
-In the simplest case, `nominally` can parse one name string into segmented name fields:
+In its simplest application, `nominally` can parse one name string into a dictionary of segmented name fields:
 
 ```python
 >>> from nominally import parse_name
@@ -82,8 +85,8 @@ In the simplest case, `nominally` can parse one name string into segmented name 
 }
 ```
 
-The possible combinations of name parts are extensive, but as a further example
-`Nominally` extracts appropriate and comparable fields
+The possible combinations of name parts are too extensive to present,
+but as a further example `Nominally` extracts appropriate and comparable fields
 from these divergent presentations of a single name:
 
 | Input                          | Title | First  | Middle | Last  | Suffix | Nickname |
@@ -105,6 +108,6 @@ Thanks go also to other human name parsing projects including
 [name-cleaver](https://github.com/sunlightlabs/name-cleaver),
 and especially [python-nameparser](https://github.com/derek73/python-nameparser).
 Before considerable overhaul, `nominally` began life as a fork of `python-nameparser`,
-and working with its test names was very helpful through `nominally`'s development.
+and working with its test name lists was very helpful through `nominally`'s development.
 
 # References
