@@ -30,21 +30,22 @@
 
 ### 🔗 Names
 
-*Nominally* simplifies and parses a personal name written in
+_Nominally_ simplifies and parses a personal name written in
 [Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
 into six core fields: title, first, middle, last, suffix, and nickname.
 
-Typically, *nominally* is used to parse entire lists or
+Typically, _nominally_ is used to parse entire lists or
 [pd.Series](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html)
 of names en masse. This package includes a command line tool
 to parse a single name for convenient one-off testing and examples.
 
-*Nominally* produces fields primarily suitable for comparisons across or within datasets. As such, names come out formatted for data without regard to human syntactic preference: `de von ausfern, mr johann g` rather than
+_Nominally_ produces fields intended for comparisons between or within datasets. As such, names come out formatted for data without regard to human syntactic preference: `de von ausfern, mr johann g` rather than
 `Mr. Johann G. de von Ausfern`.
 
 ### 📓 Getting Started
 
 Call `parse_name()` to parse out the six core fields:
+
 ```
 $ python -q
 >>> from nominally import parse_name
@@ -58,7 +59,9 @@ $ python -q
   'nickname': 'jimmy'
 }
 ```
+
 Dive into the `Name` class to parse and recreate a string...
+
 ```
 >>> from nominally import Name
 >>> n = Name("DR. PEACHES BARTKOWICZ")
@@ -68,7 +71,9 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 'bartkowicz, dr peaches'
 
 ```
+
 ...or use the dict...
+
 ```
 >>> dict(n)
 {
@@ -82,7 +87,9 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 >>> list(n.values())
 ['dr', 'peaches', '', 'bartkowicz', '', '']
 ```
+
 ...or retrieve a more elaborate set of attributes...
+
 ```
 >>> n.report()
 {
@@ -98,7 +105,9 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
   'nickname': ''
 }
 ```
+
 ...or capture individual attributes.
+
 ```
 >>> n.first
 'peaches'
@@ -114,6 +123,7 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 ### 🖥️ Command Line
 
 For a quick report, invoke the `nominally` command line tool:
+
 ```
 $ nominally "DR. PEACHES BARTKOWICZ"
        raw: DR. PEACHES BARTKOWICZ
@@ -130,7 +140,7 @@ $ nominally "DR. PEACHES BARTKOWICZ"
 
 ### 🔬 Worked Examples
 
-Binder hosts live Jupyter notebooks walking through examples of *nominally*.
+Binder hosts live Jupyter notebooks walking through examples of _nominally_.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![csv.ipynb on mybinder.org](https://img.shields.io/badge/launch_notebook-csv_parse-888.svg?style=for-the-badge&logo=jupyter&logoColor=fff&color=ff4785)](https://mybinder.org/v2/gh/vaneseltine/nominally-examples/master?filepath=notebooks%2Fcsv.ipynb)
 
