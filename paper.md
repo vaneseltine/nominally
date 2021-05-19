@@ -64,7 +64,7 @@ and it will thereby perform well if existing name fields are concatenated.
 scrapes titles, nicknames, and suffixes;
 and parses apart first, middle, and last names.
 
-`Nominally` is designed for large-scale work, and it is employed in the construction of UMETRICS data [@UMETRICS2020], where millions of employee, principal investigator, and author name records are processed. UMETRICS is a multi-university administrative dataset which has been used by over two hundred social science researchers in recent years [@IRIS2021].
+`Nominally` is designed for large-scale work, and we employ `nominally` in the construction of UMETRICS data at the Institute for Research on Innovation & Science [@UMETRICS2020], where millions of employee, principal investigator, and author name records are processed. UMETRICS is a multi-university administrative dataset used by over two hundred social science researchers in recent years [@IRIS2021].
 
 TODO: Comparisons
 
@@ -101,7 +101,7 @@ from these divergent presentations of a single name:
 
 # Acknowledgements
 
-Thanks to staff of the Institute for Research on Innovation and Science at the University of Michigan,
+Thanks to IRIS staff at the University of Michigan,
 who have run `nominally` at scale and provided bug reports.
 Thanks go also to other human name parsing projects including
 [probablepeople](https://github.com/datamade/probablepeople),
