@@ -70,6 +70,36 @@ scrapes titles, nicknames, and suffixes;
 and parses apart first, middle, and last names.
 Not all errors can be corrected, but many variations can be aligned.
 
+In its simplest application,
+`nominally` parses one name string into a dictionary of segmented name fields:
+
+```python
+>>> from nominally import parse_name
+>>> parse_name("Vimes, jr, Mr. Samuel 'Sam'")
+{
+    'title': 'mr',
+    'first': 'samuel',
+    'middle': '',
+    'last': 'vimes',
+    'suffix': 'jr',
+    'nickname': 'sam'
+}
+```
+
+Possible combinations of name parts are too extensive to itemize,
+but as a further example `nominally` extracts appropriate and comparable fields
+from these divergent presentations of a single name:
+
+| Input                          | Title | First  | Middle | Last  | Suffix | Nickname |
+| ------------------------------ | ----- | ------ | ------ | ----- | ------ | -------- |
+| S.T. VIMES JUNIOR              |       | s      | t      | vimes | jr     |          |
+| Vimes, Samuel T.               |       | samuel | t      | vimes |        |          |
+| samüél t vimés                 |       | samuel | t      | vimes |        |          |
+| Samuel "sam" Thomas Vimes      |       | samuel | thomas | vimes |        | sam      |
+| Dr. Samuel Thomas Vimes, Ph.D. | dr    | samuel | thomas | vimes | phd    |          |
+| Samuel T. Vimes, Jr. 24601     |       | samuel | t      | vimes | jr     |          |
+| vimes, jr. phd, samuel         |       | samuel |        | vimes | jr phd |          |
+
 `Nominally` is designed for large-scale work.
 We employ `nominally` as part of the construction of data linkage for
 the UMETRICS dataset of the Institute for Research on Innovation & Science [@UMETRICS2020],
@@ -93,38 +123,6 @@ capture of multiple names, politicians, or companies.
 By narrowing the scope to single human names,
 `nominally` loses the broader applications of these packages
 but gains accuracy in its core capacity.
-
-# Examples
-
-In its simplest application,
-`nominally` can parse one name string into a dictionary of segmented name fields:
-
-```python
->>> from nominally import parse_name
->>> parse_name("Vimes, jr, Mr. Samuel 'Sam'")
-{
-    'title': 'mr',
-    'first': 'samuel',
-    'middle': '',
-    'last': 'vimes',
-    'suffix': 'jr',
-    'nickname': 'sam'
-}
-```
-
-The possible combinations of name parts are too extensive to present,
-but as a further example `nominally` extracts appropriate and comparable fields
-from these divergent presentations of a single name:
-
-| Input                          | Title | First  | Middle | Last  | Suffix | Nickname |
-| ------------------------------ | ----- | ------ | ------ | ----- | ------ | -------- |
-| S.T. VIMES JUNIOR              |       | s      | t      | vimes | jr     |          |
-| Vimes, Samuel T.               |       | samuel | t      | vimes |        |          |
-| samüél t vimés                 |       | samuel | t      | vimes |        |          |
-| Samuel "sam" Thomas Vimes      |       | samuel | thomas | vimes |        | sam      |
-| Dr. Samuel Thomas Vimes, Ph.D. | dr    | samuel | thomas | vimes | phd    |          |
-| Samuel T. Vimes, Jr. 24601     |       | samuel | t      | vimes | jr     |          |
-| vimes, jr. phd, samuel         |       | samuel |        | vimes | jr phd |          |
 
 # Acknowledgements
 
