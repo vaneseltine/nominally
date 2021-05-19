@@ -19,18 +19,16 @@ bibliography: paper.bib
 
 # Summary
 
-Increasing availability to data in recent decades has heightened the importance
-of successfully connecting people across disparate datasets through record linkage.
-As we draw from multiple data sources,
+With greater and greater data availability, the importance
+of successfully connecting people across disparate datasets grows.
+In this process of record linkage, as we draw from multiple sources
 we would like identify and measure similarities of the name
 "Matthew VanEseltine" in one database,
 "Matt Van Eseltine" in another,
 and "Vaneseltine, M PhD" in a third.
-`Nominally` is designed to assist in the initial stages of record linkage,
-where datasets are cleaned and preprocessed.
-It uses a rule-based system [@Christen2012]
-to simplify and parse a single-string personal name
-of [Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
+`Nominally` assists in initial stages of record linkage,
+where datasets are cleaned and preprocessed,
+by simplifying and parsing single-string personal names
 into six core fields: title, first, middle, last, suffix, and nickname.
 
 # Statement of Need
@@ -39,13 +37,15 @@ into six core fields: title, first, middle, last, suffix, and nickname.
 independent of any specific data science framework or website
 and requiring minimal dependencies.
 Its API provides simple command-line, function, and class access
-and easily integrates with the [Pandas](https://pandas.pydata.org/) data analysis library.
-The typical use case of `nominally` is parsing entire lists of names en masse.
+and easily integrates with the `pandas` [@pandas] data analysis library.
+The typical use case of `nominally`
+is parsing entire lists of strings into segmented names en masse.
 
 Human names can be difficult to work with in data.
-Varying quality and practices across institutions and datasets introduce noise
-into data and cause misrepresentation. This increases the challenges of
-deduplicating rows within data and and linking names across multiple datasets.
+Varying quality and practices across institutions and datasets
+introduce noise and cause misrepresentation.
+This increases the challenges of deduplicating rows within data
+and linking names across multiple datasets.
 Errors and discrepencies easily include (and this list is by no means exhaustive):
 
 - First and middle names split arbitrarily.
@@ -57,10 +57,11 @@ Errors and discrepencies easily include (and this list is by no means exhaustive
 
 Cumulative variations and errors can combine to make
 the seemingly straightforward job of simply identifying first and last names rather difficult.
-`Nominally` is designed to consistently extract the most useful features of personal names
-without assuming any prior differentiation between name fields.
-That is, it works under the highly restrictive case where only a single string name field is available,
-and it will thereby perform well if existing name fields are concatenated.
+`Nominally` is designed to consistently extract key features of personal names
+using a rule-based system [@Christen2012].
+No prior differentiation is assumed between name fields;
+that is, `nominally` operates under the least informative case
+where only a single string name field is available.
 `Nominally` aggressively cleans input;
 scrapes titles, nicknames, and suffixes;
 and parses apart first, middle, and last names.
@@ -68,15 +69,15 @@ and parses apart first, middle, and last names.
 `Nominally` is designed for large-scale work,
 and we employ `nominally` as part of the construction of data linkage for
 the UMETRICS dataset at the Institute for Research on Innovation & Science [@UMETRICS2020],
-which requires processing millions of
-university employee, grant principal investigator, and journal author name records.
+which involves processing millions of name records of
+university employees, grant principal investigators, and published authors.
 
 Multiple open-source Python packages focus on parsing names, including
 `python-nameparser` [@python-nameparser],
 `probablepeople` [@probablepeople],
 and `name-cleaver` [@name-cleaver].
 `Nominally` improves upon these packages in its core use case:
-parsing single human names in Western name order.
+parsing single human names of Western name order (first middle last).
 `Nominally` began from a fork of `python-nameparser`,
 initially aiming to refactor code and improve certain test cases.
 As development continued through a complete overhaul,
@@ -125,7 +126,7 @@ from these divergent presentations of a single name:
 Special thanks go to IRIS staff at the University of Michigan,
 who have run `nominally` at scale and provided bug reports.
 `Nominally` is indebted to the foundation of the
-[python-nameparser](https://github.com/derek73/python-nameparser) project;
+`python-nameparser` project;
 its base of tests and name lists have been
 especially helpful throughout `nominally`'s development.
 
