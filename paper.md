@@ -19,10 +19,10 @@ bibliography: paper.bib
 
 # Summary
 
-With greater and greater data availability, the importance
+With ever greater data availability, the importance
 of successfully connecting people across disparate datasets grows.
-In this process of record linkage, as we draw from multiple sources
-we would like identify and measure similarities of the name
+As we link records from multiple sources,
+we would like to identify and measure similarities of names such as
 "Matthew VanEseltine" in one database,
 "Matt Van Eseltine" in another,
 and "Vaneseltine, M PhD" in a third.
@@ -33,26 +33,29 @@ into six core fields: title, first, middle, last, suffix, and nickname.
 
 # Statement of Need
 
-`Nominally` is a user-friendly Python package designed for name parsing
-independent of any specific data science framework or website
-and requiring minimal dependencies.
-Its API provides simple command-line, function, and class access
+`Nominally` is a user-friendly Python package designed to
+parse large lists of names.
+It is independent of any specific data science framework
+and requires minimal dependencies.
+The `nominally` API provides simple command-line, function, and class access
 and easily integrates with the `pandas` [@pandas] data analysis library.
-The typical use case of `nominally`
-is parsing entire lists of strings into segmented names en masse.
+The aim is to be able to parse
+thousands or millions of strings
+into name parts for record linkage
+that maintain relevant features while excluding irrelevant details.
 
 Human names can be difficult to work with in data.
 Varying quality and practices across institutions and datasets
-introduce noise and cause misrepresentation.
-This increases the challenges of deduplicating rows within data
-and linking names across multiple datasets.
-Errors and discrepencies easily include (and this list is by no means exhaustive):
+introduce noise and cause misrepresentation,
+increasing linkage and deduplication challenges.
+Common errors and discrepencies include
+(and this list is by no means exhaustive):
 
-- First and middle names split arbitrarily.
-- Misplaced prefixes of last names (e.g., "van" and "de la").
-- Records with multiple last names partitioned into middle name fields.
-- Titles and suffixes variously recorded in different fields and with or without separators.
-- Inconsistent capture of accents and other non-ASCII characters.
+- Arbitrarily split first and middle names.
+- Misplaced prefixes of last names such as "van" and "de la."
+- Multiple last names partitioned into middle name fields.
+- Titles and suffixes variously recorded in different fields, with or without separators.
+- Inconsistent capture of accents, ʻokinas, and other non-ASCII characters.
 - Single name fields arbitrarily concatenating name parts.
 
 Cumulative variations and errors can combine to make
@@ -65,10 +68,11 @@ where only a single string name field is available.
 `Nominally` aggressively cleans input;
 scrapes titles, nicknames, and suffixes;
 and parses apart first, middle, and last names.
+Not all errors can be corrected, but many variations can be aligned.
 
-`Nominally` is designed for large-scale work,
-and we employ `nominally` as part of the construction of data linkage for
-the UMETRICS dataset at the Institute for Research on Innovation & Science [@UMETRICS2020],
+`Nominally` is designed for large-scale work.
+We employ `nominally` as part of the construction of data linkage for
+the UMETRICS dataset of the Institute for Research on Innovation & Science [@UMETRICS2020],
 which involves processing millions of name records of
 university employees, grant principal investigators, and published authors.
 
@@ -80,14 +84,15 @@ and `name-cleaver` [@name-cleaver].
 parsing single human names of Western name order (first middle last).
 `Nominally` began from a fork of `python-nameparser`,
 initially aiming to refactor code and improve certain test cases.
-As development continued through a complete overhaul,
-the current core state of `nominally` accurately handles a wider range of names.
+Development continued through a complete overhaul,
+and `nominally` now accurately handles a wider range of names
+without requiring user customization.
 `Probablepeople` and `name-cleaver`
-both extend their processes to simultaneously address
-capturing the details of multiple names, politicians, or companies.
+both cast a wider nat, simultaneously addressing
+capture of multiple names, politicians, or companies.
 By narrowing the scope to single human names,
 `nominally` loses the broader applications of these packages
-but gains accuracy in this core capacity.
+but gains accuracy in its core capacity.
 
 # Examples
 
