@@ -130,3 +130,20 @@ def issue_52_hyphenated_number():
     name = Name("¼,A,A")
     assert name.first == "a"
     assert name.last == "a"
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [
+        "samuel ‘sam’ vimes",
+        "samuel 'sam' vimes",
+        "samuel ‘sam’ vimes",
+        'samuel "sam" vimes',
+        "samuel “sam“ vimes",
+        "samuel ”sam” vimes",
+        "samuel “sam” vimes",
+    ],
+)
+def issue_53_smart_quotes(raw):
+    entry = {"raw": raw, "last": "vimes", "first": "samuel", "nickname": "sam"}
+    dict_entry_test(Name, entry)
