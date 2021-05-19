@@ -27,7 +27,8 @@ as the same individual as "Matt Van Eseltine" in another
 and "Vaneseltine, M PhD" in a third.
 `Nominally` is designed to assist in the initial stages of record linkage across datasets,
 during cleaning and preprocessing.
-`Nominally` simplifies and parses a single-string personal name of
+`Nominally` uses a rule-based process [@Christen2012]
+to simplify and parse a single-string personal name of
 [Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
 into six core fields: title, first, middle, last, suffix, and nickname.
 Typically, `nominally` is used to parse entire lists or of names en masse.
@@ -70,23 +71,40 @@ In the simplest case, `nominally` can parse one name string into segmented name 
 
 ```python
 >>> from nominally import parse_name
->>> parse_name("Blankinsop, Jr., Mr. James 'Jimmy'")
-{'title': 'mr', 'first': 'james', 'middle': '', 'last': 'blankinsop', 'suffix': 'jr', 'nickname': 'jimmy'}
+>>> parse_name("Vimes, jr, Mr. Samuel 'Sam'")
+{
+    'title': 'mr',
+    'first': 'samuel',
+    'middle': '',
+    'last': 'vimes',
+    'suffix': 'jr',
+    'nickname': 'sam'
+}
 ```
 
-`Nominally` resolves the following variations on a single name resolve into reasonably useful fields:
+The possible combinations of name parts are extensive, but as a further example
+`Nominally` extracts appropriate and comparable fields
+from these divergent presentations of a single name:
 
-| Input                            | Title | First  | Middle  | Last    | Suffix | Nickname |
-| -------------------------------- | ----- | ------ | ------- | ------- | ------ | -------- |
-| R.J. CANNING JUNIOR              |       | r      | j       | canning | junior |          |
-| Canning, Ramsay J.               |       | ramsay | j       | canning |        |          |
-| Ramsay "R.J." Jackson Canning    |       | ramsay | jackson | canning |        | r j      |
-| Dr. Ramsay Jackson Canning, M.D. | dr    | ramsay | jackson | canning | md     |          |
-| Ramsay J. Canning, Jr.           |       | ramsay | j       | canning | jr     |          |
-| canning, jr., dr. ramsay         | dr    | ramsay |         | canning | jr     |          |
+| Input                          | Title | First  | Middle | Last  | Suffix | Nickname |
+| ------------------------------ | ----- | ------ | ------ | ----- | ------ | -------- |
+| S.T. VIMES JUNIOR              |       | s      | t      | vimes | jr     |
+| Vimes, Samuel T.               |       | samuel | t      | vimes |        |
+| samüél t vimés                 |       | samuel | t      | vimes |        |
+| Samuel "sam" Thomas Vimes      |       | samuel | thomas | vimes |        | sa       |
+| Dr. Samuel Thomas Vimes, Ph.D. | dr    | samuel | thomas | vimes | phd    |
+| Samuel T. Vimes, Jr.           |       | samuel | t      | vimes | jr     |
+| vimes, jr. phd, samuel         |       | samuel |        | vimes | jr phd |
 
 # Acknowledgements
 
-Thanks to staff of the Institute for Research on Innovation and Science at the University of Michigan, who have run `nominally` at scale and provided bug reports. Thanks go also to other human name parsing projects including [probablepeople](https://github.com/datamade/probablepeople), [name-cleaver](https://github.com/sunlightlabs/name-cleaver), and especially [python-nameparser](https://github.com/derek73/python-nameparser), the test database of which spurred `nominally`'s original fork.
+Thanks to staff of the Institute for Research on Innovation and Science at the University of Michigan,
+who have run `nominally` at scale and provided bug reports.
+Thanks go also to other human name parsing projects including
+[probablepeople](https://github.com/datamade/probablepeople),
+[name-cleaver](https://github.com/sunlightlabs/name-cleaver),
+and especially [python-nameparser](https://github.com/derek73/python-nameparser).
+Before considerable overhaul, `nominally` began life as a fork of `python-nameparser`,
+and working with its test names was very helpful through `nominally`'s development.
 
 # References
