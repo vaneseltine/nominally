@@ -124,3 +124,9 @@ def issue_4_clean_nicknames():
 )
 def issue_32_strip_hyphens(entry):
     dict_entry_test(Name, entry)
+
+
+def issue_52_hyphenated_number():
+    name = Name("¼,A,A")
+    assert name.first == "a"
+    assert name.last == "a"

@@ -210,14 +210,19 @@ class Name(MappingBase):
         self.detail["title"] = []
         return outgoing
 
-    @staticmethod
-    def _remove_numbers(cluster: Clusters) -> Clusters:
+    @classmethod
+    def _remove_numbers(cls, cluster: Clusters) -> Clusters:
         """Clear out all numbers.
 
         Intended to be applied following primary generational suffix extraction.
         """
-        no_numbers = [[re.sub(r"\d", "", x) for x in word] for word in cluster]
+        no_numbers = [[cls._deep_number_clean(x) for x in word] for word in cluster]
         return remove_falsy(no_numbers)
+
+    @classmethod
+    def _deep_number_clean(cls, s: str) -> str:
+        no_numbers = re.sub(r"\d", "", s)
+        return cls.strip_pointlessness(no_numbers)
 
     def _post_clean(self) -> T.Dict[str, Cluster]:
         return {k: self._clean_cluster(self.detail[k]) for k in self._keys}
