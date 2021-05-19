@@ -1,5 +1,5 @@
 ---
-title: "nominally: a name parser for record linkage"
+title: "Nominally: A Name Parser for Record Linkage"
 tags:
   - Python
   - data science
@@ -29,8 +29,8 @@ and "Vaneseltine, M PhD" in a third.
 `Nominally` is designed to assist in the initial stages of record linkage,
 where datasets are cleaned and preprocessed.
 It uses a rule-based system [@Christen2012]
-to simplify and parse a single-string personal name of
-[Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
+to simplify and parse a single-string personal name
+of [Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
 into six core fields: title, first, middle, last, suffix, and nickname.
 
 # Statement of Need
@@ -75,22 +75,23 @@ Multiple open-source Python packages focus on parsing names, including
 `python-nameparser` [@python-nameparser],
 `probablepeople` [@probablepeople],
 and `name-cleaver` [@name-cleaver].
-`Nominally` is designed to be superior to these packages
-in its core use case: parsing single human names in Western name order.
+`Nominally` improves upon these packages in its core use case:
+parsing single human names in Western name order.
 `Nominally` began from a fork of `python-nameparser`,
 initially aiming to refactor code and improve certain test cases.
 As development continued through a complete overhaul,
 the current core state of `nominally` accurately handles a wider range of names.
 `Probablepeople` and `name-cleaver`
 both extend their processes to simultaneously address
-segmenting multiple names, organizations, or politician names.
+capturing the details of multiple names, politicians, or companies.
 By narrowing the scope to single human names,
 `nominally` loses the broader applications of these packages
 but gains accuracy in this core capacity.
 
 # Examples
 
-In its simplest application, `nominally` can parse one name string into a dictionary of segmented name fields:
+In its simplest application,
+`nominally` can parse one name string into a dictionary of segmented name fields:
 
 ```python
 >>> from nominally import parse_name
@@ -111,13 +112,13 @@ from these divergent presentations of a single name:
 
 | Input                          | Title | First  | Middle | Last  | Suffix | Nickname |
 | ------------------------------ | ----- | ------ | ------ | ----- | ------ | -------- |
-| S.T. VIMES JUNIOR              |       | s      | t      | vimes | jr     |
-| Vimes, Samuel T.               |       | samuel | t      | vimes |        |
-| samüél t vimés                 |       | samuel | t      | vimes |        |
+| S.T. VIMES JUNIOR              |       | s      | t      | vimes | jr     |          |
+| Vimes, Samuel T.               |       | samuel | t      | vimes |        |          |
+| samüél t vimés                 |       | samuel | t      | vimes |        |          |
 | Samuel "sam" Thomas Vimes      |       | samuel | thomas | vimes |        | sam      |
-| Dr. Samuel Thomas Vimes, Ph.D. | dr    | samuel | thomas | vimes | phd    |
-| Samuel T. Vimes, Jr. 24601     |       | samuel | t      | vimes | jr     |
-| vimes, jr. phd, samuel         |       | samuel |        | vimes | jr phd |
+| Dr. Samuel Thomas Vimes, Ph.D. | dr    | samuel | thomas | vimes | phd    |          |
+| Samuel T. Vimes, Jr. 24601     |       | samuel | t      | vimes | jr     |          |
+| vimes, jr. phd, samuel         |       | samuel |        | vimes | jr phd |          |
 
 # Acknowledgements
 
@@ -125,6 +126,7 @@ Special thanks go to IRIS staff at the University of Michigan,
 who have run `nominally` at scale and provided bug reports.
 `Nominally` is indebted to the foundation of the
 [python-nameparser](https://github.com/derek73/python-nameparser) project;
-its base of tests and name lists were especially helpful throughout `nominally`'s development.
+its base of tests and name lists have been
+especially helpful throughout `nominally`'s development.
 
 # References
