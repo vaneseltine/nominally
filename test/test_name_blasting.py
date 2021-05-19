@@ -1,4 +1,5 @@
 import pytest
+from unidecode import unidecode_expect_ascii
 
 from nominally import Name
 
@@ -11,19 +12,18 @@ def test_all_name_banks(entry):
 
 
 @pytest.mark.parametrize("entry", load_bank("*"), ids=make_ids)
-def test_idempotence(entry):
-    name = Name(entry["raw"])
-    namename = Name(str(name))
-    assert name == namename
-
-
-@pytest.mark.parametrize("entry", load_bank("*"), ids=make_ids)
 def issue_30_check_fingerprint(entry):
+    """
+    This helps ensure that we aren't losing random name parts.
+    """
     name = Name(entry["raw"])
-    rawish = name._pre_clean(entry["raw"])
-    if "junior" in rawish:
-        return
-    assert fingerprint(rawish) == fingerprint(str(name))
+    rawish = unidecode_expect_ascii(entry["raw"]).lower()
+
+    string_finger = fingerprint(str(name))
+    raw_finger = fingerprint(rawish)
+    alt_finger = fingerprint(rawish.replace("junior", "jr"))
+
+    assert string_finger in (raw_finger, alt_finger)
 
 
 def fingerprint(s):

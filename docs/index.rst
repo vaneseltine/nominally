@@ -54,22 +54,6 @@ In the list above (and many, many variations beyond), *nominally* correctly
 captures each Canning as a last name, each R(amsay) as a first, both types
 of suffix, and so forth.
 
-Idempotence
---------------------------
-
-The process of converting input to output in *nominally* is
-`idempotent <https://en.wikipedia.org/wiki/Idempotence>`_. For all *x*:
-
-.. math::
-
-   Name(Name(x)) == Name(x)
-
-In other words, parsing and reparsing any name will not change the outcome.
-This holds true even when its output has been condensed to a single-field
-string representation.
-Managing a data pipeline is hard enough without worrying about keeping
-track of the correct number of times to preprocess a feature.
-
 Contents
 ----------------------------
 
