@@ -39,8 +39,7 @@ It is independent of any specific data science framework
 and requires minimal dependencies.
 The `nominally` API provides simple command-line, function, and class access
 and easily integrates with the `pandas` [@McKinney2010] data analysis library.
-The aim is to be able to parse
-thousands or millions of strings
+The aim is to parse thousands or millions of strings
 into name parts for record linkage
 that maintain relevant features while excluding irrelevant details.
 
@@ -100,10 +99,10 @@ from these divergent presentations of a single name:
 | vimes, jr. phd, samuel         |       | samuel |        | vimes | jr phd |          |
 
 `Nominally` is designed for large-scale work.
-We employ `nominally` as part of the construction of data linkage for
-the UMETRICS dataset of the Institute for Research on Innovation & Science [@UMETRICS2020],
+We employ `nominally` as part of record linkage in building
+the UMETRICS data at the Institute for Research on Innovation & Science [@UMETRICS2020],
 which involves processing millions of name records of
-university employees, grant principal investigators, and published authors.
+university employees, principal investigators, and published authors.
 
 Multiple open-source Python packages focus on parsing names, including
 `python-nameparser` [@python-nameparser],
