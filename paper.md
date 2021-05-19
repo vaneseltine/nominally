@@ -115,10 +115,10 @@ parsing single human names of Western name order (first middle last).
 `Nominally` began from a fork of `python-nameparser`,
 initially aiming to refactor code and improve certain test cases.
 Development continued through a complete overhaul,
-and `nominally` now accurately handles a wider range of names
+and `nominally` now accurately handles a greater range of names
 without requiring user customization.
 `Probablepeople` and `name-cleaver`
-both cast a wider nat, simultaneously addressing
+both cast a wider net, simultaneously addressing
 capture of multiple names, politicians, or companies.
 By narrowing the scope to single human names,
 `nominally` loses the broader applications of these packages
