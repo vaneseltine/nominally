@@ -21,9 +21,9 @@ bibliography: paper.bib
 
 Increasing availability to data in recent decades has heightened the importance
 of successfully connecting people across disparate datasets through record linkage.
-As we draw from multiple data sources, we would like to identify
+As we draw from multiple data sources, we would like to the similarity of the name
 "Matthew VanEseltine" in one database
-as the same individual as "Matt Van Eseltine" in another
+with "Matt Van Eseltine" in another
 and "Vaneseltine, M PhD" in a third.
 `Nominally` is designed to assist in the initial stages of record linkage across datasets,
 during cleaning and preprocessing.
@@ -31,7 +31,6 @@ It uses a rule-based process [@Christen2012]
 to simplify and parse a single-string personal name of
 [Western name order](https://en.wikipedia.org/wiki/Personal_name#Name_order)
 into six core fields: title, first, middle, last, suffix, and nickname.
-The typical use case of `nominally` is parsing entire lists of names en masse.
 
 # Statement of Need
 
@@ -40,6 +39,7 @@ independent of any specific data science framework or website
 and requiring minimal dependencies.
 Its API provides simple command-line, function, and class access
 and easily integrates with the [Pandas](https://pandas.pydata.org/) data analysis library.
+The typical use case of `nominally` is parsing entire lists of names en masse.
 
 Human names can be difficult to work with in data.
 Varying quality and practices across institutions and datasets introduce noise
@@ -64,7 +64,7 @@ and it will thereby perform well if existing name fields are concatenated.
 scrapes titles, nicknames, and suffixes;
 and parses apart first, middle, and last names.
 
-`Nominally` is designed for large-scale work, and we employ `nominally` in the construction of UMETRICS data at the Institute for Research on Innovation & Science [@UMETRICS2020], where millions of employee, principal investigator, and author name records are processed. UMETRICS is a multi-university administrative dataset used by over two hundred social science researchers in recent years [@IRIS2021].
+`Nominally` is designed for large-scale work, and we employ `nominally` as part of the construction of data linkage for the UMETRICS dataset at the Institute for Research on Innovation & Science [@UMETRICS2020], which requires processing millions of university employee, grant principal investigator, and journal author name records.
 
 TODO: Comparisons
 
