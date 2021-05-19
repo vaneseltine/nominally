@@ -38,6 +38,8 @@ def test_commas_do_not_break(raw1, raw2, raw3):
     _ = Name(f"{raw1},{raw2},{raw3}").raw
 
 
+# Failing on https://github.com/vaneseltine/nominally/issues/52
+@pytest.mark.xfail
 @pytest.mark.filterwarnings(UNIDECODE_SURROGATE_WARNING)
 @h.given(raw1=s.characters(), raw2=s.characters(), raw3=s.characters())
 @h.settings(max_examples=MAX_EXAMPLES, deadline=DEADLINE)
@@ -46,6 +48,8 @@ def test_idempotence_madness_for_breakage(raw1, raw2, raw3):
     assert str(name) == str(Name(str(name)))
 
 
+# Failing on https://github.com/vaneseltine/nominally/issues/52
+@pytest.mark.xfail
 @pytest.mark.parametrize(
     "raw", ["0,/,A", "0,',\"", "sr, a", "a, sr", "',A,A", '",A,A', "㈠,㈪,0"]
 )

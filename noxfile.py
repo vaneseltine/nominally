@@ -1,11 +1,13 @@
 #! /usr/bin/env python3
 """Invoke via `nox` or `python -m nox`"""
 
+import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+import urllib.request
 from pathlib import Path
 
 import nox
@@ -65,7 +67,7 @@ def pypi_needs_new_version():
 
     versions["PyPI"] = get_pypi_version()
     if broken:
-        print(f"\nVersion inconsistency!\n")
+        print("\nVersion inconsistency!\n")
         deployable = False
     else:
         repo_v = the_version.pop()
@@ -80,7 +82,7 @@ def pypi_needs_new_version():
 def get_tagged_version():
     """Return the latest git tag"""
     result = subprocess.run(
-        ["git", "describe", "--tags", "--abbrev=0"], stdout=subprocess.PIPE
+        ["git", "describe", "--tags", "--abbrev=0"], check=True, stdout=subprocess.PIPE
     )
     return result.stdout.decode("utf-8").strip()
 
@@ -108,15 +110,11 @@ def search_in_file(path, pattern, encoding="utf-8"):
 
 def get_pypi_version(encoding="utf-8"):
     """Scrape the latest version of this package on PyPI"""
-    result = subprocess.check_output(
-        ["python", "-m", "pip", "search", PACKAGE_NAME]
-    ).decode(encoding)
-    complete_pattern = "^" + PACKAGE_NAME + r" \(" + VERSION_PATTERN
-    matched = re.search(complete_pattern, result)
-    try:
-        return matched.group(1)
-    except AttributeError:
-        return None
+
+    pypi_body = urllib.request.urlopen("https://pypi.org/pypi/nominally/json").read()
+    pypi_json = json.loads(pypi_body.decode(encoding))
+
+    return pypi_json["info"]["version"]
 
 
 @nox.session(python=False)
@@ -138,7 +136,7 @@ def lint_typing(session, subfolder=PACKAGE_NAME):
 
 @nox.session(python=False)
 def lint_black(session):
-    session.run("python", "-m", "black", "-t", "py36", ".")
+    session.run("python", "-m", "black", "-t", "py37", ".")
 
 
 @nox.session(python=False)

@@ -18,9 +18,9 @@ def parse_name(s: str) -> T.Dict[str, T.Any]:
 def cli(arguments: T.Optional[T.Sequence[str]] = None) -> int:
     """Simple CLI with a minimal set of options.
 
-        1. Report of a single name (parse into details).
-        2. Help via usage information. [help, -h, --help]
-        3. Version information. [-V, --version]
+    1. Report of a single name (parse into details).
+    2. Help via usage information. [help, -h, --help]
+    3. Version information. [-V, --version]
     """
     if not arguments:
         arguments = sys.argv

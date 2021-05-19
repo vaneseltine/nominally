@@ -20,7 +20,7 @@ Please follow nominally's Code of Conduct in all project interactions.
     $ source ./.venv/bin/activate
     (.venv) $ python -m pip install -r requirements/dev.txt
     (.venv) $ git checkout -b informative-branch-name
-    (.venv) $ nox
+    (.venv) $ nox -k "test or lint"
     ```
 1. Fix things up.
 
