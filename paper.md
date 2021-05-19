@@ -48,7 +48,7 @@ Human names can be difficult to work with in data.
 Varying quality and practices across institutions and datasets
 introduce noise and cause misrepresentation,
 increasing linkage and deduplication challenges.
-Common errors and discrepencies include
+Common errors and discrepancies include
 (and this list is by no means exhaustive):
 
 - Arbitrarily split first and middle names.
