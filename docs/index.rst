@@ -25,7 +25,7 @@ deduplicating rows within data and and linking names across multiple datasets.
 We observe this by-no-means-exhaustive list:
 
     - First and middle names split arbitrarily.
-    - Misplaced prefixes of last names (e.g., "van" and "de la").
+    - Misplaced prefixes of last names such as "van" and "de la."
     - Records with multiple last names partitioned into middle name fields.
     - Titles and suffixes various recorded in fields and/or with separators.
     - Inconsistent capture of accents and other non-ASCII characters.

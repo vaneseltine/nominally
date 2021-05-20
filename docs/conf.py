@@ -8,7 +8,7 @@ import alabaster
 
 project = "nominally"
 author = "Matt VanEseltine"
-copyright = "2019, Matt VanEseltine"
+copyright = "2021, Matt VanEseltine"
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT))
