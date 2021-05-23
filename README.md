@@ -4,29 +4,38 @@
 
 <h2 align="center">nominally: a maximum-strength name parser for record linkage</h2>
 
+
+
+
 <p align="center">
-  <a href="https://www.gnu.org/licenses/agpl-3.0">
-    <img alt="License: AGPL 3.0+" src="https://img.shields.io/badge/license-AGPL-009999.svg?style=flat-square" />
-  </a>
-  <a href="https://pypi.python.org/pypi/nominally">
-    <img alt="Distributed via PyPI" src="https://img.shields.io/pypi/v/nominally?style=flat-square&color=009999" />
-  </a>
-  <a href="https://codeclimate.com/github/vaneseltine/nominally">
-    <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally?style=flat-square">
-  </a>
   <a href="https://circleci.com/gh/vaneseltine/nominally">
-    <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally?style=flat-square" />
+    <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally" />
   </a>
   <a href="https://coveralls.io/github/vaneseltine/nominally">
-    <img alt="Test coverage at Coveralls" src="https://img.shields.io/coveralls/github/vaneseltine/nominally?style=flat-square" />
+    <img alt="Test coverage at Coveralls" src="https://img.shields.io/coveralls/github/vaneseltine/nominally" />
+  </a>
+  <a href="https://codeclimate.com/github/vaneseltine/nominally">
+    <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally">
   </a>
   <a href="https://nominally.readthedocs.io/en/latest/">
-    <img alt="Documentation at Read the Docs" src="https://img.shields.io/readthedocs/nominally/latest?style=flat-square" />
+    <img alt="Documentation at Read the Docs" src="https://img.shields.io/readthedocs/nominally/latest?" />
   </a>
   <a href="https://github.com/vaneseltine/nominally">
-    <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally?style=flat-square" />
+    <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally" />
   </a>
 </p>
+<p align="center">
+  <a href="https://www.gnu.org/licenses/agpl-3.0">
+    <img alt="License: AGPL 3.0+" src="https://img.shields.io/badge/license-AGPL-009999.svg" />
+  </a>
+  <a href="https://pypi.python.org/pypi/nominally">
+    <img alt="Distributed via PyPI" src="https://img.shields.io/pypi/v/nominally?color=009999" />
+  </a>
+  <a href="https://joss.theoj.org/papers/d340ccbed7e8775b9fc3f4d5ee137fa0">
+    <img src="https://joss.theoj.org/papers/d340ccbed7e8775b9fc3f4d5ee137fa0/status.svg">
+    </a>
+</p>
+
 
 ### 🔗 Names
 
