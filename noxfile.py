@@ -28,20 +28,14 @@ IN_WINDOWS = sys.platform.startswith("win")
 AT_HOME = not IN_CI and not IN_WINDOWS
 
 
-def supported_pythons(classifiers_in="setup.cfg"):
+def supported_pythons(classifiers_file=Path("setup.cfg")):
     """
-    In Windows, return None (to create a single using the current interpreter)
-    In other contexts, pull all supported Python classifiers from setup.cfg
+    Parse all supported Python classifiers from setup.cfg
     """
     if IN_WINDOWS:
         return None
-    versions = []
-    lines = Path(classifiers_in).read_text().splitlines()
-    for line in lines:
-        hit = re.match(r".*Python :: ([0-9.]+)\W*$", line)
-        if hit:
-            versions.append(hit.group(1))
-    return versions
+    pattern = re.compile(r"Programming Language :: Python :: ([0-9]+\.[0-9.]+)")
+    return pattern.findall(classifiers_file.read_text())
 
 
 def pypi_needs_new_version():
