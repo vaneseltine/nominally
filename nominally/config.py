@@ -39,7 +39,7 @@ SUFFIX_PATTERNS = {
 CONJUNCTIONS = {"y"}
 
 # Titles: cannot include things that could also be first names
-TITLES = {"dr", "mr", "mrs", "ms"}
+TITLES = {"dr", "miss", "mr", "mrs", "ms", "mx"}
 
 # Name tokens that appear before a last name. Prefixes join to the token
 # that follows them to make one new token. They can be chained together, e.g

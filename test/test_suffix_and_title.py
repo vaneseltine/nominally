@@ -12,7 +12,6 @@ def fake_working(**kwargs):
     return defaultdict(list, {**kwargs, **fresh})
 
 
-# @pytest.mark.xfail(reason="Breaking unit tests")
 @pytest.mark.parametrize(
     "incoming, outs, outwork",
     [
@@ -248,4 +247,49 @@ def issue_31_allow_ordinals(entry):
     ],
 )
 def test_last_names_and_junior_non_prefixed_(entry):
+    dict_entry_test(Name, entry)
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        {
+            "raw": "dr susan sto-helit",
+            "title": "dr",
+            "first": "susan",
+            "last": "sto-helit",
+        },
+        {
+            "raw": "miss susan sto-helit",
+            "title": "miss",
+            "first": "susan",
+            "last": "sto-helit",
+        },
+        {
+            "raw": "ms susan sto-helit",
+            "title": "ms",
+            "first": "susan",
+            "last": "sto-helit",
+        },
+        {
+            "raw": "mr susan sto-helit",
+            "title": "mr",
+            "first": "susan",
+            "last": "sto-helit",
+        },
+        {
+            "raw": "mrs susan sto-helit",
+            "title": "mrs",
+            "first": "susan",
+            "last": "sto-helit",
+        },
+        {
+            "raw": "mx susan sto-helit",
+            "title": "mx",
+            "first": "susan",
+            "last": "sto-helit",
+        },
+    ],
+)
+def issue_54_add_to_titles(entry):
     dict_entry_test(Name, entry)
