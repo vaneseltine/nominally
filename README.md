@@ -84,27 +84,33 @@ Call `parse_name()` to parse out the six core fields:
 ```
 $ python -q
 >>> from nominally import parse_name
->>> parse_name("Blankinsop, Jr., Mr. James 'Jimmy'")
+>>> parse_name("Vimes, jr, Mr. Samuel 'Sam'")
 {
-  'title': 'mr',
-  'first': 'james',
-  'middle': '',
-  'last': 'blankinsop',
-  'suffix': 'jr',
-  'nickname': 'jimmy'
+    'title': 'mr',
+    'first': 'samuel',
+    'middle': '',
+    'last': 'vimes',
+    'suffix': 'jr',
+    'nickname': 'sam'
 }
 ```
 
-Dive into the `Name` class to parse and recreate a string...
+Dive into the `Name` class to parse out a reformatted string...
 
 ```
 >>> from nominally import Name
->>> n = Name("DR. PEACHES BARTKOWICZ")
+>>> n = Name("Vimes, jr, Mr. Samuel 'Sam'")
 >>> n
-Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'suffix': '', 'nickname': ''})
+Name({
+  'title': 'mr',
+  'first': 'samuel',
+  'middle': '',
+  'last': 'vimes',
+  'suffix': 'jr',
+  'nickname': 'sam'
+})
 >>> str(n)
-'bartkowicz, dr peaches'
-
+'vimes, mr samuel (sam) jr'
 ```
 
 ...or use the dict...
@@ -112,15 +118,15 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 ```
 >>> dict(n)
 {
-  'title': 'dr',
-  'first': 'peaches',
+  'title': 'mr',
+  'first': 'samuel',
   'middle': '',
-  'last': 'bartkowicz',
-  'suffix': '',
-  'nickname': ''
+  'last': 'vimes',
+  'suffix': 'jr',
+  'nickname': 'sam'
 }
 >>> list(n.values())
-['dr', 'peaches', '', 'bartkowicz', '', '']
+['mr', 'samuel', '', 'vimes', 'jr', 'sam']
 ```
 
 ...or retrieve a more elaborate set of attributes...
@@ -128,16 +134,16 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 ```
 >>> n.report()
 {
-  'raw': 'DR. PEACHES BARTKOWICZ',
-  'cleaned': {'dr peaches bartkowicz'},
-  'parsed': 'bartkowicz, dr peaches',
-  'list': ['dr', 'peaches', '', 'bartkowicz', '', ''],
-  'title': 'dr',
-  'first': 'peaches',
+  'raw': "Vimes, jr, Mr. Samuel 'Sam'",
+  'cleaned': {'jr', 'sam', 'vimes, mr samuel'},
+  'parsed': 'vimes, mr samuel (sam) jr',
+  'list': ['mr', 'samuel', '', 'vimes', 'jr', 'sam'],
+  'title': 'mr',
+  'first': 'samuel',
   'middle': '',
-  'last': 'bartkowicz',
-  'suffix': '',
-  'nickname': ''
+  'last': 'vimes',
+  'suffix': 'jr',
+  'nickname': 'sam'
 }
 ```
 
@@ -145,14 +151,13 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 
 ```
 >>> n.first
-'peaches'
+'samuel'
 >>> n['last']
-'bartkowicz'
->>> n.get('title')
-'dr'
+'vimes'
+>>> n.get('suffix')
+'jr'
 >>> n.raw
-'DR. PEACHES BARTKOWICZ'
-
+"Vimes, jr, Mr. Samuel 'Sam'"
 ```
 
 ### 🖥️ Command Line
@@ -160,17 +165,17 @@ Name({'title': 'dr', 'first': 'peaches', 'middle': '', 'last': 'bartkowicz', 'su
 For a quick report, invoke the `nominally` command line tool:
 
 ```
-$ nominally "DR. PEACHES BARTKOWICZ"
-       raw: DR. PEACHES BARTKOWICZ
-   cleaned: dr. peaches bartkowicz
-    parsed: bartkowicz, dr peaches
-      list: ['dr', 'peaches', '', 'bartkowicz', '', '']
-     title: dr
-     first: peaches
+$ nominally "Vimes, jr, Mr. Samuel 'Sam'"
+       raw: Vimes, jr, Mr. Samuel 'Sam'
+   cleaned: {'jr', 'vimes, mr samuel', 'sam'}
+    parsed: vimes, mr samuel (sam) jr
+      list: ['mr', 'samuel', '', 'vimes', 'jr', 'sam']
+     title: mr
+     first: samuel
     middle:
-      last: bartkowicz
-    suffix:
-  nickname:
+      last: vimes
+    suffix: jr
+  nickname: sam
 ```
 
 ### 🔬 Worked Examples
