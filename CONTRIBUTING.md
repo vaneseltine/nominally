@@ -11,7 +11,7 @@ Please follow nominally's Code of Conduct in all project interactions.
 
 1. Fork nominally to your own repository.
 
-1. Then something like:
+1. Clone your own version and set up an environment, e.g.:
 
     ```
     $ git clone git@github.com:yournamehere/nominally.git
@@ -19,12 +19,25 @@ Please follow nominally's Code of Conduct in all project interactions.
     $ python -m venv .venv
     $ source ./.venv/bin/activate
     (.venv) $ python -m pip install -r requirements/dev.txt
+    ```
+
+1. Create a new branch for your work.
+    ```
     (.venv) $ git checkout -b informative-branch-name
+    ```
+
+1. _Pytest_ for tests alone...
+    ```
+    (.venv) $ pytest
+    ```
+
+1. ...but _nox_ runs all the linting required in _nominally_.
+    ```
     (.venv) $ nox -k "test or lint"
     ```
-1. Fix things up.
 
-1. Ensure nox is still happy.
+
+1. Fix things up & ensure that nox is still happy.
 
 1. Leave an explanatory commit message that tags the relevant issue.
 

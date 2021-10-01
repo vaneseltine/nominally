@@ -48,8 +48,34 @@ Typically, _nominally_ is used to parse entire lists or
 of names en masse. This package includes a command line tool
 to parse a single name for convenient one-off testing and examples.
 
+Human names can be difficult to work with in data.
+Varying quality and practices across institutions and datasets
+introduce noise and cause misrepresentation,
+increasing linkage and deduplication challenges.
+Common errors and discrepancies include
+(and this list is by no means exhaustive):
+
+- Arbitrarily split first and middle names.
+- Misplaced prefixes of last names such as "van" and "de la."
+- Multiple last names partitioned into middle name fields.
+- Titles and suffixes variously recorded in different fields, with or without separators.
+- Inconsistent capture of accents, okinas, and other non-ASCII characters.
+- Single name fields arbitrarily concatenating name parts.
+
 _Nominally_ produces fields intended for comparisons between or within datasets. As such, names come out formatted for data without regard to human syntactic preference: `de von ausfern, mr johann g` rather than
 `Mr. Johann G. de von Ausfern`.
+
+### 📜 Documentation
+
+Full _nominally_ documentation is maintained on ReadTheDocs: https://nominally.readthedocs.io/en/latest/
+
+### ⛏️ Installation
+
+Releases of _nominally_ are [distributed on PyPI](https://pypi.org/project/nominally/), so the recommended approach is to install via pip:
+
+```
+$ python -m pip install -U nominally
+```
 
 ### 📓 Getting Started
 
@@ -157,6 +183,14 @@ Binder hosts live Jupyter notebooks walking through examples of _nominally_.
 
 These notebooks and additional examples reside [in the Nominally Examples repository](https://github.com/vaneseltine/nominally-examples/).
 
+### 👩‍💻 Community
+
+Interested in helping to improve _nominally_? Please see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+[CONTRIBUTING.md](CONTRIBUTING.md) also includes directions to run tests, using a clone of the full repository.
+
+Having problems with _nominally_? Need help or support? Feel free to [open an issue here on Github](https://github.com/vaneseltine/nominally/issues/new/choose), or contact me via email or Twitter ([see my profile for links](https://github.com/vaneseltine)).
+
 ### 🧙‍ Author
 
 [![Matt VanEseltine](https://img.shields.io/badge/name-matt_vaneseltine-888.svg?style=for-the-badge&logo=linux&logoColor=fff&color=violet)](https://vaneseltine.github.io)
@@ -173,6 +207,6 @@ These notebooks and additional examples reside [in the Nominally Examples reposi
 
 ### 💡 Acknowledgements
 
-**Nominally** started as a fork of the
+_Nominally_ started as a fork of the
 [python-nameparser](https://github.com/derek73/python-nameparser) package,
 and has benefitted considerably from this origin⸺especially the wealth of examples and tests developed for python-nameparser.
