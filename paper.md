@@ -104,6 +104,8 @@ the UMETRICS data at the Institute for Research on Innovation & Science [@UMETRI
 which involves processing millions of name records of
 university employees, principal investigators, and published authors.
 
+# Comparisons with Existing Software
+
 Multiple open-source Python packages focus on parsing names, including
 `python-nameparser` [@python-nameparser],
 `probablepeople` [@probablepeople],
