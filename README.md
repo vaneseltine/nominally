@@ -59,7 +59,7 @@ Common errors and discrepancies include
 - Misplaced prefixes of last names such as "van" and "de la."
 - Multiple last names partitioned into middle name fields.
 - Titles and suffixes variously recorded in different fields, with or without separators.
-- Inconsistent capture of accents, okinas, and other non-ASCII characters.
+- Inconsistent capture of accents, the ʻokina, and other non-ASCII characters.
 - Single name fields arbitrarily concatenating name parts.
 
 _Nominally_ produces fields intended for comparisons between or within datasets. As such, names come out formatted for data without regard to human syntactic preference: `de von ausfern, mr johann g` rather than

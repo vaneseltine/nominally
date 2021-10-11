@@ -54,7 +54,7 @@ Common errors and discrepancies include
 - Misplaced prefixes of last names such as "van" and "de la."
 - Multiple last names partitioned into middle name fields.
 - Titles and suffixes variously recorded in different fields, with or without separators.
-- Inconsistent capture of accents, okinas, and other non-ASCII characters.
+- Inconsistent capture of accents, the ʻokina, and other non-ASCII characters.
 - Single name fields arbitrarily concatenating name parts.
 
 Cumulative variations and errors can combine to make
