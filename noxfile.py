@@ -13,6 +13,7 @@ from pathlib import Path
 import nox
 
 nox.options.stop_on_first_error = True
+nox.options.keywords = "test or lint"
 
 PACKAGE_NAME = "nominally"
 MODULE_DEFINING_VERSION = "./nominally/api.py"
