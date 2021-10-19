@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "VanEseltine"
+  given-names: "Matthew"
+  orcid: "https://orcid.org/0000-0002-9520-1360"
+title: "Nominally: A Name Parser for Record Linkage"
+version: 1.10
+doi: 10.5281/zenodo.5562628
+date-released: 2021-10-11
+url: "https://github.com/vaneseltine/nominally"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "VanEseltine"
+    given-names: "Matthew"
+    orcid: "https://orcid.org/0000-0002-9520-1360"
+  doi: "10.21105/joss.03440"
+  journal: "Journal of Open Source Software"
+  month: 10
+  start: 3440 # First page number
+  title: "Nominally: A Name Parser for Record Linkage"
+  issue: 66
+  volume: 6
+  year: 2021
