@@ -4,7 +4,7 @@
 
 # Publish package
 twine==3.4.1
-wheel==0.36.2
+wheel==0.38.1
 
 # Lint package
 black==21.5b1
