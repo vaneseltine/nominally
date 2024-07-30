@@ -61,8 +61,7 @@ confidence=
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
 
-disable=bad-continuation,               # handled by black
-        line-too-long,                  # handled by black
+disable=line-too-long,                  # handled by black
         import-error,                   # more of a problem to install
         fixme,                          # covered elsewhere
         logging-fstring-interpolation,  # WRONG

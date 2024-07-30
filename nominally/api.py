@@ -54,6 +54,6 @@ def cli_version() -> int:
     """Output version info and script location"""
     print(
         f"nominally {__version__} running on "
-        f"Python {sys.version.split(' ')[0]} ({sys.executable})"
+        f"Python {sys.version.split(' ', maxsplit=1)[0]} ({sys.executable})"
     )
     return 0

@@ -47,8 +47,8 @@ def test_report_output():
     name = Name('de la Véña, Dr. Jüan "Paco", Jr.')
     report = name.report()
 
-    for k in name.keys():
-        assert name[k] == report[k]
+    for k, v in name.items():
+        assert v == report[k]
     assert all(k in report for k in ("list", "raw", "parsed"))
 
 
@@ -168,7 +168,7 @@ def test_do_not_invent_attributes():
 
 def issue_6_name_to_name():
     name1 = Name("Dr. Horace 'Ook' Worblehat")
-    name2 = Name(name1)
+    name2 = Name(name1)  # type: ignore
     assert name1 == name2
 
 

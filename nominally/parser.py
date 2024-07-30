@@ -16,6 +16,8 @@ if T.TYPE_CHECKING:
 else:
     MappingBase = abc.Mapping
 
+WordContainer = T.Union[str, Cluster, Clusters]
+
 
 def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
     """
@@ -23,8 +25,6 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
 
     If there are too few (less than minimum) words, return the arguments.
     """
-
-    WordContainer = T.Union[str, Cluster, Clusters]
 
     def decorator_bouncer(
         func: T.Callable[[T.Any, WordContainer], WordContainer]
@@ -42,7 +42,7 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
                 checklist = countable
             else:
                 checklist = flatten_once(countable)
-            wordlist = [s for s in checklist if re.search("[a-z]", s)]
+            wordlist = [s for s in checklist if re.search("[a-z]", str(s))]
             if len(wordlist) < minimum:
                 return countable
             return func(obj, countable)

@@ -1,8 +1,7 @@
 -r common.txt
 
 # This file contains the minimum to run the test suite
-coverage==5.5
-hypothesis==6.13.0
-pytest==6.2.4
-pytest-randomly==3.8.0
-
+coverage
+hypothesis
+pytest
+pytest-randomly

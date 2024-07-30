@@ -36,7 +36,7 @@ def supported_pythons(classifiers_file=Path("setup.cfg")):
     if IN_WINDOWS:
         return None
     pattern = re.compile(r"Programming Language :: Python :: ([0-9]+\.[0-9.]+)")
-    return pattern.findall(classifiers_file.read_text())
+    return pattern.findall(classifiers_file.read_text(encoding="utf-8"))
 
 
 def pypi_needs_new_version():
@@ -90,7 +90,7 @@ def get_package_version(defined_in):
 
 
 def get_docs_version():
-    from docs import conf
+    from docs import conf  # pylint:disable=import-outside-toplevel
 
     return conf.release
 

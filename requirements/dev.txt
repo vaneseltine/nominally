@@ -3,19 +3,19 @@
 -r test.txt
 
 # Publish package
-twine==3.4.1
-wheel==0.36.2
+twine
+wheel
 
 # Lint package
-black==21.5b1
-flake8==3.9.2
-flake8-2020==1.6.0
-flake8-isort==4.0.0
-mypy==0.812
-pylint==2.8.2
+black
+flake8
+flake8-2020
+flake8-isort
+mypy
+pylint
 
 # Runners
-nox==2020.12.31
-coveralls==3.0.1
+nox
+coveralls
 # required for coveralls
-PyYAML==5.4
+PyYAML

@@ -3,6 +3,7 @@ hypothesis-driven input testing.
 Note that attempts to print the hypothesis output may fail due to console encoding;
 a failure to print is not necessarily a failure to parse.
 """
+
 import hypothesis as h
 import hypothesis.strategies as s
 import pytest
