@@ -1,1 +1,1 @@
-unidecode==1.2
+unidecode>=1.2
