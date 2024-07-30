@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 import urllib.request
 from pathlib import Path
 
@@ -20,21 +19,24 @@ MODULE_DEFINING_VERSION = "./nominally/api.py"
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
 BASIC_COMMANDS = [
     " ".join((PACKAGE_NAME, suffix))
-    for suffix in ("-h", "--help", "-V", "--version", "")
+    for suffix in (
+        "-h",
+        "--help",
+        "-V",
+        "--version",
+        "",
+        '''"Mr. Arthur 'Two Sheds' Jackson"''',
+    )
 ]
 
 
 IN_CI = os.getenv("CI", "").lower() == "true"
-IN_WINDOWS = sys.platform.startswith("win")
-AT_HOME = not IN_CI and not IN_WINDOWS
 
 
 def supported_pythons(classifiers_file=Path("setup.cfg")):
     """
     Parse all supported Python classifiers from setup.cfg
     """
-    if IN_WINDOWS:
-        return None
     pattern = re.compile(r"Programming Language :: Python :: ([0-9]+\.[0-9.]+)")
     return pattern.findall(classifiers_file.read_text(encoding="utf-8"))
 
@@ -151,10 +153,11 @@ def pytest(session):
         cmd.append("--junit-xml=build/pytest/results.xml")
     session.run(*cmd)
     session.run("python", "-m", "coverage", "report")
-    make_sure_various_cli_invocations_do_not_crash(session, cmds=BASIC_COMMANDS)
 
 
-def make_sure_various_cli_invocations_do_not_crash(session, cmds):
+@nox.session(python=supported_pythons(), reuse_venv=True)
+def test_cli_does_not_crash(session, cmds=BASIC_COMMANDS):
+    session.install("-e", ".")
     for prefix in ["", "python -m "]:
         for core_cmd in cmds:
             complete_cmd = (prefix + core_cmd).split()
@@ -215,8 +218,6 @@ def autopush_repo(session):
     if git_output:
         print(git_output.decode("ascii").rstrip())
         session.skip("Local repo is not clean")
-    if not AT_HOME:
-        session.skip("Only from home")
     subprocess.check_output(["git", "push"])
 
 

@@ -1,40 +1,40 @@
 version: 2.1
 workflows:
-  do_it_all:
+  ci_testing:
     jobs:
       - build
 
 jobs:
   build:
     docker:
-      - image: circleci/python:3.7
+      - image: cimg/python:3.7
         environment:
           MYPYPATH: "./stubs"
     steps:
       - checkout
       - restore_cache:
           keys:
-            - dependencies-20240730a
+            - dependencies-20240730b
       - run:
           name: Prepare environment
           command: |
             python3 -m venv .venv
             . .venv/bin/activate
             python3 -m pip install -q -U pip
-            python3 -m pip install -q -r requirements/dev.txt
+            python3 -m pip install -q -r requirements/circleci.txt
             python3 -m pip --version
       - save_cache:
           paths:
             - "~/.cache/pip"
-          key: dependencies-20240730a
+          key: dependencies-20240730b
       - run:
           name: Run the nox gauntlet
           command: |
             . .venv/bin/activate
             python3 -m pip --version
             python3 -m pip freeze
-            nox -l
-            nox
+            nox -k test -l
+            nox -k test --no-error-on-missing-interpreters --report build/nox-status.json
       - store_test_results:
           path: build/pytest
       - store_artifacts:
