@@ -1,6 +1,7 @@
 import pytest
 
 from nominally.parser import Name
+
 from .conftest import dict_entry_test
 
 
@@ -9,15 +10,17 @@ def only_weird_prefixes():
 
 
 @pytest.mark.parametrize(
-    "incoming, outgoing",
+    "raw, first, last",
     (
-        (["oni", "de", "la", "soul"], ["oni", "de la soul"]),
-        (["oni", "bin", "baloney"], ["oni", "bin baloney"]),
-        (["oni", "van", "mooface"], ["oni", "van mooface"]),
+        ("oni de la soul", "oni", "de la soul"),
+        ("oni bin baloney", "oni", "bin baloney"),
+        ("oni van mooface", "oni", "van mooface"),
     ),
 )
-def test_prefix_combining(incoming, outgoing):
-    assert Name._combine_rightmost_prefixes(incoming) == outgoing
+def test_prefix_combining(raw, first, last):
+    name = Name(raw)
+    assert name.first == first
+    assert name.last == last
 
 
 @pytest.mark.parametrize(
@@ -43,7 +46,7 @@ def test_prefix_avoid(static):
     ),
 )
 def test_conjunction_combine(incoming, outgoing):
-    assert Name._combine_conjunctions(incoming) == outgoing
+    assert Name("")._combine_conjunctions(incoming) == outgoing
 
 
 @pytest.mark.parametrize(
@@ -55,7 +58,7 @@ def test_conjunction_combine(incoming, outgoing):
     ),
 )
 def test_conjunction_avoid(static):
-    assert Name._combine_conjunctions(static) == static
+    assert Name("")._combine_conjunctions(static) == static
 
 
 @pytest.mark.parametrize(

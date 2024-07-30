@@ -42,7 +42,7 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
                 checklist = countable
             else:
                 checklist = flatten_once(countable)
-            wordlist = [s for s in checklist if re.search("[a-z]", str(s))]
+            wordlist = [s for s in checklist if re.search(r"\S", str(s))]
             if len(wordlist) < minimum:
                 return countable
             return func(obj, countable)
@@ -57,21 +57,44 @@ class Name(MappingBase):
 
     _keys = ["title", "first", "middle", "last", "suffix", "nickname"]
     # https://github.com/vaneseltine/nominally/issues/47
-    __slots__ = _keys + ["_raw", "_has_generational", "detail", "_final", "_cleaned"]
+    __slots__ = _keys + [
+        "_raw",
+        "_skip_cleaning",
+        "prefixes",
+        "_has_generational",
+        "detail",
+        "_final",
+        "_cleaned",
+    ]
 
-    def __init__(self, raw: str = "") -> None:
-
+    def __init__(
+        self,
+        raw: str = "",
+        *,
+        skip_cleaning: bool = False,
+        prefixes: T.Optional[T.Collection[str]] = None,
+    ) -> None:
         self._raw = raw
+        self._skip_cleaning = skip_cleaning
+        self.prefixes: T.Collection[str]
+        if prefixes is None:
+            self.prefixes = config.PREFIXES
+        else:
+            self.prefixes = prefixes
+
         self._has_generational = False
         self.detail: T.Dict[str, Cluster] = {k: [] for k in self._keys}
 
-        s = self._pre_clean(self.raw)
-        s = self._pre_process(s)
-        s = self.clean(s)
+        if skip_cleaning:
+            s = self._raw
+        else:
+            s = self._pre_clean(self.raw)
+            s = self._pre_process(s)
+            s = self.clean(s)
         self._cleaned = self._archive_cleaned(s)
         self._process(s)
         self._post_process()
-        self._final = self._post_clean()
+        self._final = self._post_clean(skip_cleaning=self._skip_cleaning)
 
     @staticmethod
     def _pre_clean(s: str) -> str:
@@ -110,16 +133,16 @@ class Name(MappingBase):
             (r"(\s*(;|:|,))+", ", "),  # convert : ; , to , with spacing
             (r"\.\s*", ". "),  # reduce/add space after each .
             (r"[-_/\\:]+", "-"),  # convert _ / \ - : to single hyphen
-            (r"[^-\sa-z0-9,]+", ""),  # drop most all excluding -  , .
+            (r"[^-\sA-Za-z0-9,]+", ""),  # drop most all excluding -  , .
             (r"\s+", whitespace_out),  # condense all whitespace groups
         ]
         if final:
-            cleaning_subs.append((r"[^a-z0-9- \)\()]", ""))
+            cleaning_subs.append((r"[^A-Za-z0-9- \)\()]", ""))
         for pattern, repl in cleaning_subs:
             s = re.sub(pattern, repl, s)
         s = cls.strip_pointlessness(s)
 
-        if not re.search(r"[a-z]", s):
+        if not re.search(r"[A-Za-z]", s):
             return ""
         return s
 
@@ -137,7 +160,8 @@ class Name(MappingBase):
         """Primary processing of clusters into extracted name parts."""
         clusters = self._string_to_clusters(preprocessed_str)
         clusters = self._extract_title(clusters)
-        clusters = self._remove_numbers(clusters)
+        if not self._skip_cleaning:
+            clusters = self._remove_numbers(clusters)
         clusters = self._grab_junior(clusters)
         self._extract_last_first_middle(clusters)
 
@@ -224,7 +248,9 @@ class Name(MappingBase):
         no_numbers = re.sub(r"\d", "", s)
         return cls.strip_pointlessness(no_numbers)
 
-    def _post_clean(self) -> T.Dict[str, Cluster]:
+    def _post_clean(self, skip_cleaning: bool = False) -> T.Dict[str, Cluster]:
+        if skip_cleaning:
+            return {k: self.detail[k] for k in self._keys}
         return {k: self._clean_cluster(self.detail[k]) for k in self._keys}
 
     @classmethod
@@ -307,20 +333,18 @@ class Name(MappingBase):
         clusters[-1].append(partitioned_last)
         return clusters
 
-    @classmethod
-    def _cluster_words(cls, cluster: Cluster) -> Cluster:
+    def _cluster_words(self, cluster: Cluster) -> Cluster:
         """
         Split list of cluster down to individual words and
             - join on conjuctions if appropriate
             - add prefixes to last names if appropriate
         """
-        cluster = cls._combine_conjunctions(cluster)
-        cluster = cls._combine_rightmost_prefixes(cluster)
+        cluster = self._combine_conjunctions(cluster)
+        cluster = self._combine_rightmost_prefixes(cluster)
         return cluster
 
-    @classmethod
     @word_count_bouncer(minimum=4)
-    def _combine_conjunctions(cls, cluster: Cluster) -> Cluster:
+    def _combine_conjunctions(self, cluster: Cluster) -> Cluster:
         """Accept one conjunction at the end: `bob|steve|cortez y costa`"""
         *new_cluster, last_name_one, conj, last_name_two = cluster
 
@@ -331,14 +355,13 @@ class Name(MappingBase):
         new_cluster.append(rightmost)
         return new_cluster
 
-    @classmethod
     @word_count_bouncer(minimum=3)
-    def _combine_rightmost_prefixes(cls, cluster: Cluster) -> Cluster:
+    def _combine_rightmost_prefixes(self, cluster: Cluster) -> Cluster:
         """Work right-to-left through cluster, joining up prefixes of rightmost"""
         result: Clusters = []
 
         for word in reversed(cluster):
-            if len(result) > 1 or word not in config.PREFIXES:
+            if len(result) > 1 or word not in self.prefixes:
                 result.insert(0, [word])
                 continue
             if not result:

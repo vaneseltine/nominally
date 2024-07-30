@@ -115,11 +115,6 @@ def get_pypi_version(encoding="utf-8"):
 
 
 @nox.session(python=False)
-def lint_flake8(session):
-    session.run("flake8", ".")
-
-
-@nox.session(python=False)
 def lint_pylint(session):
     for args in [PACKAGE_NAME, "test --rcfile=./test/pylintrc"]:
         cmd = "python -m pylint --score=no"
