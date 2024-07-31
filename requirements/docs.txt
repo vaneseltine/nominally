@@ -1,6 +1,7 @@
+# Minimum to build the docs
+
 -r common.txt
 
-# Build docs
 Sphinx
 sphinx-autorun
 doc8

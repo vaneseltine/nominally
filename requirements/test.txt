@@ -1,6 +1,7 @@
+# Minimum to run the test suite
+
 -r common.txt
 
-# This file contains the minimum to run the test suite
 coverage
 hypothesis
 pytest

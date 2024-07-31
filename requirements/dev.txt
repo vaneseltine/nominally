@@ -3,13 +3,11 @@
 -r test.txt
 
 # Automation
+
 nox
 
-# Publish package
-twine
-wheel
+# Formatting, linting, type checking
 
-# Lint package
 black
 mypy
 pylint
