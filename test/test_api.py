@@ -57,11 +57,13 @@ class TestCLIFairlySimply:
 
     def test_cli_report(self, capsys):
         cli_report(SAMPLE_RAW)
-        substrings = (
-            very_rough_clean(SAMPLE_RAW).split()
-            + Name._keys
-            + ["raw", "cleaned", "parsed"]
-        )
+        substrings = [
+            *very_rough_clean(SAMPLE_RAW).split(),
+            *Name._keys,
+            "raw",
+            "cleaned",
+            "parsed",
+        ]
 
         captured = capsys.readouterr()
         for subs in substrings:

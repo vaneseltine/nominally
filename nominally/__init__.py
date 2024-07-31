@@ -1,4 +1,5 @@
 """nominally: a maximum-strength name parser for record linkage"""
+# ruff: noqa: F401
 
-from nominally.api import parse_name, cli, cli_report, __version__
+from nominally.api import __version__, cli, cli_report, parse_name
 from nominally.parser import Name

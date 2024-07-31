@@ -4,15 +4,9 @@
 
 <h2 align="center">nominally: a maximum-strength name parser for record linkage</h2>
 
-
-
-
 <p align="center">
   <a href="https://circleci.com/gh/vaneseltine/nominally">
     <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally" />
-  </a>
-  <a href="https://coveralls.io/github/vaneseltine/nominally">
-    <img alt="Test coverage at Coveralls" src="https://img.shields.io/coveralls/github/vaneseltine/nominally" />
   </a>
   <a href="https://codeclimate.com/github/vaneseltine/nominally">
     <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally">
@@ -39,7 +33,6 @@
     <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally" />
   </a>
 </p>
-
 
 ### 🔗 Names
 

@@ -2,6 +2,9 @@
 -r docs.txt
 -r test.txt
 
+# Automation
+nox
+
 # Publish package
 twine
 wheel
@@ -10,10 +13,4 @@ wheel
 black
 mypy
 pylint
-
-# Runners
-nox
-coveralls
-
-# required for coveralls
-PyYAML
+ruff

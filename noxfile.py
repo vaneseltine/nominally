@@ -33,9 +33,9 @@ BASIC_COMMANDS = [
 IN_CI = os.getenv("CI", "").lower() == "true"
 
 
-def supported_pythons(classifiers_file=Path("setup.cfg")):
+def supported_pythons(classifiers_file=Path("pyproject.toml")):
     """
-    Parse all supported Python classifiers from setup.cfg
+    Parse all supported Python classifiers from pyproject.toml
     """
     pattern = re.compile(r"Programming Language :: Python :: ([0-9]+\.[0-9.]+)")
     return pattern.findall(classifiers_file.read_text(encoding="utf-8"))
@@ -53,7 +53,8 @@ def pypi_needs_new_version():
     Return true if the current version is consistent, non-dev, ahead of PyPI.
     """
     versions = {
-        "Internal": get_package_version(MODULE_DEFINING_VERSION),
+        "Internal module": get_package_version(MODULE_DEFINING_VERSION),
+        "pyproject.toml": get_pyproject_version(),
         "Git tag": get_tagged_version(),
     }
     if not IN_CI:
@@ -74,6 +75,10 @@ def pypi_needs_new_version():
     for k, v in versions.items():
         print(f"{k:<15}: {v}")
     return deployable
+
+
+def get_pyproject_version():
+    return search_in_file("pyproject.toml", 'version = "' + VERSION_PATTERN)
 
 
 def get_tagged_version():
@@ -115,6 +120,16 @@ def get_pypi_version(encoding="utf-8"):
 
 
 @nox.session(python=False)
+def lint_black(session):
+    session.run("python", "-m", "black", "-t", "py37", ".")
+
+
+@nox.session(python=False)
+def lint_ruff(session, subfolder=PACKAGE_NAME):
+    session.run("python", "-m", "ruff", "check", subfolder)
+
+
+@nox.session(python=False)
 def lint_pylint(session):
     for args in [PACKAGE_NAME, "test --rcfile=./test/pylintrc"]:
         cmd = "python -m pylint --score=no"
@@ -124,11 +139,6 @@ def lint_pylint(session):
 @nox.session(python=False)
 def lint_typing(session, subfolder=PACKAGE_NAME):
     session.run("python", "-m", "mypy", "--strict", subfolder)
-
-
-@nox.session(python=False)
-def lint_black(session):
-    session.run("python", "-m", "black", "-t", "py37", ".")
 
 
 @nox.session(python=False)
@@ -147,7 +157,6 @@ def pytest(session):
     if IN_CI:
         cmd.append("--junit-xml=build/pytest/results.xml")
     session.run(*cmd)
-    session.run("python", "-m", "coverage", "report")
 
 
 @nox.session(python=supported_pythons(), reuse_venv=True)
@@ -160,10 +169,10 @@ def test_cli_does_not_crash(session, cmds=BASIC_COMMANDS):
 
 
 @nox.session(python=False)
-def coverage(session):
-    session.run("coveralls", success_codes=[0, 1])
+def coverage_local(session):
     session.run("python", "-m", "coverage", "html")
     output = Path("build/coverage/index.html").resolve()
+    session.run("python", "-m", "coverage", "report")
     print(f"Coverage at {output}")
 
 

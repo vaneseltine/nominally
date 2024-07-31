@@ -1,25 +1,35 @@
+from __future__ import annotations
+
 import functools
 import re
-import typing as T
 from collections import abc
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Collection,
+    Iterator,
+    List,
+    Mapping,
+    Union,
+)
 
 from unidecode import unidecode_expect_ascii
 
 from nominally import config
 from nominally.utilities import flatten_once, remove_falsy
 
-Cluster = T.List[str]
-Clusters = T.List[Cluster]
-
-if T.TYPE_CHECKING:
-    MappingBase = T.Mapping[str, str]
+Cluster = List[str]
+Clusters = List[Cluster]
+if TYPE_CHECKING:
+    MappingBase = Mapping[str, str]
 else:
     MappingBase = abc.Mapping
 
-WordContainer = T.Union[str, Cluster, Clusters]
+WordContainer = Union[str, Cluster, Clusters]
 
 
-def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
+def word_count_bouncer(minimum: int) -> Callable[[Any], Any]:
     """
     Decorate only class/instance methods, enforce word count on first real arg.
 
@@ -27,13 +37,13 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
     """
 
     def decorator_bouncer(
-        func: T.Callable[[T.Any, WordContainer], WordContainer]
-    ) -> T.Callable[[T.Any, WordContainer], WordContainer]:
+        func: Callable[[Any, WordContainer], WordContainer],
+    ) -> Callable[[Any, WordContainer], WordContainer]:
         """Return countable instead of func(countable) if too few words."""
 
         @functools.wraps(func)
-        def wrapper_bouncer(obj: T.Any, countable: WordContainer) -> WordContainer:
-            checklist: T.List[T.Any]
+        def wrapper_bouncer(obj: Any, countable: WordContainer) -> WordContainer:
+            checklist: list[Any]
             if not countable:
                 return countable
             if isinstance(countable, str):
@@ -55,9 +65,10 @@ def word_count_bouncer(minimum: int) -> T.Callable[[T.Any], T.Any]:
 class Name(MappingBase):
     """A personal name, separated and simplified into component parts."""
 
-    _keys = ["title", "first", "middle", "last", "suffix", "nickname"]
+    _keys = ("title", "first", "middle", "last", "suffix", "nickname")
     # https://github.com/vaneseltine/nominally/issues/47
-    __slots__ = _keys + [
+    __slots__ = [
+        *_keys,
         "_raw",
         "_skip_cleaning",
         "prefixes",
@@ -72,18 +83,18 @@ class Name(MappingBase):
         raw: str = "",
         *,
         skip_cleaning: bool = False,
-        prefixes: T.Optional[T.Collection[str]] = None,
+        prefixes: Collection[str] | None = None,
     ) -> None:
         self._raw = raw
         self._skip_cleaning = skip_cleaning
-        self.prefixes: T.Collection[str]
+        self.prefixes: Collection[str]
         if prefixes is None:
             self.prefixes = config.PREFIXES
         else:
             self.prefixes = prefixes
 
         self._has_generational = False
-        self.detail: T.Dict[str, Cluster] = {k: [] for k in self._keys}
+        self.detail: dict[str, Cluster] = {k: [] for k in self._keys}
 
         if skip_cleaning:
             s = self._raw
@@ -114,7 +125,8 @@ class Name(MappingBase):
         s = self._sweep_junior(s)
         self.detail["nickname"] = self._clean_cluster(self.detail["nickname"])
         self.detail["suffix"] = self._clean_cluster(
-            self.detail["suffix"], condense=True
+            self.detail["suffix"],
+            condense=True,
         )
         return s
 
@@ -150,7 +162,7 @@ class Name(MappingBase):
     def strip_pointlessness(s: str) -> str:
         return s.strip("-, |")
 
-    def _archive_cleaned(self, s: str) -> T.Set[str]:
+    def _archive_cleaned(self, s: str) -> set[str]:
         """Return a handy representation of cleaned string(s) as a set."""
         result = {s}
         result.update(*(tuple(x) for x in self.detail.values() if x))
@@ -226,7 +238,7 @@ class Name(MappingBase):
 
             first_word, *remainder = next_cluster
             if first_word in config.TITLES:
-                outgoing = outgoing + [remainder] + clusters
+                outgoing = [*outgoing, remainder, *clusters]
                 self.detail["title"] = [first_word]
                 return outgoing
 
@@ -248,13 +260,13 @@ class Name(MappingBase):
         no_numbers = re.sub(r"\d", "", s)
         return cls.strip_pointlessness(no_numbers)
 
-    def _post_clean(self, skip_cleaning: bool = False) -> T.Dict[str, Cluster]:
+    def _post_clean(self, *, skip_cleaning: bool = False) -> dict[str, Cluster]:
         if skip_cleaning:
             return {k: self.detail[k] for k in self._keys}
         return {k: self._clean_cluster(self.detail[k]) for k in self._keys}
 
     @classmethod
-    def _clean_cluster(cls, cluster: Cluster, condense: bool = False) -> Cluster:
+    def _clean_cluster(cls, cluster: Cluster, *, condense: bool = False) -> Cluster:
         """Clean the string of each token in a cluster."""
         cleaned = [cls.clean(s, condense=condense, final=True) for s in cluster]
         return [s for s in cleaned if s]
@@ -351,7 +363,7 @@ class Name(MappingBase):
         if conj not in config.CONJUNCTIONS:
             return cluster
 
-        rightmost = " ".join((last_name_one, conj, last_name_two))
+        rightmost = f"{last_name_one} {conj} {last_name_two}"
         new_cluster.append(rightmost)
         return new_cluster
 
@@ -370,14 +382,14 @@ class Name(MappingBase):
 
         return [" ".join(cluster) for cluster in result if cluster]
 
-    def __eq__(self, other: T.Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """If Name is parsable and object dicts are identical, consider it equal."""
         try:
-            return dict(self) == dict(other) and self.parsable
+            return dict(self) == dict(other) and self.parsable  # type: ignore
         except (ValueError, TypeError):
-            return NotImplemented
+            return False
 
-    def __getattr__(self, name: str) -> T.Any:
+    def __getattr__(self, name: str) -> Any:
         """
         Provides attribute access to all of Name._keys (by way of __iter__()
         for the keys and __getitem__() for the value).
@@ -386,7 +398,7 @@ class Name(MappingBase):
             return self[name]
         return self.__getattribute__(name)
 
-    def __getitem__(self, key: str) -> T.Any:
+    def __getitem__(self, key: str) -> Any:
         """Implement Name dict to return strings"""
         return " ".join(self._final[key]) or ""
 
@@ -394,7 +406,7 @@ class Name(MappingBase):
         """Implement Name dict to return strings"""
         return len(self._keys)
 
-    def __iter__(self) -> T.Iterator[str]:
+    def __iter__(self) -> Iterator[str]:
         """Implement Name dict to return strings"""
         return iter(self._keys)
 
@@ -439,11 +451,11 @@ class Name(MappingBase):
         return self._raw
 
     @property
-    def cleaned(self) -> T.Set[str]:
+    def cleaned(self) -> set[str]:
         """Return some set of cleaned string parts."""
         return self._cleaned
 
-    def report(self) -> T.Dict[str, T.Any]:
+    def report(self) -> dict[str, Any]:
         """Return a more-or-less complete parsing dict."""
         return {
             "raw": self.raw,

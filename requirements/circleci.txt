@@ -1,3 +1,5 @@
+# CircleCI uses a limited set of requirements to run and test in 3.7
+
 -r common.txt
 -r test.txt
 

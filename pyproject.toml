@@ -1,0 +1,107 @@
+[build-system]
+requires = ["setuptools>=47.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nominally"
+version = "1.1.0"
+description = "A maximum-strength name parser for record linkage."
+requires-python = ">=3.7"
+dynamic = ["dependencies", "readme"]
+authors = [{ name = "Matt VanEseltine", email = "matvan@umich.edu" }]
+license = { file = "LICENSE" }
+keywords = ["data", "database", "English", "names", "parser", "text"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Database",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Sociology",
+    "Topic :: Text Processing :: Linguistic",
+    "Typing :: Typed",
+]
+
+[project.scripts]
+nominally = "nominally:cli"
+
+[project.urls]
+Homepage = "https://github.com/vaneseltine/nominally"
+Repository = "https://github.com/vaneseltine/nominally"
+Issues = "https://github.com/vaneseltine/nominally/issues"
+
+[tool.coverage.run]
+omit = ["*/__*.py"]
+branch = true
+
+[tool.coverage.html]
+directory = "build/coverage"
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+]
+
+[tool.doc8]
+ignore = ["D002", "D004"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pylint."messages control"]
+
+[tool.pylint.reports]
+output-format = "colorized"
+disable = [
+    "empty-docstring",   # We're going to let ruff yell at me about this
+    "missing-docstring", # And this
+]
+
+[tool.pylint.basic]
+good-names = ["df", "i", "k", "n", "s", "v", "logger"]
+
+
+[tool.pytest.ini_options]
+addopts = "-ra --durations=5 --strict-markers --strict-config"
+log_cli = "False"
+log_cli_level = "DEBUG"
+python_files = ["test_*.py"]
+python_functions = ["t_*", "test_*", "issue*"]
+testpaths = ["test"]
+
+[tool.ruff]
+target-version = "py37"
+include = ["nominally/**/*.py"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [ # see https://docs.astral.sh/ruff/rules/
+    "ANN401",  # We are fine returning Any when overriding functions that return Any.
+    "D",       # Deferring pydocstyle concerns for now.
+    "N812",    # We're importing typing as T, no worries.
+    "PGH003",  # We're okay with broad type ignore in moderation.
+    "PLR2004", # We use magic numbers (2 and 1) in moderation.
+    "RET504",  # Unnecessary assignment before return for clarity doesn't hurt.
+    "SIM108",  # We sometimes prefer if-else blocks to ternary.
+    "T201",    # Sometimes we do, in fact, print!
+]
+
+[tool.setuptools]
+packages = ["nominally"]
+
+[tool.setuptools.dynamic]
+readme = { file = ["README.md"], content-type = "text/markdown" }
+dependencies = { file = ["requirements/common.txt"] }
