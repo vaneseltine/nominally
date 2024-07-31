@@ -150,7 +150,7 @@ def lint_todos(_):
 
 
 @nox.session(python=supported_pythons(), reuse_venv=False)
-def pytest(session):
+def test_pytest(session):
     session.install("-r", "requirements/test.txt")
     session.install("-e", ".")
     cmd = ["python", "-m", "coverage", "run", "-m", "pytest"]
@@ -169,20 +169,17 @@ def test_cli_does_not_crash(session, cmds=BASIC_COMMANDS):
 
 
 @nox.session(python=False)
-def coverage_local(session):
+def test_coverage(session):
     session.run("python", "-m", "coverage", "html")
     output = Path("build/coverage/index.html").resolve()
     session.run("python", "-m", "coverage", "report")
     print(f"Coverage at {output}")
 
 
-@nox.session(python=False)
-def lint_docs(session):
-    session.run("doc8", "docs", "-q")
-
-
-@nox.session(python=False)
+@nox.session(python=["3.12"], reuse_venv=True)
 def build_docs(session):
+    session.run("doc8", "docs", "-q")
+    session.install("-r", "requirements/docs.txt")
     if IN_CI:
         session.skip("Not building on CI")
     output_dir = Path("build/docs").resolve()
@@ -204,18 +201,9 @@ def build_docs(session):
 
 
 @nox.session(python=False)
-def deploy_to_pypi(session):
-    if not pypi_needs_new_version():
-        session.skip("PyPI already up to date")
-    print("Current version is ready to deploy to PyPI.")
-    if not IN_CI:
-        session.skip("Only deploying from CI")
-    session.run("python", "setup.py", "sdist", "bdist_wheel")
-    session.run("python", "-m", "twine", "upload", "dist/*")
-
-
-@nox.session(python=False)
 def autopush_repo(session):
+    if IN_CI:
+        session.skip("Not pushing on CI")
     if not nox.options.stop_on_first_error:
         session.skip("Error-free runs required")
     git_output = subprocess.check_output(["git", "status", "--porcelain"])
