@@ -8,14 +8,12 @@ wheel
 
 # Lint package
 black
-flake8
-flake8-2020
-flake8-isort
 mypy
 pylint
 
 # Runners
 nox
 coveralls
+
 # required for coveralls
 PyYAML

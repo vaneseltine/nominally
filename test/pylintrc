@@ -11,7 +11,7 @@ disable=line-too-long,                  # handled by black
         fixme,                          # covered elsewhere
         logging-fstring-interpolation,  # WRONG
         missing-docstring,              # yes yes
-        empty-docstring,                 # yes yes yes
+        empty-docstring,                # yes yes yes
         protected-access,
         duplicate-code
 
