@@ -6,32 +6,23 @@
 
 <p align="center">
   <a href="https://circleci.com/gh/vaneseltine/nominally">
-    <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally" />
-  </a>
+    <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally" /></a>
   <a href="https://codeclimate.com/github/vaneseltine/nominally">
-    <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally">
-  </a>
+    <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally"></a>
   <a href="https://nominally.readthedocs.io/en/latest/">
-    <img alt="Documentation at Read the Docs" src="https://img.shields.io/readthedocs/nominally/latest?" />
-  </a>
+    <img alt="Documentation at Read the Docs" src="https://img.shields.io/readthedocs/nominally/latest?" /></a>
   <a href="https://snyk.io/test/github/vaneseltine/nominally/">
-    <img alt="Vulnerabilities monitored by Snyk" src="https://snyk.io/test/github/vaneseltine/nominally/badge.svg" />
-  </a>
+    <img alt="Vulnerabilities monitored by Snyk" src="https://snyk.io/test/github/vaneseltine/nominally/badge.svg" /></a>
 
 </p>
 <p align="center">
-  <a href="https://www.gnu.org/licenses/agpl-3.0">
-    <img alt="License: AGPL 3.0+" src="https://img.shields.io/badge/license-AGPL-009999.svg" />
-  </a>
+  <a href="https://www.gnu.org/licenses/agpl-3.0"><img alt="License: AGPL 3.0+" src="https://img.shields.io/badge/license-AGPL-009999.svg" /></a>
   <a href="https://pypi.python.org/pypi/nominally">
-    <img alt="Distributed via PyPI" src="https://img.shields.io/pypi/v/nominally?color=009999" />
-  </a>
+    <img alt="Distributed via PyPI" src="https://img.shields.io/pypi/v/nominally?color=009999" /></a>
   <a href="https://joss.theoj.org/papers/d340ccbed7e8775b9fc3f4d5ee137fa0">
-    <img src="https://joss.theoj.org/papers/d340ccbed7e8775b9fc3f4d5ee137fa0/status.svg">
-  </a>
+    <img src="https://joss.theoj.org/papers/d340ccbed7e8775b9fc3f4d5ee137fa0/status.svg"></a>
   <a href="https://github.com/vaneseltine/nominally">
-    <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally" />
-  </a>
+    <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally" /></a>
 </p>
 
 ### 🔗 Names
