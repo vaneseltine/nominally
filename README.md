@@ -20,9 +20,10 @@
   <a href="https://nominally.readthedocs.io/en/latest/">
     <img alt="Documentation at Read the Docs" src="https://img.shields.io/readthedocs/nominally/latest?" />
   </a>
-  <a href="https://github.com/vaneseltine/nominally">
-    <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally" />
+  <a href="https://snyk.io/test/github/vaneseltine/nominally/">
+    <img alt="Vulnerabilities monitored by Snyk" src="https://snyk.io/test/github/vaneseltine/nominally/badge.svg" />
   </a>
+
 </p>
 <p align="center">
   <a href="https://www.gnu.org/licenses/agpl-3.0">
@@ -33,7 +34,10 @@
   </a>
   <a href="https://joss.theoj.org/papers/d340ccbed7e8775b9fc3f4d5ee137fa0">
     <img src="https://joss.theoj.org/papers/d340ccbed7e8775b9fc3f4d5ee137fa0/status.svg">
-    </a>
+  </a>
+  <a href="https://github.com/vaneseltine/nominally">
+    <img alt="Latest commit at GitHub" src="https://img.shields.io/github/last-commit/vaneseltine/nominally" />
+  </a>
 </p>
 
 
