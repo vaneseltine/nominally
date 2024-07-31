@@ -7,7 +7,7 @@ About
 ================================
 
 **Nominally** is a program to separate commonly-used parts of
-personal names. Copyright (C) 2021 Matt VanEseltine.
+personal names. Copyright (C) 2024 Matt VanEseltine.
 
 GNU Affero General Public License
 ----------------------------------

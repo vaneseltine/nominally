@@ -9,7 +9,7 @@
     <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/nominally" /></a>
   <a href="https://codeclimate.com/github/vaneseltine/nominally">
     <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/nominally"></a>
-  <a href="https://nominally.readthedocs.io/en/latest/">
+  <a href="https://nominally.readthedocs.io/">
     <img alt="Documentation at Read the Docs" src="https://img.shields.io/readthedocs/nominally/latest?" /></a>
   <a href="https://snyk.io/test/github/vaneseltine/nominally/">
     <img alt="Vulnerabilities monitored by Snyk" src="https://snyk.io/test/github/vaneseltine/nominally/badge.svg" /></a>
