@@ -50,7 +50,8 @@ Common errors and discrepancies include
 - Inconsistent capture of accents, the ʻokina, and other non-ASCII characters.
 - Single name fields arbitrarily concatenating name parts.
 
-_Nominally_ produces fields intended for comparisons between or within datasets. As such, names come out formatted for data without regard to human syntactic preference: `de von ausfern, mr johann g` rather than
+_Nominally_ produces fields intended for comparisons between or within datasets. 
+As such, names come out formatted for data without regard to human syntactic preference: `de von ausfern, mr johann g` rather than
 `Mr. Johann G. de von Ausfern`.
 
 ### 📜 Documentation
